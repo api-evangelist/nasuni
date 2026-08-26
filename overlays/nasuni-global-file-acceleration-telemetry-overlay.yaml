@@ -1,0 +1,23 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Global File Accleration Telemetry API
+  version: 1.0.0
+extends: openapi/nasuni-global-file-acceleration-telemetry-openapi.yml
+x-generated: '2026-08-26'
+x-method: generated
+x-source: Derived from openapi/_original/nasuni-global-file-acceleration-telemetry-openapi.json; never mutates the
+  original contract.
+actions:
+- target: $.info
+  description: Record the API Evangelist harvest provenance for this contract.
+  update:
+    x-apievangelist-source: https://docs.api.nasuni.com/ (Redocly portal page-data, harvested 2026-08-26)
+    x-apievangelist-profile: https://github.com/api-evangelist/nasuni
+- target: $
+  description: Attach the published rate limits and the artifacts derived from this contract.
+  update:
+    x-rate-limits: rate-limits/nasuni-rate-limits.yml
+    x-error-catalog: errors/nasuni-problem-types.yml
+    x-conventions: conventions/nasuni-conventions.yml
+    x-authentication: authentication/nasuni-authentication.yml
+    x-lifecycle: lifecycle/nasuni-lifecycle.yml

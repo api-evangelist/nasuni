@@ -1,0 +1,269 @@
+generated: '2026-08-26'
+method: searched
+source: 'Docs: https://docs.api.nasuni.com/api/nmc/v120/introduction/ , https://docs.api.nasuni.com/api/portal/v0/introduction/
+  , https://docs.nasuni.com/docs/nasuni-data-api , https://docs.nasuni.com/docs/portal-mcp-server , https://github.com/nasuni-labs/nasuni-api-utilities
+  . Schemes derived from openapi/*.yml (7 contracts).'
+summary:
+  types:
+  - apiKey
+  - http
+  - oauth2
+  api_key_in:
+  - header
+  - query
+  oauth2_flows:
+  - clientCredentials
+schemes:
+- name: ApiTokenHeader
+  type: apiKey
+  in: header
+  parameter: Authorization
+  sources:
+  - openapi/nasuni-global-file-acceleration-telemetry-openapi.yml
+  - openapi/nasuni-nasuni-data-service-aws-openapi.yml
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+  - openapi/nasuni-nmc-v1-0-openapi.yml
+  - openapi/nasuni-nmc-v1-1-openapi.yml
+  - openapi/nasuni-nmc-v1-2-openapi.yml
+- name: SASAuth_sig
+  type: apiKey
+  in: query
+  parameter: sig
+  description: SAS Authorization signature query param.
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_se
+  type: apiKey
+  in: query
+  parameter: se
+  description: SAS Authorization expiration query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_sp
+  type: apiKey
+  in: query
+  parameter: sp
+  description: SAS Authorization permissions query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_sv
+  type: apiKey
+  in: query
+  parameter: sv
+  description: SAS Authorization version query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_ss
+  type: apiKey
+  in: query
+  parameter: ss
+  description: SAS Authorization service scope query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_srt
+  type: apiKey
+  in: query
+  parameter: srt
+  description: SAS Authorization resources query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_sr
+  type: apiKey
+  in: query
+  parameter: sr
+  description: SAS Authorization Service resource type query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_st
+  type: apiKey
+  in: query
+  parameter: st
+  description: SAS Authorization starts query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_si
+  type: apiKey
+  in: query
+  parameter: si
+  description: SAS Authorization identifier query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_sip
+  type: apiKey
+  in: query
+  parameter: sip
+  description: SAS Authorization IP range query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_spr
+  type: apiKey
+  in: query
+  parameter: spr
+  description: SAS Authorization protocol query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_rscc
+  type: apiKey
+  in: query
+  parameter: rscc
+  description: SAS Authorization response cache control query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_rscd
+  type: apiKey
+  in: query
+  parameter: rscd
+  description: SAS Authorization response content disposition query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_rsce
+  type: apiKey
+  in: query
+  parameter: rsce
+  description: SAS Authorization response content encoding query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_rscl
+  type: apiKey
+  in: query
+  parameter: rscl
+  description: SAS Authorization response content length query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_rsct
+  type: apiKey
+  in: query
+  parameter: rsct
+  description: SAS Authorization response content type query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_rs
+  type: apiKey
+  in: query
+  parameter: rs
+  description: SAS Authorization snapshot query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: SASAuth_ses
+  type: apiKey
+  in: query
+  parameter: ses
+  description: SAS Authorization encryption scope query param
+  sources:
+  - openapi/nasuni-nasuni-data-service-azure-openapi.yml
+- name: ServiceKeyHeader
+  type: apiKey
+  in: header
+  parameter: x-service-key
+  description: Service key for programmatic API access. Must be used together with x-service-secret.
+  sources:
+  - openapi/nasuni-portal-v0-openapi.yml
+- name: ServiceSecretHeader
+  type: apiKey
+  in: header
+  parameter: x-service-secret
+  description: Service secret for programmatic API access. Must be used together with x-service-key.
+  sources:
+  - openapi/nasuni-portal-v0-openapi.yml
+- name: UserKeyHeader
+  type: apiKey
+  in: header
+  parameter: x-user-key
+  description: User key for user-specific API access.
+  sources:
+  - openapi/nasuni-portal-v0-openapi.yml
+- name: HTTPBearer
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  description: Bearer token obtained from /auth/token endpoint.
+  sources:
+  - openapi/nasuni-portal-v0-openapi.yml
+- name: OAuth2ClientCredentials
+  type: oauth2
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+    scopes: 0
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service key) and `client_secret`
+    (service secret) as form-encoded body parameters to the token endpoint.
+  sources:
+  - openapi/nasuni-portal-v0-openapi.yml
+name: Nasuni authentication profile
+docs:
+- api: Nasuni Management Console (NMC) API
+  url: https://docs.api.nasuni.com/api/nmc/v120/introduction/
+- api: Nasuni Portal API
+  url: https://docs.api.nasuni.com/api/portal/v0/introduction/
+- api: Nasuni Data API
+  url: https://docs.nasuni.com/docs/nasuni-data-api
+- api: Nasuni Portal MCP Server
+  url: https://docs.nasuni.com/docs/portal-mcp-server
+profiles:
+- api: Nasuni Management Console (NMC) API
+  scheme: opaque bearer token
+  header: 'Authorization: Token <token>'
+  token_endpoint: POST /auth/login/ with {username, password} -> {token, expires}
+  revoke: POST /auth/logout/
+  identity_sources:
+  - native NMC accounts
+  - Active Directory domain accounts (UPN user@domain.com or DOMAIN\\samaccountname)
+  sso_supported: false
+  sso_note: SSO accounts are explicitly NOT supported for NMC API authentication.
+  authorization: The account must be in an NMC group with "Enable NMC API Access" AND hold the specific NMC permission
+    for each action (e.g. "Manage Folder Quotas").
+  auth_rate_limit: 10 login requests per minute
+  source: https://docs.api.nasuni.com/api/nmc/v120/introduction/
+- api: Nasuni Portal API
+  scheme: OAuth 2.0 client credentials -> JWT bearer; legacy key headers also accepted
+  schemes:
+  - OAuth2ClientCredentials (RFC 6749 §4.4)
+  - HTTPBearer (JWT)
+  - ServiceKeyHeader x-service-key + ServiceSecretHeader x-service-secret
+  - UserKeyHeader x-user-key
+  token_endpoint: 'POST /auth/token (application/x-www-form-urlencoded: grant_type=client_credentials, client_id,
+    client_secret)'
+  refresh: POST /auth/token/refresh
+  revoke: DELETE /auth/token
+  mcp_authorize: POST /auth/mcp
+  key_management: Service keys and user keys are issued and revoked through the IAM surface (/iam/service_keys,
+    /iam/user_keys).
+  authorization: Role-based. GET /iam/me returns the caller's roles and permissions; GET /iam/permissions lists
+    every permission in the system.
+  source: https://docs.api.nasuni.com/api/portal/v0/introduction/
+- api: Nasuni Portal MCP Server
+  scheme: OAuth 2.0 authorization code with Dynamic Client Registration
+  flow: authorization_code
+  client_registration: RFC 7591 Dynamic Client Registration
+  token_refresh: automatic
+  authorization: Inherits the caller's Portal RBAC; no privilege elevation possible through the server.
+  source: https://docs.nasuni.com/docs/portal-mcp-server
+- api: Nasuni Data Service (NDS) for AWS
+  scheme: AWS Signature Version 4, or presigned URLs
+  headers:
+  - 'Authorization: AWS4-HMAC-SHA256 ...'
+  - X-Amz-Date
+  - X-Amz-Content-Sha256
+  - X-Amz-Security-Token
+  source: openapi/_original/nasuni-nasuni-data-service-aws-openapi.json
+- api: Nasuni Data Service (NDS) for Azure
+  scheme: Azure Shared Key header, or SAS query parameters (sv, ss, srt, sp, se, st, sig)
+  note: Shared Key and SAS must not be combined.
+  key_management: Keys generated at NDS deployment; listed/rotated via the Portal API /uaas/stacks/{stack_id}/nds/blob-keys
+    and /nds/sas-token.
+  source: openapi/_original/nasuni-nasuni-data-service-azure-openapi.json
+- api: Global File Acceleration (GFA) Telemetry API
+  scheme: API token in the Authorization header
+  key_management: GFA API keys are issued and revoked through the Portal API (/gfa/api_keys).
+  source: openapi/_original/nasuni-global-file-acceleration-telemetry-openapi.json
+- api: Nasuni Data API (mobileapi)
+  scheme: secret-key token presented as HTTP Basic
+  token_endpoint: 'POST /mobileapi/1/auth/login (multipart form: username, password, device_id, device_type) ->
+    x-secret-key response header'
+  usage: Subsequent calls send HTTP Basic with username=device_id and password=the x-secret-key value.
+  prerequisite: Mobile Access must be enabled on the share (Sync and Mobile Access on the NMC Shares page).
+  note: As of Nasuni 10.1 most response headers are lowercase; earlier versions returned X-Secret-Key.
+  source: https://docs.nasuni.com/docs/nasuni-data-api
+note: Seven contracts, six distinct authentication models, none of them shared. The NMC API and the Portal API do
+  not accept each other's credentials, and the two NDS surfaces deliberately adopt the native auth of the cloud
+  they emulate. Only the Portal API and the Portal MCP Server use OAuth 2.0.

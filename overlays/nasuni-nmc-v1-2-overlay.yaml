@@ -1,0 +1,27 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Nasuni Management Console API
+  version: 1.0.0
+extends: openapi/nasuni-nmc-v1-2-openapi.yml
+x-generated: '2026-08-26'
+x-method: generated
+x-source: Derived from openapi/_original/nasuni-nmc-v1-2-openapi.json; never mutates the original contract.
+actions:
+- target: $.info
+  description: Record the API Evangelist harvest provenance for this contract.
+  update:
+    x-apievangelist-source: https://docs.api.nasuni.com/ (Redocly portal page-data, harvested 2026-08-26)
+    x-apievangelist-profile: https://github.com/api-evangelist/nasuni
+- target: $
+  description: Attach the published rate limits and the artifacts derived from this contract.
+  update:
+    x-rate-limits: rate-limits/nasuni-rate-limits.yml
+    x-error-catalog: errors/nasuni-problem-types.yml
+    x-conventions: conventions/nasuni-conventions.yml
+    x-authentication: authentication/nasuni-authentication.yml
+    x-lifecycle: lifecycle/nasuni-lifecycle.yml
+- target: $.info
+  description: 'Flag the missing operationIds: 120 of 120 operations in this contract carry no operationId, which
+    blocks code generation and agent tool-forging.'
+  update:
+    x-apievangelist-finding-operationids-missing: 120

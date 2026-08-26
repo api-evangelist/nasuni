@@ -1,0 +1,999 @@
+openapi: 3.1.0
+info:
+  title: Nasuni Data Service (NDS) API
+  description: "\n# Overview\n\nWelcome to Nasuni Data Service (NDS) API Documentation.\n\nThis documentation provides comprehensive\
+    \ information about the Nasuni Data\nService (NDS) API. This API provides Azure Blob Storage compatible endpoints for\n\
+    accessing data stored in Nasuni Volume.\n\n## Authentication\n\nThis API supports the following authentication methods:\n\
+    * **SAS Token Authentication**: Use a Shared Access Signature (SAS) token to\n authenticate your requests. You can copy\
+    \ one of the SAS tokens generated during\n NDS deployment. This requires the following query parameters:\n    - `sv`:\
+    \ The storage service version.\n    - `ss`: The services accessible with the SAS token.\n    - `srt`: The resource types\
+    \ accessible with the SAS token.\n    - `sp`: The permissions granted by the SAS token.\n    - `se`: The expiration time\
+    \ of the SAS token.\n    - `st`: The start time of the SAS token.\n    - `sig`: The signature for the SAS token.\n* **Shared\
+    \ Key Authentication**: Use a shared key to sign your requests. This\n type of authorization is represented in the `Authorization`\
+    \ header. You should\n use one of the two Shared Keys generated during NDS Deployment.\n\n## Available Operations\n* **List\
+    \ Containers**: Retrieve a list of all containers (Nasuni Volumes)\n registered with NDS.\n* **List Blobs**: Retrieve\
+    \ a list of blobs (files) within a specified container\n (Nasuni Volume).\n* **Get Blob**: Download a specific blob (file)\
+    \ from a container\n (Nasuni Volume).\n* **Get Blob Properties**: Retrieve metadata and properties of a specific blob\n\
+    \ (file) from a container (Nasuni Volume) without downloading the actual content.\n"
+  termsOfService: https://www.nasuni.com/legal
+  contact:
+    name: Nasuni Support
+    url: https://www.nasuni.com/support
+    email: support@nasuni.com
+  license:
+    name: Nasuni
+    url: https://www.nasuni.com/legal
+  version: 1.0.0
+paths:
+  /:
+    get:
+      summary: List Containers
+      description: List all containers (i.e. Nasuni Volumes) that are attached to Nasuni Data Service.
+      operationId: list_containers__get
+      responses:
+        '200':
+          description: Success. Returns the list of containers.
+          content:
+            application/xml:
+              schema:
+                type: object
+                format: xml
+                xml:
+                  name: conceptDescription
+              example: '<?xml version="1.0" encoding="UTF-8"?>
+
+                <EnumerationResults ServiceEndpoint="https://nds.myapi.myregion.azurecontainerapps.io/"><Containers><Container><Name>6c19a28d-19cd-4876-ac90-1a2fe3a22426-1</Name><Properties><Last-Modified>Thu,
+                27 Jun 2024 13:31:43 GMT</Last-Modified><Etag>6c19a28d-19cd-4876-ac90-1a2fe3a22426_1</Etag><PublicAccess>container</PublicAccess></Properties></Container></Containers><Prefix/><NextMarker/><MaxResults>10</MaxResults></EnumerationResults>'
+        '403':
+          description: Forbidden.
+          headers:
+            date:
+              description: Response date
+              schema:
+                type: string
+            server:
+              description: Server name
+              schema:
+                type: string
+            x-request-id:
+              description: Request ID
+              schema:
+                type: string
+            x-ms-error-code:
+              description: Azure error code
+              schema:
+                type: string
+            content-length:
+              description: Content length
+              schema:
+                type: integer
+            content-type:
+              description: Content type
+              schema:
+                type: string
+          content:
+            application/xml:
+              schema:
+                type: object
+                format: xml
+                xml:
+                  name: conceptDescription
+              example: '<?xml version="1.0" encoding="UTF-8"?>
+
+                <Error><Code>AuthenticationFailed</Code><Message>Server failed to authenticate the request. Make sure the
+                value of Authorization header is formed correctly including the signature.
+
+                RequestId:
+
+                Time:2025-08-06T20:46:00.503175+00:00Z</Message></Error>'
+      security:
+      - SharedKeyAuthorization: []
+      - SASAuth_sig: []
+      - SASAuth_se: []
+      - SASAuth_sp: []
+      - SASAuth_sv: []
+      - SASAuth_ss: []
+      - SASAuth_srt: []
+      - SASAuth_sr: []
+      - SASAuth_st: []
+      - SASAuth_si: []
+      - SASAuth_sip: []
+      - SASAuth_spr: []
+      - SASAuth_rscc: []
+      - SASAuth_rscd: []
+      - SASAuth_rsce: []
+      - SASAuth_rscl: []
+      - SASAuth_rsct: []
+      - SASAuth_rs: []
+      - SASAuth_ses: []
+  /{container}/:
+    get:
+      summary: List blobs in a container
+      description: List all containers (i.e. Nasuni Volumes) that are attached to Nasuni Data Service.
+      operationId: list_blobs___container___get
+      security:
+      - SharedKeyAuthorization: []
+      - SASAuth_sig: []
+      - SASAuth_se: []
+      - SASAuth_sp: []
+      - SASAuth_sv: []
+      - SASAuth_ss: []
+      - SASAuth_srt: []
+      - SASAuth_sr: []
+      - SASAuth_st: []
+      - SASAuth_si: []
+      - SASAuth_sip: []
+      - SASAuth_spr: []
+      - SASAuth_rscc: []
+      - SASAuth_rscd: []
+      - SASAuth_rsce: []
+      - SASAuth_rscl: []
+      - SASAuth_rsct: []
+      - SASAuth_rs: []
+      - SASAuth_ses: []
+      parameters:
+      - name: container
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Container
+      - name: restype
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Resource Type
+          description: The type of resource to access, e.g., "container".
+        description: The type of resource to access, e.g., "container".
+      - name: comp
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Component
+          description: The operation to be performed on the resource, e.g., "list".
+        description: The operation to be performed on the resource, e.g., "list".
+      - name: prefix
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Prefix
+          description: Optional. Filters the results to return only blobs with names that begin with the specified prefix.
+        description: Optional. Filters the results to return only blobs with names that begin with the specified prefix.
+      - name: marker
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Marker
+          description: Optional. A string value that identifies the portion of the list to be returned with the next list
+            operation. The operation returns a marker value within the response body if the list returned was not complete.
+            You can then use the marker value in a subsequent call to request the next set of list items.
+        description: Optional. A string value that identifies the portion of the list to be returned with the next list operation.
+          The operation returns a marker value within the response body if the list returned was not complete. You can then
+          use the marker value in a subsequent call to request the next set of list items.
+      - name: maxresults
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Results
+          description: Optional. Specifies the maximum number of blobs to return, including all `BlobPrefix` elements. If
+            the request doesn't specify `maxresults`, or specifies a value greater than `5,000`, the server will return up
+            to `5,000` items. If there are additional results to return, the service returns a continuation the service might
+            return fewer token in the `NextMarker` response element. In certain cases, results than specified by `maxresults`,
+            and also return a `NextMarker` token.
+        description: Optional. Specifies the maximum number of blobs to return, including all `BlobPrefix` elements. If the
+          request doesn't specify `maxresults`, or specifies a value greater than `5,000`, the server will return up to `5,000`
+          items. If there are additional results to return, the service returns a continuation the service might return fewer
+          token in the `NextMarker` response element. In certain cases, results than specified by `maxresults`, and also return
+          a `NextMarker` token.
+      - name: delimiter
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Delimiter
+          description: Optional. When the request includes this parameter, the operation returns a `BlobPrefix` element in
+            the response body. This element acts as a placeholder for all blobs with names that begin with the same substring,
+            up to the appearance of the `delimiter` character. The `delimiter` can be a single character or a string.
+        description: Optional. When the request includes this parameter, the operation returns a `BlobPrefix` element in the
+          response body. This element acts as a placeholder for all blobs with names that begin with the same substring, up
+          to the appearance of the `delimiter` character. The `delimiter` can be a single character or a string.
+      responses:
+        '200':
+          description: Success. Returns the list of blobs in the container.
+          content:
+            application/xml:
+              schema:
+                type: object
+                format: xml
+                xml:
+                  name: conceptDescription
+              example: '<?xml version="1.0" encoding="UTF-8"?>
+
+                <EnumerationResults ServiceEndpoint="https://nds.myapi.myregion.azurecontainerapps.io/" ContainerName="fa4476a0-1234-5678-b801-5e2b153c4677-1"><Blobs><Blob><Name>sample.txt</Name><Properties><AccessTierChangeTime>Fri,
+                20 Jun 2025 12:00:00 GMT</AccessTierChangeTime><Content-Length>12345</Content-Length><Content-MD5>AbCdEf123456==</Content-MD5><Content-Type>text/plain</Content-Type><Creation-Time>Fri,
+                20 Jun 2025 12:00:00 GMT</Creation-Time><Last-Modified>Fri, 20 Jun 2025 12:00:00 GMT</Last-Modified><Etag>sample-etag-123</Etag><Cache-Control/><Content-CRC64/><Content-Disposition/><Content-Encoding/><Content-Language/><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><BlobType>BlockBlob</BlobType><LeaseState>available</LeaseState><LeaseStatus>unlocked</LeaseStatus><ServerEncrypted>true</ServerEncrypted></Properties><Metadata><handle>3.uni3eFa6F0b-738</handle><uid>1000</uid><size>12345</size><mtime>2025-06-20T12:00:00Z</mtime><ctime>2025-06-20T12:00:00Z</ctime><firsthandle>3.uni3eFa6F0b-1</firsthandle></Metadata><OrMetadata/></Blob></Blobs><MaxResults>5000</MaxResults><NextMarker/></EnumerationResults>'
+        '400':
+          description: Bad Request.
+          content:
+            application/xml:
+              schema:
+                type: object
+                format: xml
+                xml:
+                  name: conceptDescription
+              example: '<?xml version="1.0" encoding="UTF-8"?>
+
+                <Error><Code>InvalidQueryParameterValue</Code><Message>An invalid value was specified for one of the query
+                parameters in the request URI.
+
+                RequestId:
+
+                Time:2025-08-06T20:46:00.502977+00:00Z</Message></Error>'
+        '403':
+          description: Forbidden.
+          headers:
+            date:
+              description: Response date
+              schema:
+                type: string
+            server:
+              description: Server name
+              schema:
+                type: string
+            x-request-id:
+              description: Request ID
+              schema:
+                type: string
+            x-ms-error-code:
+              description: Azure error code
+              schema:
+                type: string
+            content-length:
+              description: Content length
+              schema:
+                type: integer
+            content-type:
+              description: Content type
+              schema:
+                type: string
+          content:
+            application/xml:
+              schema:
+                type: object
+                format: xml
+                xml:
+                  name: conceptDescription
+              example: '<?xml version="1.0" encoding="UTF-8"?>
+
+                <Error><Code>AuthenticationFailed</Code><Message>Server failed to authenticate the request. Make sure the
+                value of Authorization header is formed correctly including the signature.
+
+                RequestId:
+
+                Time:2025-08-06T20:46:00.503175+00:00Z</Message></Error>'
+        '404':
+          description: Not Found. The specified resource does not exist.
+          content:
+            application/xml:
+              schema:
+                type: object
+                format: xml
+                xml:
+                  name: conceptDescription
+              example: '<?xml version="1.0" encoding="UTF-8"?>
+
+                <Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.
+
+                RequestId:
+
+                Time:2025-08-06T20:46:00.503220+00:00Z</Message></Error>'
+  /{container}/{blob}:
+    get:
+      summary: Get a blob
+      description: Get the contents of the specified blob (file).
+      operationId: get_blob__container___blob__get
+      security:
+      - SharedKeyAuthorization: []
+      - SASAuth_sig: []
+      - SASAuth_se: []
+      - SASAuth_sp: []
+      - SASAuth_sv: []
+      - SASAuth_ss: []
+      - SASAuth_srt: []
+      - SASAuth_sr: []
+      - SASAuth_st: []
+      - SASAuth_si: []
+      - SASAuth_sip: []
+      - SASAuth_spr: []
+      - SASAuth_rscc: []
+      - SASAuth_rscd: []
+      - SASAuth_rsce: []
+      - SASAuth_rscl: []
+      - SASAuth_rsct: []
+      - SASAuth_rs: []
+      - SASAuth_ses: []
+      parameters:
+      - name: container
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Container
+      - name: blob
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Blob
+      responses:
+        '200':
+          description: Success. Returns the blob contents as the guessed MIME type.
+          content:
+            '*/*':
+              example: Sample file content.
+          headers:
+            content-length:
+              description: Blob size in bytes
+              schema:
+                type: integer
+              example: 10485760
+            content-type:
+              description: Guessed MIME type
+              schema:
+                type: string
+              example: text/plain
+            last-modified:
+              description: Last modified date
+              schema:
+                type: string
+              example: Mon, 09 Jun 2025 19:29:04 GMT
+            etag:
+              description: Entity tag
+              schema:
+                type: string
+              example: fc0dd9e8ae65c883dc634a4affc933b9-0
+            x-ms-creation-time:
+              description: Creation time
+              schema:
+                type: string
+              example: Mon, 09 Jun 2025 19:29:04 GMT
+            x-ms-request-id:
+              description: Request ID
+              schema:
+                type: string
+              example: 80b36086-1234-5678-87cc-de4d122abce5
+            x-ms-client-request-id:
+              description: Client request ID
+              schema:
+                type: string
+              example: 80b361d0-4ddc-11f0-87cc-de4d122abce5
+            x-ms-version:
+              description: API version
+              schema:
+                type: string
+              example: '2024-05-04'
+            x-ms-blob-type:
+              description: Blob type
+              schema:
+                type: string
+              example: '`BlockBlob`'
+            x-ms-meta-version:
+              description: 'Metadata: version'
+              schema:
+                type: string
+              example: '4'
+            x-ms-meta-handle:
+              description: 'Metadata: UniFS handle'
+              schema:
+                type: string
+              example: 3.uni8eF3bF59-1749497123-123
+            x-ms-meta-uid:
+              description: 'Metadata: uid'
+              schema:
+                type: string
+              example: '0'
+            x-ms-meta-gid:
+              description: 'Metadata: gid'
+              schema:
+                type: string
+              example: '0'
+            x-ms-meta-mode:
+              description: 'Metadata: mode'
+              schema:
+                type: string
+              example: '0100644'
+            x-ms-meta-size:
+              description: 'Metadata: size'
+              schema:
+                type: string
+              example: '10485760'
+            x-ms-meta-atime:
+              description: 'Metadata: atime'
+              schema:
+                type: string
+              example: '2025-06-09T19:29:04.243003797Z'
+            x-ms-meta-mtime:
+              description: 'Metadata: mtime'
+              schema:
+                type: string
+              example: '2025-06-09T19:29:04.424638744Z'
+            x-ms-meta-ctime:
+              description: 'Metadata: ctime'
+              schema:
+                type: string
+              example: '2025-06-09T19:29:04.423795224Z'
+            x-ms-meta-firsthandle:
+              description: 'Metadata: UniFS firsthandle'
+              schema:
+                type: string
+              example: 3-uni6C19A28D-1749497123-1
+        '206':
+          description: Partial Content. Returns a file segment with guessed MIME type.
+          content:
+            '*/*':
+              example: Partial file content.
+          headers:
+            date:
+              description: Response date
+              schema:
+                type: string
+              example: Fri, 20 Jun 2025 14:03:53 GMT
+            content-length:
+              description: Length of the returned content in bytes
+              schema:
+                type: integer
+              example: 1025
+            content-type:
+              description: Guessed MIME type
+              schema:
+                type: string
+              example: text/plain
+            last-modified:
+              description: Last modified date
+              schema:
+                type: string
+              example: Mon, 09 Jun 2025 19:29:04 GMT
+            etag:
+              description: Entity tag
+              schema:
+                type: string
+              example: fc0dd9e8ae65c883dc634a4affc933b9-0
+            x-ms-creation-time:
+              description: Creation time
+              schema:
+                type: string
+              example: Mon, 09 Jun 2025 19:29:04 GMT
+            x-ms-request-id:
+              description: Request ID
+              schema:
+                type: string
+              example: 66d673ee-4ddf-11f0-9607-2648d06f86ef
+            x-ms-client-request-id:
+              description: Client request ID
+              schema:
+                type: string
+              example: 66d674e8-4ddf-11f0-9607-2648d06f86ef
+            x-ms-version:
+              description: API version
+              schema:
+                type: string
+              example: '2024-05-04'
+            x-ms-blob-type:
+              description: Blob type
+              schema:
+                type: string
+              example: '`BlockBlob`'
+            content-range:
+              description: Range of bytes returned
+              schema:
+                type: string
+              example: bytes 0-1024/10485760
+            x-ms-meta-version:
+              description: 'Metadata: version'
+              schema:
+                type: string
+              example: '4'
+            x-ms-meta-handle:
+              description: 'Metadata: UniFS handle'
+              schema:
+                type: string
+              example: 3.uni8eF3bF59-1749497123-123
+            x-ms-meta-uid:
+              description: 'Metadata: uid'
+              schema:
+                type: string
+              example: '0'
+            x-ms-meta-gid:
+              description: 'Metadata: gid'
+              schema:
+                type: string
+              example: '0'
+            x-ms-meta-mode:
+              description: 'Metadata: mode'
+              schema:
+                type: string
+              example: '0100644'
+            x-ms-meta-size:
+              description: 'Metadata: size'
+              schema:
+                type: string
+              example: '10485760'
+            x-ms-meta-atime:
+              description: 'Metadata: atime'
+              schema:
+                type: string
+              example: '2025-06-09T19:29:04.243003797Z'
+            x-ms-meta-mtime:
+              description: 'Metadata: mtime'
+              schema:
+                type: string
+              example: '2025-06-09T19:29:04.424638744Z'
+            x-ms-meta-ctime:
+              description: 'Metadata: ctime'
+              schema:
+                type: string
+              example: '2025-06-09T19:29:04.423795224Z'
+            x-ms-meta-firsthandle:
+              description: 'Metadata: UniFS firsthandle'
+              schema:
+                type: string
+              example: 3-uni6C19A28D-1749497123-1
+        '400':
+          description: Bad Request.
+          content:
+            application/xml:
+              schema:
+                type: object
+                format: xml
+                xml:
+                  name: conceptDescription
+              example: '<?xml version="1.0" encoding="UTF-8"?>
+
+                <Error><Code>InvalidQueryParameterValue</Code><Message>An invalid value was specified for one of the query
+                parameters in the request URI.
+
+                RequestId:
+
+                Time:2025-08-06T20:46:00.502977+00:00Z</Message></Error>'
+        '403':
+          description: Forbidden.
+          headers:
+            date:
+              description: Response date
+              schema:
+                type: string
+            server:
+              description: Server name
+              schema:
+                type: string
+            x-request-id:
+              description: Request ID
+              schema:
+                type: string
+            x-ms-error-code:
+              description: Azure error code
+              schema:
+                type: string
+            content-length:
+              description: Content length
+              schema:
+                type: integer
+            content-type:
+              description: Content type
+              schema:
+                type: string
+          content:
+            application/xml:
+              schema:
+                type: object
+                format: xml
+                xml:
+                  name: conceptDescription
+              example: '<?xml version="1.0" encoding="UTF-8"?>
+
+                <Error><Code>AuthenticationFailed</Code><Message>Server failed to authenticate the request. Make sure the
+                value of Authorization header is formed correctly including the signature.
+
+                RequestId:
+
+                Time:2025-08-06T20:46:00.503175+00:00Z</Message></Error>'
+        '404':
+          description: Not Found. The specified resource does not exist.
+          content:
+            application/xml:
+              schema:
+                type: object
+                format: xml
+                xml:
+                  name: conceptDescription
+              example: '<?xml version="1.0" encoding="UTF-8"?>
+
+                <Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.
+
+                RequestId:
+
+                Time:2025-08-06T20:46:00.503220+00:00Z</Message></Error>'
+        '413':
+          description: Payload Too Large. The uploaded blob exceeds the maximum allowed size.
+          content:
+            application/xml:
+              schema:
+                type: object
+                format: xml
+                xml:
+                  name: conceptDescription
+              example: '<?xml version="1.0" encoding="UTF-8"?>
+
+                <Error><Code>BlobTooLarge</Code><Message>File exceeds max size of 1181116007.0
+
+                RequestId:
+
+                Time:2025-08-06T20:46:00.503251+00:00Z</Message></Error>'
+    head:
+      summary: Get properties of a blob
+      description: Get blob (file) properties for the specified container (Nasuni Volume) and path.
+      operationId: get_blob__container___blob__head
+      security:
+      - SharedKeyAuthorization: []
+      - SASAuth_sig: []
+      - SASAuth_se: []
+      - SASAuth_sp: []
+      - SASAuth_sv: []
+      - SASAuth_ss: []
+      - SASAuth_srt: []
+      - SASAuth_sr: []
+      - SASAuth_st: []
+      - SASAuth_si: []
+      - SASAuth_sip: []
+      - SASAuth_spr: []
+      - SASAuth_rscc: []
+      - SASAuth_rscd: []
+      - SASAuth_rsce: []
+      - SASAuth_rscl: []
+      - SASAuth_rsct: []
+      - SASAuth_rs: []
+      - SASAuth_ses: []
+      parameters:
+      - name: container
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Container
+      - name: blob
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Blob
+      responses:
+        '200':
+          description: Success. Returns the blob properties.
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary
+          headers:
+            content-length:
+              description: Blob size in bytes
+              schema:
+                type: integer
+            content-type:
+              description: MIME type
+              schema:
+                type: string
+            last-modified:
+              description: Last modified date
+              schema:
+                type: string
+            etag:
+              description: Entity tag
+              schema:
+                type: string
+            x-ms-creation-time:
+              description: Creation time
+              schema:
+                type: string
+            x-ms-request-id:
+              description: Request ID
+              schema:
+                type: string
+            x-ms-client-request-id:
+              description: Client request ID
+              schema:
+                type: string
+            x-ms-version:
+              description: API version
+              schema:
+                type: string
+            x-ms-blob-type:
+              description: Blob type
+              schema:
+                type: string
+            x-ms-meta-version:
+              description: 'Metadata: version'
+              schema:
+                type: string
+            x-ms-meta-handle:
+              description: 'Metadata: handle'
+              schema:
+                type: string
+            x-ms-meta-uid:
+              description: 'Metadata: uid'
+              schema:
+                type: string
+            x-ms-meta-gid:
+              description: 'Metadata: gid'
+              schema:
+                type: string
+            x-ms-meta-mode:
+              description: 'Metadata: mode'
+              schema:
+                type: string
+            x-ms-meta-size:
+              description: 'Metadata: size'
+              schema:
+                type: string
+            x-ms-meta-atime:
+              description: 'Metadata: atime'
+              schema:
+                type: string
+            x-ms-meta-mtime:
+              description: 'Metadata: mtime'
+              schema:
+                type: string
+            x-ms-meta-ctime:
+              description: 'Metadata: ctime'
+              schema:
+                type: string
+            x-ms-meta-firsthandle:
+              description: 'Metadata: firsthandle'
+              schema:
+                type: string
+        '400':
+          description: Bad Request.
+          content:
+            application/xml:
+              schema:
+                type: object
+                format: xml
+                xml:
+                  name: conceptDescription
+              example: '<?xml version="1.0" encoding="UTF-8"?>
+
+                <Error><Code>InvalidQueryParameterValue</Code><Message>An invalid value was specified for one of the query
+                parameters in the request URI.
+
+                RequestId:
+
+                Time:2025-08-06T20:46:00.502977+00:00Z</Message></Error>'
+        '403':
+          description: Forbidden.
+          headers:
+            date:
+              description: Response date
+              schema:
+                type: string
+            server:
+              description: Server name
+              schema:
+                type: string
+            x-request-id:
+              description: Request ID
+              schema:
+                type: string
+            x-ms-error-code:
+              description: Azure error code
+              schema:
+                type: string
+            content-length:
+              description: Content length
+              schema:
+                type: integer
+            content-type:
+              description: Content type
+              schema:
+                type: string
+          content:
+            application/xml:
+              schema:
+                type: object
+                format: xml
+                xml:
+                  name: conceptDescription
+              example: '<?xml version="1.0" encoding="UTF-8"?>
+
+                <Error><Code>AuthenticationFailed</Code><Message>Server failed to authenticate the request. Make sure the
+                value of Authorization header is formed correctly including the signature.
+
+                RequestId:
+
+                Time:2025-08-06T20:46:00.503175+00:00Z</Message></Error>'
+        '404':
+          description: Not Found. The specified blob does not exist.
+          content:
+            application/xml:
+              example: ''
+          headers:
+            date:
+              description: Response date
+              schema:
+                type: string
+            x-request-id:
+              description: Request ID
+              schema:
+                type: string
+            x-ms-containerapp-name:
+              description: Container app name
+              schema:
+                type: string
+              example: nds
+            x-ms-containerapp-revision-name:
+              description: Container app revision name
+              schema:
+                type: string
+            x-forwarded-proto:
+              description: Forwarded protocol
+              schema:
+                type: string
+            x-ms-error-code:
+              description: Azure error code
+              schema:
+                type: string
+              example: BlobNotFound
+            content-length:
+              description: Content length
+              schema:
+                type: integer
+            content-type:
+              description: Content type
+              schema:
+                type: string
+              example: application/xml
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    SharedKeyAuthorization:
+      type: apiKey
+      description: Authorization header using one of the Shared Keys generated during NDS Deployment.<br><br>This should not
+        be used together with SASAuth_* query parameters.
+      in: header
+      name: Authorization
+    SASAuth_sig:
+      type: apiKey
+      description: SAS Authorization signature query param.
+      in: query
+      name: sig
+    SASAuth_se:
+      type: apiKey
+      description: SAS Authorization expiration query param
+      in: query
+      name: se
+    SASAuth_sp:
+      type: apiKey
+      description: SAS Authorization permissions query param
+      in: query
+      name: sp
+    SASAuth_sv:
+      type: apiKey
+      description: SAS Authorization version query param
+      in: query
+      name: sv
+    SASAuth_ss:
+      type: apiKey
+      description: SAS Authorization service scope query param
+      in: query
+      name: ss
+    SASAuth_srt:
+      type: apiKey
+      description: SAS Authorization resources query param
+      in: query
+      name: srt
+    SASAuth_sr:
+      type: apiKey
+      description: SAS Authorization Service resource type query param
+      in: query
+      name: sr
+    SASAuth_st:
+      type: apiKey
+      description: SAS Authorization starts query param
+      in: query
+      name: st
+    SASAuth_si:
+      type: apiKey
+      description: SAS Authorization identifier query param
+      in: query
+      name: si
+    SASAuth_sip:
+      type: apiKey
+      description: SAS Authorization IP range query param
+      in: query
+      name: sip
+    SASAuth_spr:
+      type: apiKey
+      description: SAS Authorization protocol query param
+      in: query
+      name: spr
+    SASAuth_rscc:
+      type: apiKey
+      description: SAS Authorization response cache control query param
+      in: query
+      name: rscc
+    SASAuth_rscd:
+      type: apiKey
+      description: SAS Authorization response content disposition query param
+      in: query
+      name: rscd
+    SASAuth_rsce:
+      type: apiKey
+      description: SAS Authorization response content encoding query param
+      in: query
+      name: rsce
+    SASAuth_rscl:
+      type: apiKey
+      description: SAS Authorization response content length query param
+      in: query
+      name: rscl
+    SASAuth_rsct:
+      type: apiKey
+      description: SAS Authorization response content type query param
+      in: query
+      name: rsct
+    SASAuth_rs:
+      type: apiKey
+      description: SAS Authorization snapshot query param
+      in: query
+      name: rs
+    SASAuth_ses:
+      type: apiKey
+      description: SAS Authorization encryption scope query param
+      in: query
+      name: ses

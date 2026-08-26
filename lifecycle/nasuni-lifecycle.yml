@@ -1,0 +1,92 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://docs.api.nasuni.com/api/nmc/v120/versionhistory/ ,
+  https://docs.api.nasuni.com/api/portal/v0/introduction/ ,
+  https://docs.nasuni.com/docs/release-notes ,
+  https://docs.nasuni.com/docs/using-postman-with-nmc-api
+name: Nasuni API lifecycle
+versioning:
+  scheme: path-major-minor
+  pattern: https://hostname/api/v{major}.{minor}
+  current:
+    nmc: '1.2'
+    portal: '0.1.0'
+    nds_azure: '1.0.0'
+    nds_aws: '1.1.0'
+    gfa_telemetry: '1.0.0'
+  supported_versions:
+  - version: '1.0.0'
+    api: NMC
+    introduced_with: Nasuni Edge Appliance 7.10
+    capability: GET actions only
+    status: still published
+  - version: '1.1.0'
+    api: NMC
+    introduced_with: Nasuni Edge Appliance 8.0 and higher
+    capability: GET, POST, PATCH and DELETE actions
+    status: still published
+  - version: '1.2.0'
+    api: NMC
+    introduced_with: NMC 22.2
+    capability: Cloud credentials can be updated via the API
+    status: current
+  note: >-
+    All three NMC API versions remain published side by side at docs.api.nasuni.com with no
+    end-of-life date attached to any of them. API version is coupled to appliance/NMC build
+    version: the OpenAPI spec is downloaded from the NMC appliance itself (Console Settings ->
+    NMC API Keys), so which contract a customer gets is decided by what they have deployed.
+deprecation_policy:
+  published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  note: >-
+    Nasuni publishes NO deprecation policy, no sunset schedule, and no RFC 8594 Sunset/Deprecation
+    headers. No operation in any of the seven harvested specs carries `deprecated: true`. Breaking
+    changes ARE announced retrospectively in the NMC API version history (NMC 22.2 changed cloud
+    credentials from `cred_id` to `filer_serial_number` + `cred_uuid` and removed the `links` field
+    from CIFS and FTP endpoints) but with no advance-notice window stated. No Deprecation pointer
+    is emitted in apis.yml, because there is no policy to point at.
+  breaking_changes_recorded:
+  - version: NMC 22.2 (API 1.2.0)
+    change: >-
+      Cloud credentials now identified by `filer_serial_number` and `cred_uuid` instead of
+      `cred_id`.
+    source: https://docs.api.nasuni.com/api/nmc/v120/versionhistory/
+  - version: NMC 22.2 (API 1.2.0)
+    change: CIFS and FTP endpoints no longer include the `links` field.
+    source: https://docs.api.nasuni.com/api/nmc/v120/versionhistory/
+status_page:
+  published: false
+  probed:
+  - url: https://status.nasuni.com/
+    status: 0
+    note: DNS does not resolve.
+  - url: https://status.nasuni.io/
+    status: 0
+    note: DNS does not resolve.
+  - url: https://nasuni.statuspage.io/
+    status: 200
+    note: >-
+      Redirects to atlassian.com/software/statuspage — the Statuspage product page, not a Nasuni
+      status page. Treated as a MISS.
+  note: >-
+    No public status page found. Service health is surfaced to customers instead through the Portal
+    (GET /health) and the Support portal at support.nasuni.com. No StatusPage pointer is emitted.
+sla:
+  published: false
+  note: >-
+    No public SLA document. Support commitments live in the Customer Support Policy at
+    https://www.nasuni.com/legal/customer-support-policy-2026/ behind the general legal index.
+support_policy: https://www.nasuni.com/legal/customer-support-policy-2026/
+release_notes:
+- name: NEA, File IQ, and NMC Release Notes
+  url: https://docs.nasuni.com/docs/nasuni-edge-appliance-file-iq-nmc-release-notes
+- name: Portal Release Notes
+  url: https://docs.nasuni.com/docs/portal-release-notes
+- name: UniFS as a Service (UaaS) Release Notes
+  url: https://docs.nasuni.com/docs/uaas-release-notes
+- name: NMC API Version History
+  url: https://docs.api.nasuni.com/api/nmc/v120/versionhistory/
+deprecated_operations: []

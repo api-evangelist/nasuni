@@ -1,0 +1,116 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://github.com/nasuni-labs (GitHub org listing via api.github.com/orgs/nasuni-labs/repos),
+  https://docs.nasuni.com/docs/api-links, plus registry metadata probes against
+  registry.npmjs.org, pypi.org/pypi/<pkg>/json and the PowerShell Gallery OData API.
+name: Nasuni client libraries, SDKs and tooling
+note: >-
+  Nasuni distributes ALL of its first-party client tooling from the nasuni-labs GitHub
+  organisation as source. Nothing is published to npm, PyPI, RubyGems, Maven Central, NuGet,
+  crates.io, pkg.go.dev or the PowerShell Gallery — every registry probe below returned 404 or an
+  empty result set. Consumers clone or download a ZIP and import the module directly, so there is
+  no registry version or publish date to read; the `version:` and `published:` fields therefore
+  carry the repository's last push date as the only dated release signal Nasuni provides, and
+  `version: null` where the project publishes no tagged version at all.
+registry_probes:
+- registry: powershell-gallery
+  query: "FindPackagesById()?id='NasuniPoshApi'"
+  status: 200
+  result: empty feed — package not published
+- registry: pypi
+  packages: [nasuni, nasuni-mcp, nasuni-mcp-desktop, nmcapi]
+  status: 404
+- registry: npm
+  packages: [nasuni, "@nasuni/mcp", nasuni-mcp]
+  status: 404
+packages:
+- name: NasuniPoshApi
+  language: PowerShell
+  official: true
+  registry: github
+  url: https://github.com/nasuni-labs/NasuniPoshApi
+  install: "git clone https://github.com/nasuni-labs/NasuniPoshApi.git && Import-Module .\\NasuniPoshApi"
+  version: null
+  published: '2026-03-05'
+  covers: Nasuni Management Console (NMC) API
+  description: >-
+    First-party PowerShell module and the closest thing Nasuni ships to a full SDK — an abstraction
+    layer over the NMC API covering 80+ functions across every NMC resource, with Get-/New-/Set-/
+    Remove- CRUD verbs, pipeline integration, automatic 429 retry, built-in client-side rate
+    limiting matched to the documented 5 GET/sec and 1 write/sec ceilings, async operation polling,
+    and DPAPI-cached credentials.
+  note: >-
+    Not published to the PowerShell Gallery (probed 2026-08-26, empty feed) and carries no tagged
+    release, so `version` is null. `published` is the repository's last push date, the only dated
+    signal available.
+- name: nasuni-api-utilities
+  language: PowerShell, Python
+  official: true
+  registry: github
+  url: https://github.com/nasuni-labs/nasuni-api-utilities
+  version: null
+  published: '2026-05-26'
+  covers: Nasuni Management Console (NMC) API
+  description: >-
+    Sample PowerShell and Python scripts for the NMC API — token acquisition, error handling,
+    self-signed certificate handling, throttle avoidance, and operational/reporting recipes.
+    Referenced directly from the Nasuni API Documentation page as the NMC API sample library.
+- name: nmcapi-python
+  language: Python
+  official: true
+  registry: github
+  url: https://github.com/nasuni-labs/nmcapi-python
+  version: null
+  published: '2022-08-16'
+  covers: Nasuni Management Console (NMC) API
+  description: Python utilities for interacting with the NMC API.
+  note: >-
+    Last pushed 2022-08-16 — predates NMC API 1.2.0 (introduced with NMC 22.2) and every version
+    published since, so it does not cover the current contract surface.
+- name: local-nasuni-management-mcp-server
+  language: Python
+  official: true
+  registry: github
+  url: https://github.com/nasuni-labs/local-nasuni-management-mcp-server
+  version: null
+  published: '2026-08-26'
+  covers: Nasuni Management Console (NMC) API, Nasuni Portal API
+  description: >-
+    Locally-run MCP server exposing NMC and Portal data (filers, volumes, shares, health metrics,
+    notifications, reports) to Claude. Requires Python 3.11+.
+- name: nasuni-mcp-desktop
+  language: Python
+  official: true
+  registry: github
+  url: https://github.com/nasuni-labs/nasuni-mcp-desktop
+  version: null
+  published: '2026-08-26'
+  covers: Nasuni SMB shares (filesystem)
+  description: >-
+    Desktop MCP server letting Claude Desktop browse, read and retrieve files from Nasuni SMB
+    shares. Run with uv.
+- name: nasuni-dashboards
+  language: Grafana/JSON
+  official: true
+  registry: github
+  url: https://github.com/nasuni-labs/nasuni-dashboards
+  version: null
+  published: '2026-04-08'
+  covers: Global File Acceleration (GFA) Telemetry API, Edge Appliance SNMP
+  description: >-
+    Dashboard framework for time-series data across a Nasuni estate, consuming the GFA Telemetry
+    REST API, Edge Appliance SNMP, and the Nasuni Access Anywhere monitoring API.
+- name: terraform-templates
+  language: HCL
+  official: true
+  registry: github
+  url: https://github.com/nasuni-labs/terraform-templates
+  version: null
+  published: '2026-08-07'
+  covers: Infrastructure provisioning
+  description: Sample Terraform templates for deploying Nasuni instances.
+  note: Not published to the Terraform Registry — probed via the GitHub org only.
+summary:
+  official_count: 7
+  registry_published_count: 0

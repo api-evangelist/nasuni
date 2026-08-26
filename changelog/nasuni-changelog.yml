@@ -1,0 +1,73 @@
+generated: '2026-08-26'
+method: searched
+source: https://docs.api.nasuni.com/api/nmc/v120/versionhistory/
+name: Nasuni Management Console API version history
+scheme: >-
+  Entries are keyed on the NMC/appliance release train (YY.N), not on the API semver — the API
+  version only moves when the contract does (1.2.0 shipped with NMC 22.2). Entries are undated;
+  Nasuni publishes the release number, not a calendar date.
+current_version: '1.2.0'
+dated: false
+note: >-
+  This is the NMC API's own change log. The Portal API publishes a version-history page too
+  (https://docs.api.nasuni.com/api/portal/v0/versionhistory/) but it is thin. Product-level dated
+  release notes live separately on docs.nasuni.com (see lifecycle/nasuni-lifecycle.yml).
+entries:
+- release: NMC 25.3
+  api_version: '1.2.0'
+  date: null
+  breaking: false
+  additions:
+  - 'Volume Create: add support for NTFS Multiprotocol (NTFSMP) permission policy.'
+- release: NMC 25.2
+  api_version: '1.2.0'
+  date: null
+  breaking: false
+  additions:
+  - 'Ransomware: add blocked-sources support, blocking either by IP address or by user.'
+- release: NMC 23.2
+  api_version: '1.2.0'
+  date: null
+  breaking: false
+  additions:
+  - 'Global Locking: enable Oplocks for Advanced Global Locking, supporting client read caching.'
+  updates:
+  - 'Cloud Credentials: added skip_validation to cloud credential update.'
+- release: NMC 22.3
+  api_version: '1.2.0'
+  date: null
+  breaking: false
+  additions:
+  - Blocked Clients operations — block/unblock IP addresses and list blocked clients.
+- release: NMC 22.2
+  api_version: '1.2.0'
+  date: null
+  breaking: true
+  highlights:
+  - API version bumped to 1.2.0.
+  additions:
+  - 'Cloud Credentials: update a cloud credential.'
+  breaking_changes:
+  - Cloud credentials now use `filer_serial_number` and `cred_uuid` instead of `cred_id`.
+  - CIFS and FTP endpoints no longer include the `links` field.
+- release: NMC 21.2
+  api_version: '1.1.0'
+  date: null
+  breaking: false
+  additions:
+  - NFS Exports operations — create, update and delete exports and host options.
+- release: NMC 8.8
+  api_version: '1.1.0'
+  date: null
+  breaking: false
+  additions:
+  - Health Monitor operations for listing filer health status.
+- release: NMC 8.5
+  api_version: '1.1.0'
+  date: null
+  breaking: false
+  additions:
+  - Directory operations — caching and pinning modes.
+  - AMQP Destinations management.
+  note: NMC API throttling was introduced in this release (5 reads/sec, 1 write/sec).
+entry_count: 8

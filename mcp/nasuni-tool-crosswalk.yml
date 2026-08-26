@@ -1,0 +1,293 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  mcp/nasuni-mcp.yml (tool names transcribed from https://docs.nasuni.com/docs/portal-mcp-server)
+  bound against openapi/_original/nasuni-portal-v0-openapi.json (Portal API 0.1.0, 98 paths /
+  139 operations, harvested 2026-08-26 from docs.api.nasuni.com).
+name: Nasuni Portal MCP <-> Portal REST API crosswalk
+note: >-
+  The Portal MCP Server is documented by Nasuni as a pass-through to the Portal API, so almost
+  every published tool has a backing REST operation. Bindings are by name + semantics: the live
+  MCP endpoint is per-account and unpublished, so tools/list could not be called and no tool's
+  real inputSchema was observed. Confidence is set accordingly — `high` where the tool name and
+  the operationId describe the same resource unambiguously, `medium` where the Ops IQ tool
+  aggregates or reshapes one telemetry operation, `low`/`mcp_only` where the tool is a narrative
+  guide or a composite analysis with no single backing operation.
+surfaces:
+  openapi:
+    file: openapi/nasuni-portal-v0-openapi.yml
+    original: openapi/_original/nasuni-portal-v0-openapi.json
+    operations: 139
+    gated: false
+    note: Spec is published anonymously at docs.api.nasuni.com; calling the API requires credentials.
+  graphql:
+    endpoint: null
+    note: Nasuni publishes no GraphQL surface.
+  mcp:
+    url: null
+    gated: true
+    note: >-
+      Endpoint is per-account/per-region and retrieved from the Portal UI; OAuth 2.0 with Dynamic
+      Client Registration. Private preview. Anonymous tools/list is not possible.
+crosswalk:
+- tool: list_appliances
+  category: Appliance
+  rest: [get_edges_edges_get]
+  binding: direct
+  confidence: high
+- tool: get_appliance_details
+  category: Appliance
+  rest: [get_edges_edge_edges__edge_id__get]
+  binding: direct
+  confidence: high
+- tool: get_appliance_s3_status
+  category: Appliance
+  rest: [get_edge_s3_edge_status_edges__edge_id__services_s3_edge_get]
+  binding: direct
+  confidence: high
+- tool: get_appliance_fiq_service
+  category: Appliance
+  rest: [get_edges_edge_fiq_edges__edge_id__services_fiq_get]
+  binding: direct
+  confidence: high
+- tool: list_volumes
+  category: Volume
+  rest: [get_volumes_volumes_get]
+  binding: direct
+  confidence: high
+- tool: get_volume
+  category: Volume
+  rest: [get_volume_volumes__volume_id__get, get_volume_details_volumes__volume_id__details_get]
+  binding: direct
+  confidence: high
+- tool: get_nds_config
+  category: NDS/SRaaS
+  rest: [get_stack_nds_uaas_stacks__stack_id__nds_get]
+  binding: direct
+  confidence: high
+- tool: get_nds_stack
+  category: NDS/SRaaS
+  rest: [get_stack_uaas_stacks__stack_id__get]
+  binding: direct
+  confidence: high
+- tool: list_nds_stacks
+  category: NDS/SRaaS
+  rest: [get_stacks_uaas_stacks_get]
+  binding: direct
+  confidence: high
+- tool: list_nds_access_keys
+  category: NDS/SRaaS
+  rest: [get_blob_access_keys_uaas_stacks__stack_id__nds_blob_keys_get]
+  binding: direct
+  confidence: high
+- tool: get_sraas_status
+  category: NDS/SRaaS
+  rest: [get_stack_sraas_uaas_stacks__stack_id__sraas_get]
+  binding: direct
+  confidence: high
+- tool: list_activity_logs
+  category: Activity logs
+  rest: [get_records_activity_logs_records_get]
+  binding: direct
+  confidence: high
+- tool: get_my_roles
+  category: Roles and permissions
+  rest: [get_my_roles_and_permissions_iam_me_get]
+  binding: direct
+  confidence: high
+- tool: get_role_permissions
+  category: Roles and permissions
+  rest: [get_permissions_for_role_iam_roles__role_id__permissions_get]
+  binding: direct
+  confidence: high
+- tool: list_permissions
+  category: Roles and permissions
+  rest: [get_permissions_iam_permissions_get]
+  binding: direct
+  confidence: high
+- tool: list_roles
+  category: Roles and permissions
+  rest: [get_roles_iam_roles_get]
+  binding: direct
+  confidence: high
+- tool: get_appliance_memory_utilization
+  category: Ops IQ — appliance performance
+  rest: [get_appliance_memory_utilization_telemetry_appliances__serial_number__memory_utilization_post, get_appliance_memory_utilization_details_telemetry_appliances__serial_number__memory_utilization_details_post]
+  binding: direct
+  confidence: high
+  note: Tool doc says it returns the detailed breakdown on v10.0.4+ and legacy counters on older builds — matching the two REST operations.
+- tool: get_appliance_cpu_usage
+  category: Ops IQ — appliance performance
+  rest: [get_appliance_cpu_usage_telemetry_appliances__serial_number__cpu_utilization_post]
+  binding: direct
+  confidence: high
+- tool: get_appliance_cpu_load_average
+  category: Ops IQ — appliance performance
+  rest: [get_appliance_load_avg_telemetry_appliances__serial_number__load_average_post]
+  binding: direct
+  confidence: high
+- tool: get_appliance_cache_utilization
+  category: Ops IQ — appliance performance
+  rest: [get_appliance_cache_utilization_telemetry_appliances__serial_number__cache_utilization_post]
+  binding: direct
+  confidence: high
+- tool: get_appliance_cache_disk_io
+  category: Ops IQ — appliance performance
+  rest: [get_appliance_cache_disk_io_time_telemetry_appliances__serial_number__cache_disk_io_time_post, get_appliance_cache_disk_iops_telemetry_appliances__serial_number__cache_disk_iops_post]
+  binding: composite
+  confidence: medium
+- tool: get_appliance_cache_disk_latency
+  category: Ops IQ — appliance performance
+  rest: [get_appliance_cache_disk_io_latency_telemetry_appliances__serial_number__cache_disk_io_latency_post]
+  binding: direct
+  confidence: high
+- tool: get_appliance_cache_hits_misses
+  category: Ops IQ — appliance performance
+  rest: [get_appliance_cache_hits_misses_telemetry_appliances__serial_number__cache_hits_misses_post]
+  binding: direct
+  confidence: high
+- tool: get_appliance_network_throughput
+  category: Ops IQ — appliance performance
+  rest: [get_appliance_network_utilization_telemetry_appliances__serial_number__network_utilization_post]
+  binding: direct
+  confidence: high
+- tool: get_appliance_smb_connections
+  category: Ops IQ — appliance performance
+  rest: [get_appliance_smb_connections_telemetry_appliances__serial_number__smb_connections_post]
+  binding: direct
+  confidence: high
+- tool: check_appliance_performance
+  category: Ops IQ — appliance performance
+  rest: [get_current_appliance_performance_telemetry_appliances__serial_number__current_appliance_performance_post]
+  binding: direct
+  confidence: high
+- tool: check_appliance_sync_status
+  category: Ops IQ — data protection
+  rest: [get_volume_snapshot_propagation_by_appliance_telemetry_volumes__volume_id__snapshot_propagation_by_appliance_post]
+  binding: derived
+  confidence: medium
+- tool: list_appliance_sync_statuses
+  category: Ops IQ — data protection
+  rest: [get_volume_snapshot_details_telemetry_volumes__volume_id__snapshot_details_post, get_volume_snapshot_propagation_by_appliance_telemetry_volumes__volume_id__snapshot_propagation_by_appliance_post]
+  binding: composite
+  confidence: medium
+- tool: get_volume_protection_metrics
+  category: Ops IQ — data protection
+  rest: [get_volume_snapshot_details_telemetry_volumes__volume_id__snapshot_details_post]
+  binding: direct
+  confidence: high
+- tool: get_volume_propagation_metrics
+  category: Ops IQ — data protection
+  rest: [get_volume_snapshot_propagation_by_appliance_telemetry_volumes__volume_id__snapshot_propagation_by_appliance_post]
+  binding: direct
+  confidence: high
+- tool: get_volume_latest_version
+  category: Ops IQ — data protection
+  rest: [get_volume_snapshot_timeline_telemetry_volumes__volume_id__snapshot_timeline_post, get_snapshot_status_volumes__volume_id__edges__edge_id__snapshots_get]
+  binding: derived
+  confidence: medium
+- tool: get_volume_protection_timing
+  category: Ops IQ — data protection
+  rest: [get_volume_average_time_to_protect_telemetry_volumes__volume_id__average_time_to_protect_post, get_volume_snapshot_timeline_telemetry_volumes__volume_id__snapshot_timeline_post]
+  binding: composite
+  confidence: medium
+- tool: get_volume_propagation_timing
+  category: Ops IQ — data protection
+  rest: [get_volume_snapshot_propagation_by_appliance_telemetry_volumes__volume_id__snapshot_propagation_by_appliance_post, get_volume_average_time_to_protect_telemetry_volumes__volume_id__average_time_to_protect_post]
+  binding: composite
+  confidence: medium
+- tool: compare_volume_protection_metrics
+  category: Ops IQ — data protection
+  rest: [get_volume_snapshot_details_telemetry_volumes__volume_id__snapshot_details_post, get_volumes_volumes_get]
+  binding: composite
+  confidence: low
+  note: Fan-out across every volume plus ranking logic that has no single REST equivalent.
+- tool: get_fleet_volume_health_summary
+  category: Ops IQ — protection health
+  rest: [get_volumes_volumes_get, get_volume_snapshot_details_telemetry_volumes__volume_id__snapshot_details_post]
+  binding: composite
+  confidence: low
+- tool: get_volume_health_report
+  category: Ops IQ — protection health
+  rest: [get_volume_snapshot_details_telemetry_volumes__volume_id__snapshot_details_post, get_volume_snapshot_propagation_by_appliance_telemetry_volumes__volume_id__snapshot_propagation_by_appliance_post]
+  binding: composite
+  confidence: low
+- tool: get_volume_data_protection_report
+  category: Ops IQ — protection health
+  rest: [get_volume_snapshot_details_telemetry_volumes__volume_id__snapshot_details_post]
+  binding: composite
+  confidence: low
+- tool: analyze_appliance_health
+  category: Ops IQ — diagnostics
+  rest: [get_appliance_health_score_telemetry_appliances__serial_number__appliance_health_score_post, get_current_appliance_performance_telemetry_appliances__serial_number__current_appliance_performance_post]
+  binding: composite
+  confidence: medium
+  note: Adds a 2-week baseline comparison and forecasting on top of the health-score operation.
+- tool: analyze_cache_disk_performance
+  category: Ops IQ — diagnostics
+  rest: [get_appliance_cache_disk_io_time_telemetry_appliances__serial_number__cache_disk_io_time_post, get_appliance_cache_disk_io_latency_telemetry_appliances__serial_number__cache_disk_io_latency_post, get_appliance_cache_disk_iops_telemetry_appliances__serial_number__cache_disk_iops_post, get_appliance_cache_hits_misses_telemetry_appliances__serial_number__cache_hits_misses_post, get_appliance_cache_utilization_telemetry_appliances__serial_number__cache_utilization_post, get_appliance_smb_connections_telemetry_appliances__serial_number__smb_connections_post]
+  binding: composite
+  confidence: medium
+mcp_only:
+- tool: analyze_appliance_tco
+  reason: >-
+    TCO and rightsizing analysis. The Portal API publishes no cost or rightsizing operation — this
+    is computed inside the MCP server from telemetry plus appliance machine specs.
+- tool: get_fleet_tco_summary
+  reason: Fleet-wide roll-up of analyze_appliance_tco; no REST equivalent.
+- tool: get_appliance_analysis_guide
+  reason: Narrative guidance text, not a data operation.
+- tool: guide_appliance_health_quick
+  reason: Narrative guidance text, not a data operation.
+- tool: guide_appliance_health_standard
+  reason: Narrative guidance text, not a data operation.
+- tool: guide_appliance_health_comprehensive
+  reason: Narrative guidance text, not a data operation.
+rest_only:
+  note: >-
+    The MCP server is read-and-analyse only. Every write, credential and lifecycle operation in the
+    Portal API is absent from the published tool list — this is the crosswalk's most important
+    finding for an agent operator: an agent connected to the Portal MCP Server cannot mutate the
+    estate.
+  families:
+  - family: Auth
+    operations: [authorize_auth_token_post, revoke_auth_token_delete, refresh_auth_token_refresh_post, mcp_authorize_auth_mcp_post]
+    note: POST /auth/mcp is the Portal API operation backing the MCP server's own OAuth exchange.
+  - family: Account Management
+    operations: [get_account_information_account_get, update_account_information_account_patch, get_account_license_account_license_get, get_account_ai_activate_info_account_ai_activate_get]
+  - family: AI Activate
+    operations: [get_ai_activate_inventories_ai_activate_inventories_get, create_ai_activate_inventory_ai_activate_inventories_post, get_ai_activate_indexes_ai_activate_indexes_get, create_ai_activate_index_ai_activate_indexes_post, get_mcp_volume_config_ai_activate_indexes__volume_id__mcp_get, update_mcp_volume_config_ai_activate_indexes__volume_id__mcp_patch]
+    note: >-
+      AI Activate builds searchable indexes over Nasuni volumes and carries its own per-volume MCP
+      configuration operations — a second, data-plane MCP surface distinct from the Portal MCP
+      Server, with no tool exposed for it.
+  - family: Cloud Credentials
+    operations: [get_cloud_credentials_cloud_credentials_get, create_credential_cloud_credentials_post, update_credential_cloud_credentials__credential_id__patch, delete_cloud_credential_cloud_credentials__credential_id__delete, create_export_cloud_credentials_exports_post]
+  - family: Configuration
+    operations: [get_sso_config_configuration_sso_get, set_sso_config_configuration_sso_put, get_s3_edge_config_configuration_s3_edge_get, set_s3_edge_config_configuration_s3_edge_post, delete_s3_edge_config_configuration_s3_edge_delete, get_web_access_sso_config_configuration_web_access_sso_get]
+  - family: IAM (write)
+    operations: [create_role_iam_roles_post, update_role_iam_roles__role_id__patch, delete_role_iam_roles__role_id__delete, duplicate_role_iam_roles_duplicate_post, create_service_key_iam_service_keys_post, delete_service_key_iam_service_keys__service_key_id__delete, create_user_key_iam_user_keys_post, delete_user_key_iam_user_keys__user_key_id__delete]
+  - family: Volumes (write)
+    operations: [start_snapshot_volumes__volume_id__edges__edge_id__snapshots_post, cancel_snapshot_volumes__volume_id__edges__edge_id__snapshots_delete, get_volume_capacity_history_volumes__volume_id__capacity_history_get]
+  - family: UaaS (write)
+    operations: [update_stack_uaas_stacks__stack_id__patch, update_nds_config_uaas_stacks__stack_id__nds_patch, add_stack_volume_uaas_stacks__stack_id__volumes__volume_id__post, delete_stack_volume_uaas_stacks__stack_id__volumes__volume_id__delete, generate_sas_token_uaas_stacks__stack_id__nds_sas_token_post, regenerate_blob_access_key_uaas_stacks__stack_id__nds_blob_keys__blob_key_id__patch]
+  - family: GFA
+    operations: [get_gfa_api_keys_gfa_api_keys_get, generate_gfa_api_key_gfa_api_keys_post, delete_gfa_api_key_gfa_api_keys__api_key__delete]
+  - family: Jobs / Serials / Software / Notifications / Health
+    operations: [get_jobs_jobs_get, get_job_jobs__job_id__get, acknowledge_failed_job_jobs__job_id__acknowledge_post, get_serials_serials_get, get_downloads_software_downloads_get, get_notifications_notifications_get, get_health_get]
+  - family: NMC API (separate contract)
+    operations: []
+    note: >-
+      The entire NMC API (120 operations across v1.2) is unmapped — the Portal MCP Server fronts the
+      Portal API only. NMC-side agent access is served instead by the open-source
+      local-nasuni-management-mcp-server.
+coverage:
+  mcp_tools_documented: 45
+  mcp_tools_bound: 39
+  mcp_only: 6
+  rest_operations_total: 139
+  rest_operations_bound: 33
+  rest_only_estimate: 106
+  bindings_high_confidence: 22
+  bindings_medium_confidence: 11
+  bindings_low_confidence: 6

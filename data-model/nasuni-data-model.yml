@@ -1,0 +1,277 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  openapi/_original/nasuni-nmc-v1-2-openapi.json (55 schemas, 85 paths) and
+  openapi/_original/nasuni-portal-v0-openapi.json (288 schemas, 98 paths); path-parameter
+  identifier analysis plus $ref graph.
+name: Nasuni entity-relationship model
+note: >-
+  Derived from path structure and identifier fields rather than from a published object reference —
+  Nasuni does not publish one. The NMC and Portal APIs model the SAME physical estate through two
+  different vocabularies: what NMC calls a "Filer" (identified by filer_serial) the Portal calls an
+  "Edge" (identified by edge_id), and NMC identifies volumes by volume_guid while the Portal uses
+  volume_id. Any agent working across both contracts must reconcile these itself; no mapping
+  endpoint is published.
+identifiers:
+- name: filer_serial
+  api: NMC
+  entity: Filer (Edge Appliance)
+  form: appliance serial number
+- name: edge_id
+  api: Portal
+  entity: Edge Appliance
+- name: serial_number
+  api: Portal (Ops IQ telemetry)
+  entity: Edge Appliance
+  note: Ops IQ telemetry paths key on serial_number, matching NMC's filer_serial, not on edge_id.
+- name: volume_guid
+  api: NMC
+  entity: Volume
+  form: GUID
+- name: volume_id
+  api: Portal
+  entity: Volume
+- name: share_id
+  api: NMC
+  entity: CIFS/SMB share
+- name: export_id
+  api: NMC
+  entity: NFS export
+- name: host_option_id
+  api: NMC
+  entity: NFS host option
+- name: folder_quota_id
+  api: NMC
+  entity: Folder quota
+- name: antivirus_id
+  api: NMC
+  entity: Antivirus violation
+- name: amqp_destination_name
+  api: NMC
+  entity: AMQP audit destination
+- name: cred_uuid
+  api: NMC
+  entity: Cloud credential
+  note: Replaced cred_id in API 1.2.0 (NMC 22.2) — a breaking change.
+- name: credential_id
+  api: Portal
+  entity: Cloud credential
+- name: stack_id
+  api: Portal
+  entity: UaaS stack
+- name: blob_key_id
+  api: Portal
+  entity: NDS blob access key
+- name: role_id
+  api: Portal
+  entity: IAM role
+- name: user_id
+  api: Portal
+  entity: IAM user
+- name: service_key_id
+  api: Portal
+  entity: Service key
+- name: user_key_id
+  api: Portal
+  entity: User key
+- name: job_id
+  api: Portal
+  entity: Job
+- name: serial_id
+  api: Portal
+  entity: Serial (licence)
+- name: record_id
+  api: Portal
+  entity: Activity-log record
+- name: message_id
+  api: NMC
+  entity: Message
+- name: file_iq_serial
+  api: Portal
+  entity: File IQ appliance
+entities:
+- name: Account
+  apis: [NMC, Portal]
+  description: The customer tenancy. Root of the Portal graph; carries licence and AI Activate state.
+- name: Filer / Edge Appliance
+  apis: [NMC, Portal]
+  description: >-
+    A caching appliance at a site. Carries CPU/RAM/disk specs, build version, IP, location, and
+    service flags for S3 Edge and File IQ.
+- name: Volume
+  apis: [NMC, Portal]
+  description: >-
+    A UniFS namespace backed by object storage. Connected to one or more appliances; owns shares,
+    exports, snapshots, quotas and global-lock folders.
+- name: Share
+  apis: [NMC]
+  description: A CIFS/SMB share exposed by one appliance on one volume.
+- name: Export
+  apis: [NMC]
+  description: An NFS export exposed by one appliance on one volume; owns host options.
+- name: Snapshot
+  apis: [NMC, Portal]
+  description: >-
+    An immutable point-in-time version of a volume, taken by an appliance and propagated to others.
+- name: Folder quota
+  apis: [NMC]
+- name: Global lock folder
+  apis: [NMC]
+- name: Pinned folder / Auto-cached folder
+  apis: [NMC]
+- name: Blocked client / Blocked source
+  apis: [NMC]
+  description: IP addresses and usernames blocked at an appliance — the ransomware-response surface.
+- name: Antivirus violation
+  apis: [NMC]
+- name: Cloud credential
+  apis: [NMC, Portal]
+- name: AMQP audit destination
+  apis: [NMC]
+- name: Message / Notification
+  apis: [NMC, Portal]
+- name: UaaS stack
+  apis: [Portal]
+  description: A UniFS-as-a-Service deployment; owns NDS configuration, blob access keys and SRaaS state.
+- name: NDS configuration
+  apis: [Portal]
+- name: Blob access key / SAS token
+  apis: [Portal]
+- name: File IQ appliance
+  apis: [Portal]
+- name: GFA API key
+  apis: [Portal]
+- name: IAM user / role / permission
+  apis: [Portal]
+- name: Service key / User key
+  apis: [Portal]
+- name: Job
+  apis: [Portal]
+- name: Serial
+  apis: [Portal]
+- name: Software download
+  apis: [Portal]
+- name: Activity-log record
+  apis: [Portal]
+- name: AI Activate inventory / index
+  apis: [Portal]
+  description: Searchable index built over a volume; carries its own per-volume MCP configuration.
+relationships:
+- from: Account
+  to: Filer
+  kind: has_many
+  via: account scope
+- from: Account
+  to: Volume
+  kind: has_many
+  via: account scope
+- from: Volume
+  to: Filer
+  kind: has_many
+  via: /volumes/{volume_guid}/filers/
+  note: Many-to-many — a volume is connected to many appliances and an appliance serves many volumes.
+- from: Filer
+  to: Volume
+  kind: has_many
+  via: /filers/{filer_serial}/ (volumes listed in appliance details)
+- from: Volume
+  to: Share
+  kind: has_many
+  via: /volumes/{volume_guid}/filers/{filer_serial}/shares/
+- from: Share
+  to: Filer
+  kind: belongs_to
+  via: filer_serial in path
+- from: Volume
+  to: Export
+  kind: has_many
+  via: /volumes/{volume_guid}/filers/{filer_serial}/exports/
+- from: Export
+  to: NFS host option
+  kind: has_many
+  via: /exports/{export_id}/nfs_host_options/
+- from: Volume
+  to: Snapshot
+  kind: has_many
+  via: /volumes/{volume_guid}/filers/{filer_serial}/snapshots/
+- from: Volume
+  to: Folder quota
+  kind: has_many
+  via: /volumes/{volume_guid}/folder-quotas/
+- from: Volume
+  to: Global lock folder
+  kind: has_many
+  via: /volumes/{volume_guid}/global-lock-folders/
+- from: Filer
+  to: Blocked client
+  kind: has_many
+  via: /filers/{filer_serial}/blocked-clients/
+- from: Filer
+  to: Blocked source
+  kind: has_many
+  via: /filers/{filer_serial}/blocked-sources/ip-addresses/ and /usernames/
+- from: Filer
+  to: AMQP audit destination
+  kind: has_many
+  via: /filers/{filer_serial}/amqp-audit-destinations/
+- from: Filer
+  to: Pinned folder
+  kind: has_many
+  via: /volumes/{volume_guid}/filers/{filer_serial}/pinned-folders/
+- from: Cloud credential
+  to: Filer
+  kind: has_many
+  via: /account/cloud-credentials/{cred_uuid}/filers/{filer_serial}/
+- from: UaaS stack
+  to: Volume
+  kind: has_many
+  via: /uaas/stacks/{stack_id}/volumes/{volume_id}
+- from: UaaS stack
+  to: NDS configuration
+  kind: has_one
+  via: /uaas/stacks/{stack_id}/nds
+- from: UaaS stack
+  to: Blob access key
+  kind: has_many
+  via: /uaas/stacks/{stack_id}/nds/blob-keys
+- from: UaaS stack
+  to: SRaaS status
+  kind: has_one
+  via: /uaas/stacks/{stack_id}/sraas
+- from: IAM user
+  to: IAM role
+  kind: has_many
+  via: /iam/users/{user_id}/roles
+- from: IAM role
+  to: Permission
+  kind: has_many
+  via: /iam/roles/{role_id}/permissions
+- from: Edge Appliance
+  to: File IQ appliance
+  kind: has_one
+  via: /edges/{edge_id}/services/fiq
+- from: Edge Appliance
+  to: S3 Edge service
+  kind: has_one
+  via: /edges/{edge_id}/services/s3_edge
+- from: Volume
+  to: AI Activate index
+  kind: has_one
+  via: /ai_activate/indexes/{volume_id}
+- from: AI Activate index
+  to: MCP configuration
+  kind: has_one
+  via: /ai_activate/indexes/{volume_id}/mcp
+cross_api_joins:
+- entities: [Filer, Edge Appliance]
+  nmc_key: filer_serial
+  portal_key: edge_id
+  telemetry_key: serial_number
+  note: >-
+    Ops IQ telemetry paths use serial_number, which matches NMC's filer_serial. edge_id is a Portal-
+    internal identifier. Joining NMC and Portal data on the appliance requires resolving edge_id to
+    a serial via GET /edges/{edge_id}.
+- entities: [Volume]
+  nmc_key: volume_guid
+  portal_key: volume_id
+  note: No published mapping operation.

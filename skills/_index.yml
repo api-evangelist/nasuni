@@ -1,0 +1,50 @@
+generated: '2026-08-26'
+method: generated
+source: Generated from openapi/_original/*.json (verified operationIds / verified method+path for the NMC API, which
+  publishes none), conventions/, errors/, rate-limits/ and lifecycle/.
+name: Nasuni Agent Skills
+note: Nasuni publishes no AGENTS.md and no first-party agent skills; these are API Evangelist-authored, grounded
+  only in operations that exist in the harvested contracts. NMC API skills name operations by METHOD + PATH because
+  259 of 260 NMC operations carry no operationId.
+skills:
+- file: skills/nasuni-fleet-health-review.md
+  name: nasuni-fleet-health-review
+  title: Fleet health review
+  api: Nasuni Portal API
+  class: read-only
+  description: Review the health and performance of every Nasuni Edge Appliance in an account using the Nasuni Portal
+    API Ops IQ telemetry surface, and produce a ranked list of appliances needing attention.
+  operations: 11
+- file: skills/nasuni-volume-protection-audit.md
+  name: nasuni-volume-protection-audit
+  title: Volume protection audit
+  api: Nasuni Portal API
+  class: read-mostly
+  description: Audit snapshot protection and propagation across every Nasuni volume — how often data is protected,
+    how long it takes to reach other sites, and which volumes are falling behind — using the Nasuni Portal API.
+  operations: 11
+- file: skills/nasuni-ransomware-block-response.md
+  name: nasuni-ransomware-block-response
+  title: Ransomware / abusive-client block response
+  api: Nasuni Management Console (NMC) API
+  class: write — fully reversible
+  description: Contain a suspected ransomware or misbehaving-client incident on a Nasuni estate by blocking the
+    offending IP address or username at the Edge Appliance through the NMC API, then unblocking it once cleared.
+  operations: 13
+- file: skills/nasuni-share-provisioning.md
+  name: nasuni-share-provisioning
+  title: Share and export provisioning
+  api: Nasuni Management Console (NMC) API
+  class: write — partially irreversible
+  description: Provision SMB/CIFS shares and NFS exports on a Nasuni volume through the NMC API, including folder
+    quotas and global file locking, with the version and permission checks that make it work first time.
+  operations: 18
+- file: skills/nasuni-nds-data-access.md
+  name: nasuni-nds-data-access
+  title: Reading Nasuni data through NDS
+  api: Nasuni Data Service (NDS)
+  class: read-only
+  description: Read files out of a Nasuni volume from AWS or Azure analytics and AI tooling using the Nasuni Data
+    Service S3-compatible and Azure Blob-compatible endpoints, without copying the data.
+  operations: 9
+skill_count: 5

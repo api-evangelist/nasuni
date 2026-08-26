@@ -1,0 +1,157 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  openapi/_original/nasuni-nmc-v1-2-openapi.json, nasuni-portal-v0-openapi.json,
+  nasuni-nasuni-data-service-aws-openapi.json, nasuni-nasuni-data-service-azure-openapi.json,
+  nasuni-global-file-acceleration-telemetry-openapi.json; enriched from
+  https://docs.nasuni.com/docs/nasuni-data-api
+name: Nasuni error catalog
+format: vendor-json
+rfc9457: false
+note: >-
+  No Nasuni API uses application/problem+json or RFC 9457. Each API defines its own envelope, and
+  they do NOT agree with each other — an agent integrating across NMC, Portal and NDS has to parse
+  three different error shapes. The NMC envelope is the richest: a closed enum of ten machine-
+  readable codes plus a human description, with a separate ValidationError shape carrying per-field
+  detail.
+envelopes:
+- api: Nasuni Management Console (NMC) API
+  media_type: application/json
+  shape: '{ "error": { "code": <enum>, "description": <string> } }'
+  schema: ErrorResponse -> Error
+  validation_shape: 'ValidationError -> FieldError (per-field errors)'
+- api: Nasuni Portal API
+  media_type: application/json
+  shape: '{ "message": <string>, "detail": <any|null> }'
+  schema: ErrorResponse
+  note: >-
+    Both `message` and `detail` are REQUIRED but `detail` is typed anyOf[{}, null], so it carries
+    no machine-readable code. FastAPI-style 422 responses additionally return HTTPValidationError.
+- api: Nasuni Data Service (NDS) for AWS
+  media_type: application/xml
+  shape: '<Error><Code/><Message/><Resource/><RequestId/></Error>'
+  note: S3-compatible XML error envelope, as produced by AWS S3 Object Lambda.
+- api: Nasuni Data Service (NDS) for Azure
+  media_type: application/xml
+  note: Azure Blob Storage-compatible error responses.
+- api: Nasuni Data API (mobileapi)
+  media_type: text/plain
+  note: Documented as status codes only; no structured envelope is published.
+problem_types:
+- code: error
+  api: NMC
+  title: General error
+  status: [400, 500]
+  remediation: Inspect `error.description`; retry is not guaranteed to help.
+- code: validation_error
+  api: NMC
+  title: Validation error
+  status: [400]
+  remediation: Correct the offending field(s). A ValidationError body lists per-field FieldError entries.
+- code: not_found_error
+  api: NMC
+  title: Resource not found
+  status: [404]
+  remediation: Verify the filer_serial, volume_guid or share id. Do not retry unchanged.
+- code: auth_error
+  api: NMC
+  title: Authentication error
+  status: [401]
+  remediation: >-
+    Re-authenticate at POST /auth/login/ and resend with a fresh `Authorization: Token <token>` header.
+- code: perm_error
+  api: NMC
+  title: Permission denied
+  status: [403]
+  remediation: >-
+    The account needs the "Enable NMC API Access" NMC group permission plus the specific permission
+    for the action. Not retryable.
+- code: sync_error
+  api: NMC
+  title: Error syncing settings with a Filer
+  status: [400, 409]
+  remediation: The Edge Appliance did not accept the change. Check appliance connectivity and retry.
+- code: unmanaged_error
+  api: NMC
+  title: Resource is not managed
+  status: [400, 405]
+  remediation: The appliance or volume is not under NMC management; manage it before calling this operation.
+- code: conflict_error
+  api: NMC
+  title: Conflict
+  status: [409]
+  remediation: A concurrent or contradictory operation is in flight. Re-read state and retry.
+- code: unsupported_error
+  api: NMC
+  title: Filer version does not support this request
+  status: [400, 405]
+  remediation: >-
+    Upgrade the Edge Appliance, or branch on build version. This is the API's version-skew signal
+    and the main reason an operation can 405 on one appliance and 200 on another.
+- code: throttled_error
+  api: NMC
+  title: Request throttled
+  status: [429]
+  remediation: >-
+    Back off. NMC publishes 5 reads/sec, 1 write/sec and 10 logins/min. No Retry-After header is
+    documented, so use a fixed backoff of at least 1.1s between writes.
+status_codes_observed:
+  nmc_v1_2:
+    '200': 83
+    '202': 36
+    '204': 1
+    '303': 1
+    '400': 22
+    '401': 117
+    '403': 39
+    '404': 63
+    '405': 8
+    '409': 17
+    '429': 120
+  portal_v0:
+    '200': 128
+    '201': 2
+    '202': 8
+    '204': 1
+    '400': 15
+    '401': 117
+    '403': 113
+    '404': 75
+    '408': 43
+    '409': 24
+    '413': 27
+    '422': 133
+    '429': 27
+    '500': 116
+    '503': 2
+  nds_aws:
+    '200': 4
+    '206': 1
+    '403': 4
+    '404': 4
+    '416': 1
+    '424': 4
+    '500': 4
+    '501': 4
+  nds_azure:
+    '200': 4
+    '206': 1
+    '400': 3
+    '403': 4
+    '404': 3
+    '413': 1
+data_api_return_codes:
+  source: https://docs.nasuni.com/docs/nasuni-data-api
+  codes:
+  - status: 200
+    meaning: Success
+  - status: 401
+    meaning: >-
+      Unauthorized — authentication failure. Verify username/password and that Mobile Access is
+      enabled on the share.
+  - status: 403
+    meaning: Forbidden — authentication failure (version 10.1 only).
+  - status: 410
+    meaning: >-
+      device_id is disabled on the Nasuni Edge Appliance for this device. Authorize using a
+      different device_id.

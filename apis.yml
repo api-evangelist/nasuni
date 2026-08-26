@@ -1,23 +1,257 @@
 aid: nasuni
 name: Nasuni
-description: 'Nasuni is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'Nasuni is an enterprise hybrid-cloud file data platform that consolidates distributed NAS and file servers
+  into UniFS, a cloud-native global file system backed by customer-owned object storage (Azure Blob, Amazon S3, Google Cloud
+  Storage and S3-compatible on-prem targets). Edge appliances cache hot data at each site while every version is written
+  immutably to the cloud, delivering multi-site collaboration with Global File Lock and Global File Acceleration, continuous
+  versioning, rapid ransomware recovery, and file data services for analytics and AI. Nasuni exposes a substantial programmable
+  surface: the REST Nasuni Management Console (NMC) API for fleet, volume, share, snapshot and appliance management; the
+  multi-region Nasuni Portal API for account, IAM, Ops IQ telemetry, UaaS and job orchestration; the Global File Acceleration
+  Telemetry API; Nasuni Data Service (NDS) endpoints that present Nasuni volumes through Azure Blob- and Amazon S3-compatible
+  interfaces; the Nasuni Data API for appliance filesystem access; and a hosted, OAuth 2.0 Portal MCP Server plus open-source
+  local MCP servers that make the platform callable by AI agents.'
+image: https://www.nasuni.com/wp-content/uploads/2026/04/nasuni-featured-image-logo-540x283.png
 url: https://raw.githubusercontent.com/api-evangelist/nasuni/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-26'
 modified: '2026-08-26'
 tags:
 - Company
-apis: []
+- File Storage
+- Hybrid Cloud
+- Object Storage
+- Enterprise Storage
+- Data Management
+- Backup and Recovery
+- Ransomware Protection
+- Infrastructure
+- Observability
+- MCP
+- agent-native
+tags_raw:
+- company
+- file-storage
+- hybrid-cloud
+- object-storage
+- enterprise-storage
+- data-management
+- backup-and-recovery
+- ransomware-protection
+- infrastructure
+- observability
+- mcp
+- agent-native
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- name: Nasuni Management Console (NMC) API
+  description: REST API to monitor and configure the Nasuni resources managed by a Nasuni Management Console, emulating
+    the NMC web interface. Covers account, authentication, Edge Appliance (filer) inventory and configuration, CIFS/NFS/FTP
+    shares and clients, volumes, snapshots, quotas, antivirus, cloud credentials, messages and notifications. Token authentication
+    via the Authorization header; versions 1.0, 1.1 and 1.2 are published side by side. The NMC is customer-hosted, so the
+    published server is the templated https://hostname/api/v1.2 form rather than a Nasuni-operated host.
+  humanURL: https://docs.api.nasuni.com/api/nmc/v120/introduction/
+  baseURL: https://hostname/api/v1.2
+  tags:
+  - File Storage
+  - Enterprise Storage
+  - Infrastructure
+  - Data Management
+  properties:
+  - type: OpenAPI
+    url: openapi/nasuni-nmc-v1-2-openapi.yml
+  - type: OpenAPI
+    url: openapi/nasuni-nmc-v1-1-openapi.yml
+  - type: OpenAPI
+    url: openapi/nasuni-nmc-v1-0-openapi.yml
+  - type: Documentation
+    url: https://docs.api.nasuni.com/api/nmc/v120/introduction/
+  - type: APIReference
+    url: https://docs.api.nasuni.com/api/nmc/v120/reference/overview/
+  - type: ChangeLog
+    url: https://docs.api.nasuni.com/api/nmc/v120/versionhistory/
+- name: Nasuni Portal API
+  description: Multi-region REST API for the Nasuni Portal control plane — account management, IAM, roles and permissions,
+    serials and software, Edge and File IQ appliance inventory, volumes and volume connections, cloud credentials, UniFS
+    as a Service (UaaS), Global File Accelerator, AI Activate, Ops IQ telemetry, activity logs, health and asynchronous
+    jobs. Supports OAuth 2.0 client credentials, JWT bearer tokens and legacy service-key headers, with regional base URLs
+    for the Americas, EU and Asia-Pacific.
+  humanURL: https://docs.api.nasuni.com/api/portal/v0/introduction/
+  baseURL: https://am1.portal.api.nasuni.com
+  tags:
+  - File Storage
+  - Hybrid Cloud
+  - Observability
+  - Data Management
+  properties:
+  - type: OpenAPI
+    url: openapi/nasuni-portal-v0-openapi.yml
+  - type: Documentation
+    url: https://docs.api.nasuni.com/api/portal/v0/introduction/
+  - type: APIReference
+    url: https://docs.api.nasuni.com/api/portal/v0/reference/overview/
+  - type: ChangeLog
+    url: https://docs.api.nasuni.com/api/portal/v0/versionhistory/
+- name: Global File Acceleration (GFA) Telemetry API
+  description: Telemetry API that returns Global File Acceleration performance metrics from the Nasuni NOC service, for
+    use in dashboards and time-series monitoring of accelerated file movement across a Nasuni estate. Authenticated with
+    an API token in the Authorization header.
+  humanURL: https://docs.api.nasuni.com/api/gfa/reference/overview/
+  baseURL: https://gfa-telemetry-us1.api.nasuni.com/v1
+  tags:
+  - Observability
+  - File Storage
+  properties:
+  - type: OpenAPI
+    url: openapi/nasuni-global-file-acceleration-telemetry-openapi.yml
+  - type: APIReference
+    url: https://docs.api.nasuni.com/api/gfa/reference/overview/
+- name: Nasuni Data Service (NDS) for Azure API
+  description: Azure Blob Storage-compatible endpoint that exposes data stored in a Nasuni volume to Azure-native tooling
+    and analytics/AI services without copying the data. Supports container and blob listing, blob retrieval and blob property
+    reads, authenticated with a Shared Key header or SAS query parameters generated at NDS deployment time.
+  humanURL: https://docs.nasuni.com/docs/nds-azure-api-overview
+  tags:
+  - Object Storage
+  - Hybrid Cloud
+  - Data Management
+  properties:
+  - type: OpenAPI
+    url: openapi/nasuni-nasuni-data-service-azure-openapi.yml
+  - type: Documentation
+    url: https://docs.nasuni.com/docs/nds-azure-api-overview
+  x-baseurl-note: NDS is deployed into the customer's own Azure subscription / AWS account, so there is no Nasuni-operated
+    host. Neither published spec carries a servers[] block and neither docs page states a base URL — the endpoint is generated
+    at NDS deployment time. Recorded as absent rather than guessed.
+- name: Nasuni Data Service (NDS) for AWS API
+  description: S3-compatible, read-only endpoints exposed through AWS S3 Object Lambda for accessing data stored in a Nasuni
+    volume from AWS-native analytics and AI services. Supports ListObjectsV2, GetObject and HeadObject semantics, authenticated
+    with AWS Signature Version 4 or presigned URLs.
+  humanURL: https://docs.nasuni.com/docs/nds-aws-api-overview
+  tags:
+  - Object Storage
+  - Hybrid Cloud
+  - Data Management
+  properties:
+  - type: OpenAPI
+    url: openapi/nasuni-nasuni-data-service-aws-openapi.yml
+  - type: Documentation
+    url: https://docs.nasuni.com/docs/nds-aws-api-overview
+  x-baseurl-note: NDS is deployed into the customer's own Azure subscription / AWS account, so there is no Nasuni-operated
+    host. Neither published spec carries a servers[] block and neither docs page states a base URL — the endpoint is generated
+    at NDS deployment time. Recorded as absent rather than guessed.
+- name: Nasuni Data API
+  description: HTTP API providing programmatic access to the filesystem of a Nasuni Edge Appliance — create, read, update
+    and delete files and folders, list shares, and read previous versions. Requires Mobile Access to be enabled on the share.
+    Authentication issues an x-secret-key token from /mobileapi/1/auth/login which is then presented as HTTP Basic credentials
+    alongside the device_id. Documented in prose only; Nasuni publishes no OpenAPI for this surface.
+  humanURL: https://docs.nasuni.com/docs/nasuni-data-api
+  baseURL: https://hostname/mobileapi/1
+  tags:
+  - File Storage
+  - Data Management
+  properties:
+  - type: Documentation
+    url: https://docs.nasuni.com/docs/nasuni-data-api
+- name: Nasuni Portal MCP Server
+  description: Hosted, OAuth 2.0-authenticated Model Context Protocol server that exposes the Nasuni Portal to AI clients
+    (Claude, ChatGPT, Microsoft Copilot Studio) as roughly 40 tools spanning appliance and volume inventory, Nasuni Data
+    Services and SRaaS configuration, activity logs, roles and permissions, and the Ops IQ telemetry, data-protection, health,
+    TCO/rightsizing and diagnostic families. Regional endpoints; the per-account URL is retrieved from Portal → Account
+    Settings → Integrations. Currently in private preview. RBAC is inherited from the caller's Portal account.
+  humanURL: https://docs.nasuni.com/docs/portal-mcp-server
+  baseURL: https://am1.portal.api.nasuni.com
+  tags:
+  - MCP
+  - agent-native
+  - Observability
+  properties:
+  - type: MCPServer
+    url: mcp/nasuni-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/nasuni-tool-crosswalk.yml
+  - type: Documentation
+    url: https://docs.nasuni.com/docs/portal-mcp-server
 common:
+- type: DomainSecurity
+  url: security/nasuni-domain-security.yml
+- type: OAuthScopes
+  url: scopes/nasuni-scopes.yml
+- type: Authentication
+  url: authentication/nasuni-authentication.yml
 - type: Website
-  url: https://forgeglobal.com/nasuni_stock/
+  url: https://www.nasuni.com/
+- type: DeveloperPortal
+  url: https://docs.api.nasuni.com/
+- type: Documentation
+  url: https://docs.nasuni.com/
+- type: APIReference
+  url: https://docs.api.nasuni.com/api/nmc/v120/reference/overview/
+- type: GettingStarted
+  url: https://docs.nasuni.com/docs/nasuni-quick-start-guide
+- type: Support
+  url: https://www.nasuni.com/customers/support/
+- type: HelpCenter
+  url: https://support.nasuni.com/s/
+- type: Blog
+  url: https://www.nasuni.com/blog/
+- type: GitHubOrganization
+  url: https://github.com/nasuni-labs
+- type: Pricing
+  url: https://www.nasuni.com/pricing/
+- type: SignUp
+  url: https://portal.nasuni.com/
+- type: TermsOfService
+  url: https://www.nasuni.com/legal/master-subscription-and-services-agreement-2026/
+- type: PrivacyPolicy
+  url: https://www.nasuni.com/legal/privacy-notice-2026/
+- type: TrustCenter
+  url: https://trust.nasuni.com/
+- type: Compliance
+  url: conformance/nasuni-conformance.yml
+- type: Packages
+  url: packages/nasuni-packages.yml
+- type: SDKs
+  url: packages/nasuni-packages.yml
+- type: LLMsTxt
+  url: llms/nasuni-llms.txt
+- type: Overlay
+  url: overlays/nasuni-nmc-v1-2-overlay.yaml
+- type: Conformance
+  url: conformance/nasuni-conformance.yml
+- type: ErrorCatalog
+  url: errors/nasuni-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/nasuni-lifecycle.yml
+- type: ChangeLog
+  url: changelog/nasuni-changelog.yml
+- type: Conventions
+  url: conventions/nasuni-conventions.yml
+- type: DataModel
+  url: data-model/nasuni-data-model.yml
+- type: Webhooks
+  url: asyncapi/nasuni-file-iq-alerts-webhooks.yml
+- type: JSONSchema
+  url: json-schema/nasuni-file-iq-alert-webhook-payload.schema.json
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Plans
+  url: plans/nasuni-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/nasuni-rate-limits.yml
+- type: TrustCenter
+  url: security/nasuni-trust-center.yml
+- type: MCPServer
+  url: mcp/nasuni-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/nasuni-tool-crosswalk.yml
+x-enrichment:
+  date: '2026-08-26'
+  status: enriched
+  artifacts_added: 32
+  pass: local-v1

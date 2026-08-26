@@ -1,0 +1,203 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://docs.nasuni.com/docs/portal-mcp-server (fetched 2026-08-26, HTTP 200),
+  https://github.com/nasuni-labs/local-nasuni-management-mcp-server,
+  https://github.com/nasuni-labs/nasuni-mcp-desktop
+name: Nasuni MCP servers
+status: published
+deployment:
+  mode: both
+  endpoint: null
+  install: "uv run (nasuni-mcp-desktop) / python -m (local-nasuni-management-mcp-server) — see each repo README"
+  package: https://github.com/nasuni-labs/local-nasuni-management-mcp-server
+  auth: oauth
+  verified: searched
+  note: >-
+    `mode: both` because Nasuni ships a HOSTED, remote MCP server (the Portal MCP Server, reachable
+    by an MCP client over HTTPS with OAuth 2.0) AND two open-source local stdio servers in
+    nasuni-labs. `endpoint` is deliberately null: the hosted endpoint is per-account and per-region
+    and Nasuni's own documentation says to retrieve it from Portal -> Account Settings ->
+    Integrations -> Portal MCP Server. No public URL is published, so none is recorded here — a
+    guessed URL would read as a verified agent surface. The hosted server is in private preview and
+    requires account-manager enablement.
+servers:
+- name: Nasuni Portal MCP Server
+  kind: remote
+  hosted: true
+  vendor_operated: true
+  availability: private-preview
+  docs: https://docs.nasuni.com/docs/portal-mcp-server
+  endpoint: null
+  endpoint_source: "Portal UI -> Account Settings -> Integrations -> Portal MCP Server (per-account, per-region)"
+  transport: streamable-http
+  auth:
+    scheme: oauth2
+    flow: authorization_code
+    client_registration: dynamic-client-registration
+    token_refresh: automatic
+    session_expiry: governed by Portal session policies
+    revocation: disconnecting the connector in the AI client revokes the token
+    rbac: >-
+      Inherits the caller's Nasuni Portal roles and permissions; tool results are filtered by the
+      account's RBAC policies and no privilege elevation is possible through the server.
+  tested_clients:
+  - Claude Desktop
+  - Claude Web
+  - ChatGPT Web (developer mode required)
+  - ChatGPT Desktop
+  - Microsoft 365 Copilot Studio
+  data_handling:
+    storage: none — pass-through to the Portal API, data retrieved on demand
+    transport_encryption: TLS
+    regional_endpoints: true
+    session_isolation: true
+  tool_families:
+  - name: Appliance
+    tools:
+    - name: list_appliances
+      description: List all Edge appliances, including build metadata and service enablement flags. Optionally filter by File IQ or S3 Edge availability.
+    - name: get_appliance_details
+      description: Get comprehensive details for a single appliance — volumes, machine specs (CPU, RAM, disks), build version, IP address, and location.
+    - name: get_appliance_s3_status
+      description: Get S3 Edge service configuration for a single appliance, indicating whether S3 Edge is enabled.
+    - name: get_appliance_fiq_service
+      description: Get File IQ (event forwarder) service configuration for a single appliance, including enablement status and connected File IQ appliance.
+  - name: Volume
+    tools:
+    - name: list_volumes
+      description: Return all volumes available to the caller.
+    - name: get_volume
+      description: Return details for a single volume by volume ID.
+  - name: Nasuni Data Service (NDS) and SRaaS
+    tools:
+    - name: get_nds_config
+      description: Return the Nasuni Data Services (NDS) configuration for a UaaS stack.
+    - name: get_nds_stack
+      description: Return detailed configuration for a single UaaS stack (log level, retention, remote support, volume refresh interval).
+    - name: list_nds_stacks
+      description: Return all UaaS stacks for the account.
+    - name: list_nds_access_keys
+      description: Return blob storage access keys for a UaaS stack.
+    - name: get_sraas_status
+      description: Return SRaaS (Snapshot Retention as a Service) status and run metrics.
+  - name: Activity logs
+    tools:
+    - name: list_activity_logs
+      description: Search Portal activity logs with filters for date range, action type, target type, and free-text search. Returns actor, action, target, timestamp, source IP, and change details.
+  - name: Roles and permissions
+    tools:
+    - name: get_my_roles
+      description: Return the roles and permissions assigned to your account.
+    - name: get_role_permissions
+      description: Return the full permission set for a single Portal role.
+    - name: list_permissions
+      description: Return every permission available in the Portal system.
+    - name: list_roles
+      description: Return all roles defined for the account.
+  - name: Ops IQ — appliance performance
+    tools:
+    - name: get_appliance_memory_utilization
+      description: Return memory telemetry for an appliance over a given time period. Returns detailed breakdown (v10.0.4+) or legacy counters (older builds).
+    - name: get_appliance_cpu_usage
+      description: CPU utilization percentage across the appliance.
+    - name: get_appliance_cpu_load_average
+      description: 1/5/15 minute load averages compared against appliance core count.
+    - name: get_appliance_cache_utilization
+      description: Percent of cache capacity consumed over time.
+    - name: get_appliance_cache_disk_io
+      description: Read/write I/O metrics for cache disks.
+    - name: get_appliance_cache_disk_latency
+      description: Read/write latency for cache disks (in ms).
+    - name: get_appliance_cache_hits_misses
+      description: Cache hit/miss distribution — useful for sizing cache tiers.
+    - name: get_appliance_network_throughput
+      description: Inbound/outbound throughput across NICs.
+    - name: get_appliance_smb_connections
+      description: Concurrent SMB client connection count.
+    - name: check_appliance_performance
+      description: Quick appliance performance health check (current state).
+    - name: get_appliance_analysis_guide
+      description: Narrative guide for quick, standard, and comprehensive appliance analysis workflows.
+  - name: Ops IQ — volume data protection and propagation
+    tools:
+    - name: check_appliance_sync_status
+      description: Check a specific appliance's sync status against its volumes. Returns version lag, health status, and source identification.
+    - name: list_appliance_sync_statuses
+      description: Return both snapshot details and propagation status for all appliances on a volume.
+    - name: get_volume_protection_metrics
+      description: Return snapshot-details telemetry for a volume.
+    - name: get_volume_propagation_metrics
+      description: Return snapshot-propagation telemetry for a volume.
+    - name: get_volume_latest_version
+      description: Return the latest snapshot version for a volume.
+    - name: get_volume_protection_timing
+      description: Return the complete protection cycle timing for a volume.
+    - name: get_volume_propagation_timing
+      description: Calculate total file availability timing from source to destination.
+    - name: compare_volume_protection_metrics
+      description: Compare data protection metrics (avg, min, max) across multiple volumes. Ranks volumes from best to worst protection.
+  - name: Ops IQ — protection health
+    tools:
+    - name: get_fleet_volume_health_summary
+      description: Analyze all volumes and classify each as Healthy, Warning, or Critical.
+    - name: get_volume_health_report
+      description: Generate a comprehensive Volume Health Report covering protection and propagation.
+    - name: get_volume_data_protection_report
+      description: Generate a formatted Data Protection Report for a volume.
+  - name: Ops IQ — rightsizing and TCO
+    tools:
+    - name: analyze_appliance_tco
+      description: Analyze the Total Cost of Ownership (TCO) and generate rightsizing recommendations for a single appliance.
+    - name: get_fleet_tco_summary
+      description: Fleet-wide TCO analysis and savings recommendations across all appliances.
+  - name: Ops IQ — performance diagnostics
+    tools:
+    - name: guide_appliance_health_quick
+      description: Quick 3-step guidance for appliance health checks.
+    - name: analyze_appliance_health
+      description: Comprehensive AI Ops health check comparing current appliance performance against 2-week telemetry baselines to identify anomalies and forecast resource constraints.
+    - name: analyze_cache_disk_performance
+      description: Analyze cache disk trends and anomalies across SMB connections, cache utilization, hit/miss ratios, IOPS, I/O time, and latency.
+    - name: guide_appliance_health_standard
+      description: Standard 6-step guidance for appliance health reports.
+    - name: guide_appliance_health_comprehensive
+      description: Comprehensive multi-step guidance for deep appliance analysis.
+  schema_note: >-
+    Tool names and descriptions are transcribed verbatim from Nasuni's published Tool Reference.
+    Per-tool inputSchema could NOT be captured: the endpoint is per-account and unpublished, so
+    tools/list could not be called anonymously. Input schemas require authenticated introspection
+    against a licensed Portal account.
+- name: Nasuni Management MCP Server (Local)
+  kind: local-stdio
+  hosted: false
+  vendor_operated: false
+  repo: https://github.com/nasuni-labs/local-nasuni-management-mcp-server
+  language: Python
+  runtime: Python 3.11+
+  auth:
+    scheme: nmc-token
+    note: Authenticates to the NMC API and Portal API with the operator's own credentials.
+  covers:
+  - Edge Appliance (filer) listing, monitoring and management
+  - Volume detail reporting
+  - SMB/CIFS share administration
+  - System health and performance monitoring
+  - Usage statistics and reporting
+  - Notification and alert handling
+- name: Nasuni Desktop MCP Solution for SMB shares
+  kind: local-stdio
+  hosted: false
+  vendor_operated: false
+  repo: https://github.com/nasuni-labs/nasuni-mcp-desktop
+  language: Python
+  runtime: uv
+  auth:
+    scheme: smb-credentials
+  covers:
+  - Browse Nasuni SMB shares
+  - Read and retrieve files from Nasuni SMB shares
+summary:
+  hosted_servers: 1
+  local_servers: 2
+  hosted_tools_documented: 45

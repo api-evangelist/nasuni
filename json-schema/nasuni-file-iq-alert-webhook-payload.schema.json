@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Nasuni File IQ Alert Webhook Payload",
+  "description": "Schema for File IQ Alert Webhook payloads.",
+  "type": "object",
+  "properties": {
+    "alert_name": {
+      "type": "string",
+      "description": "The alert name."
+    },
+    "alert_description": {
+      "type": "string",
+      "description": "The alert description."
+    },
+    "version": {
+      "type": "string",
+      "description": "Schema version identifier for this payload (e.g. '1.0')."
+    },
+    "source_appliance": {
+      "type": "object",
+      "description": "Metadata about the originating appliance (applies to all alerts in this payload).",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the source appliance"
+        },
+        "grafana_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Grafana UI URL if the appliance has a DNS-resolvable hostname"
+        }
+      },
+      "required": [
+        "description"
+      ],
+      "additionalProperties": false
+    },
+    "alerts": {
+      "type": "array",
+      "description": "One or more alert instances from the same source.",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/$defs/Alert"
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "description": "Configuration details of the underlying alert.",
+      "properties": {
+        "parameter_friendly_name": {
+          "type": "string",
+          "description": "Human-readable parameter name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Explains what the parameter controls."
+        },
+        "value": {
+          "description": "Configured value for the parameter.",
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Unit of measure for the value, if applicable."
+        }
+      },
+      "required": [
+        "parameter_friendly_name",
+        "description",
+        "value"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "parameter_friendly_name": "Threshold",
+          "description": "Number of events observed before the alert fires",
+          "value": "0",
+          "unit": "Events"
+        }
+      ]
+    }
+  },
+  "required": [
+    "alert_name",
+    "alert_description",
+    "version",
+    "source_appliance",
+    "alerts",
+    "configuration"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "Alert": {
+      "title": "Alert",
+      "type": "object",
+      "properties": {
+        "entity": {
+          "type": "string",
+          "description": "The entity (appliance or volume) to which the alert applies"
+        },
+        "name": {
+          "type": "string",
+          "description": "The alert name"
+        },
+        "value": {
+          "type": "string",
+          "description": "The evaluated value that triggered the alert"
+        },
+        "start_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "RFC3339 timestamp marking when the alert started"
+        },
+        "end_timestamp": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time",
+          "description": "RFC3339 timestamp when the alert ended (null if still active)"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "firing",
+            "resolved"
+          ],
+          "description": "Current status of the alert instance"
+        }
+      },
+      "required": [
+        "entity",
+        "name",
+        "value",
+        "start_timestamp",
+        "end_timestamp",
+        "status"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

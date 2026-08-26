@@ -1,0 +1,86 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://docs.api.nasuni.com/api/nmc/v120/introduction/ ,
+  https://docs.api.nasuni.com/api/portal/v0/introduction/ ,
+  https://github.com/nasuni-labs/nasuni-api-utilities (Avoid NMC API Throttling)
+name: Nasuni published rate limits
+note: >-
+  Both of Nasuni's primary REST APIs publish concrete numeric limits in their own reference
+  introductions — unusual for enterprise infrastructure vendors. The NMC limits are enforced
+  from Nasuni 8.5 onward. Response-header signalling differs sharply between the two APIs: the
+  Portal API returns Retry-After on burst exhaustion, the NMC API documents only the 429 status
+  and an error body, with no RateLimit-* or Retry-After headers described.
+rate_limits:
+- api: Nasuni Management Console (NMC) API
+  scope: per-authenticated-user
+  operation_class: authentication
+  endpoint: /auth/login/
+  window: 1 minute
+  limit: 10
+  burst: null
+  status_on_exhaustion: 429
+  error_message: Request throttled
+  headers: []
+  source: https://docs.api.nasuni.com/api/nmc/v120/introduction/
+- api: Nasuni Management Console (NMC) API
+  scope: per-authenticated-user
+  operation_class: write (POST, PUT, PATCH, DELETE)
+  window: 1 second
+  limit: 1
+  burst: null
+  status_on_exhaustion: 429
+  error_message: Request throttled
+  headers: []
+  source: https://docs.api.nasuni.com/api/nmc/v120/introduction/
+- api: Nasuni Management Console (NMC) API
+  scope: per-authenticated-user
+  operation_class: read (all other requests)
+  window: 1 second
+  limit: 5
+  burst: null
+  status_on_exhaustion: 429
+  error_message: Request throttled
+  headers: []
+  source: https://docs.api.nasuni.com/api/nmc/v120/introduction/
+- api: Nasuni Portal API
+  scope: per-account
+  operation_class: all
+  window: 30 seconds
+  limit: 500
+  burst: null
+  status_on_exhaustion: 429
+  error_message: ErrorResponse body
+  headers:
+  - name: Retry-After
+    description: Seconds to wait. Returned on burst-limit exhaustion.
+  source: https://docs.api.nasuni.com/api/portal/v0/introduction/
+- api: Nasuni Portal API
+  scope: per-account
+  operation_class: all
+  window: 1 day
+  limit: 1000000
+  burst: null
+  status_on_exhaustion: 429
+  headers: []
+  note: Daily-limit responses omit Retry-After.
+  source: https://docs.api.nasuni.com/api/portal/v0/introduction/
+- api: Nasuni Portal API
+  scope: per-account
+  operation_class: telemetry (Ops IQ)
+  window: null
+  limit: null
+  note: >-
+    Telemetry endpoints share the default limits but Nasuni states they may carry separate
+    thresholds; no numbers are published.
+  source: https://docs.api.nasuni.com/api/portal/v0/introduction/
+client_side_guidance:
+- source: https://github.com/nasuni-labs/nasuni-api-utilities
+  guidance: >-
+    Nasuni recommends inserting sleep/wait steps in NMC API integrations (e.g. Start-Sleep -s 1.1
+    in PowerShell) to stay under the 5 GET/sec and 1 write/sec ceilings.
+- source: https://github.com/nasuni-labs/NasuniPoshApi
+  guidance: >-
+    The first-party PowerShell module implements the 5 GET/sec and 1 write/sec ceilings internally
+    and retries automatically on 429.
+limit_count: 5

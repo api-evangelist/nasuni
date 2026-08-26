@@ -1,0 +1,205 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://docs.api.nasuni.com/api/nmc/v120/introduction/ ,
+  https://docs.api.nasuni.com/api/portal/v0/introduction/ ,
+  https://docs.nasuni.com/docs/nasuni-data-api ,
+  https://github.com/nasuni-labs/NasuniPoshApi ,
+  and derived from openapi/_original/*.json
+name: Nasuni API conventions and runtime semantics
+note: >-
+  Nasuni ships five REST contracts that do NOT share conventions. Auth, error envelope, pagination
+  and rate-limit signalling all differ between the NMC API and the Portal API, and the two NDS
+  surfaces deliberately mimic third-party conventions (S3 and Azure Blob) instead. Treat them as
+  five APIs, not one platform API.
+auth:
+  nmc:
+    style: opaque token in Authorization header
+    header: 'Authorization: Token <token>'
+    obtain: POST /auth/login/ with {username, password}; returns {token, expires}
+    revoke: POST /auth/logout/
+    sso: not supported for API access — native and domain accounts only
+    permission_model: >-
+      The account must belong to an NMC group with "Enable NMC API Access", AND hold the specific
+      NMC permission for each action (e.g. "Manage Folder Quotas" for folder-quota writes).
+    docs: https://docs.api.nasuni.com/api/nmc/v120/introduction/
+  portal:
+    style: OAuth 2.0 client credentials -> JWT bearer, plus legacy key headers
+    schemes: [OAuth2ClientCredentials, HTTPBearer, ServiceKeyHeader + ServiceSecretHeader, UserKeyHeader]
+    token_endpoint: POST /auth/token
+    refresh: POST /auth/token/refresh
+    revoke: DELETE /auth/token
+    mcp_authorize: POST /auth/mcp
+    docs: https://docs.api.nasuni.com/api/portal/v0/introduction/
+  nds_azure:
+    style: Azure Shared Key header or SAS query parameters
+  nds_aws:
+    style: AWS Signature Version 4, or presigned URLs
+  gfa_telemetry:
+    style: API token in Authorization header
+  data_api:
+    style: >-
+      POST /mobileapi/1/auth/login returns an x-secret-key response header; subsequent calls send
+      HTTP Basic with username=device_id and password=the secret key.
+idempotency:
+  supported: false
+  header: null
+  scope: null
+  retention: null
+  evidence: >-
+    No Idempotency-Key (or equivalent) header appears in any of the seven specs, and no reference
+    page documents one. Writes are 1/sec-throttled on the NMC API and there is no key-based
+    de-duplication, so a client that retries a POST after a timeout can create a duplicate share,
+    export, quota or AMQP destination. NO `Idempotency` pointer is emitted in apis.yml.
+  mitigation_available: >-
+    Most NMC writes are addressed by a caller-chosen path key (share name, export id, blocked IP,
+    path) and several use PUT to a full URI (blocked-sources/ip-addresses/{ip},
+    blocked-sources/usernames/{username}), which makes those specific operations naturally
+    idempotent. Creation operations that POST to a collection are not.
+pagination:
+  nmc:
+    style: limit/offset
+    params:
+      limit: items per page, default 50
+      offset: starting position
+    response_fields: not documented
+    docs: https://docs.api.nasuni.com/api/nmc/v120/introduction/
+  portal:
+    style: not documented in the reference introduction
+  note: >-
+    The first-party PowerShell module states it "handles pagination internally", which is the
+    strongest available confirmation that pagination is real on the NMC API even where the response
+    envelope is undocumented.
+async_operations:
+  supported: true
+  pattern: >-
+    NMC API 1.1+ returns 202 Accepted on long-running writes (36 operations in v1.2) and the caller
+    polls the Messages resource for completion. The Portal API returns 202 on 8 operations and
+    exposes a first-class Jobs resource (GET /jobs, GET /jobs/{job_id},
+    POST /jobs/{job_id}/acknowledge).
+  client_support: >-
+    NasuniPoshApi implements async operation tracking and message polling with empirically tuned
+    intervals, and detects async failure with diagnostic context.
+versioning:
+  style: path major.minor (/api/v1, /api/v1.1, /api/v1.2)
+  see: lifecycle/nasuni-lifecycle.yml
+error_envelope:
+  see: errors/nasuni-problem-types.yml
+  summary: >-
+    NMC returns {error:{code,description}} with a closed ten-value code enum; Portal returns
+    {message, detail}; NDS returns S3/Azure XML.
+rate_limit_signaling:
+  see: rate-limits/nasuni-rate-limits.yml
+  summary: >-
+    Portal returns Retry-After on burst 429s. NMC returns a bare 429 with a "Request throttled"
+    body and no timing header, so clients must hard-code the published 1.1s write interval.
+request_id_tracing:
+  supported: partial
+  evidence: >-
+    NDS for AWS returns RequestId inside the S3 XML error envelope. No correlation/request-id
+    header is documented for the NMC or Portal APIs.
+field_expansion:
+  supported: false
+metadata_fields:
+  supported: true
+  evidence: >-
+    NDS surfaces per-file metadata (ctime, mtime, size, Content-Type, security_ntacl) documented at
+    https://docs.nasuni.com/docs/nds-aws-api-overview and .../nds-azure-api-overview
+etags:
+  supported: true
+  api: Nasuni Data API
+  evidence: >-
+    As of Nasuni 10.1 ETags are always returned for files, generated from modified time and size,
+    and are unaffected by metadata-only changes (rename, permissions, ACLs). Directory ETags are
+    NOT calculated as of 10.1 (defect WE-873); prior to 10.1 directory ETags were returned only when
+    the directory was fully synchronized with the cloud, and any change cleared the ETag until
+    re-sync. Pre-10.1 clients had to send `X-NAS-Options: generate_etag`.
+  docs: https://docs.nasuni.com/docs/nasuni-data-api
+  caveat: Two different files can carry the same ETag — Nasuni states this explicitly.
+dry_run_mode:
+  supported: partial
+  evidence: >-
+    Not a general dry-run facility, but two real instances exist. The NMC cloud-credential update
+    accepts `skip_validation` (added NMC 23.2), inverting the idea — it SKIPS validation rather
+    than running validation alone. The File IQ webhook configuration UI offers a "Validate
+    Configuration" checkbox that validates the endpoint during save. No API operation accepts a
+    dry_run/validate_only parameter.
+contract_quality_findings:
+- finding: >-
+    The NMC API publishes NO operationIds. 0 of 39 operations in v1.0, 1 of 100 in v1.1 and 0 of 120
+    in v1.2 carry an operationId — 259 of 260 NMC operations are unnamed. Every operation does carry
+    a summary and tags, so the spec is readable by a human, but code generators, agent tool-forgers
+    and any crosswalk have to synthesise names from method+path. The Portal API, by contrast, names
+    all 139 of its operations.
+  severity: high
+  affects: [openapi/nasuni-nmc-v1-0-openapi.yml, openapi/nasuni-nmc-v1-1-openapi.yml, openapi/nasuni-nmc-v1-2-openapi.yml]
+- finding: >-
+    Three incompatible error envelopes across one vendor's APIs, none of them RFC 9457.
+  severity: medium
+- finding: >-
+    No idempotency mechanism on any write surface.
+  severity: medium
+reversibility:
+  grade: documented
+  applies: true
+  note: >-
+    Nasuni's product is built on continuous immutable versioning — every change is snapshotted and
+    prior versions are recoverable — so the PLATFORM is deeply reversible. The APIs are not. There
+    is no restore, rollback, undelete or previous-version operation in any of the seven specs; file
+    and volume recovery is driven from the NMC/Portal UI and from the Nasuni Data API's previous-
+    versions surface, not from a reversal operation an agent can call. Grade is `documented` rather
+    than `verified` because the reversal paths that DO exist in the contract state no window.
+  reversal_paths:
+  - surface: Nasuni Portal API — snapshot
+    forward: start_snapshot_volumes__volume_id__edges__edge_id__snapshots_post (POST /volumes/{volume_id}/edges/{edge_id}/snapshots)
+    reversal: cancel_snapshot_volumes__volume_id__edges__edge_id__snapshots_delete (DELETE /volumes/{volume_id}/edges/{edge_id}/snapshots)
+    window: >-
+      While the snapshot is in flight only. No duration is stated in the docs, so no window is
+      recorded here.
+    window_stated: false
+    docs: https://docs.api.nasuni.com/api/portal/v0/reference/overview/
+  - surface: NMC API — client blocking
+    forward: POST /filers/{filer_serial}/blocked-clients/ ; PUT /filers/{filer_serial}/blocked-sources/ip-addresses/{blocked_ip}/ ; PUT /filers/{filer_serial}/blocked-sources/usernames/{blocked_username}/
+    reversal: DELETE on the same resources (unblock a client IP, an IP address, or a username)
+    window: unbounded — the block persists until explicitly removed
+    window_stated: true
+    note: The cleanest reversible pair in the whole surface, and the one a ransomware-response agent needs.
+  - surface: NMC API — global file locking
+    forward: POST /volumes/{volume_guid}/global-lock-folders/ (enable global locking on a path)
+    reversal: DELETE /volumes/{volume_guid}/global-lock-folders/{path} (disable global locking on that path)
+    window: unbounded
+    window_stated: true
+  - surface: NMC API — cache pinning and auto-caching
+    forward: POST /volumes/{volume_guid}/filers/{filer_serial}/pinned-folders/ ; POST .../auto-cached-folders/
+    reversal: DELETE .../pinned-folder/{path} ; DELETE .../auto-cached-folder/{path}
+    window: unbounded
+    window_stated: true
+  - surface: NMC API — AMQP audit destinations
+    forward: POST /filers/{filer_serial}/amqp-audit-destinations/
+    reversal: DELETE /filers/{filer_serial}/amqp-audit-destinations/{amqp_destination_name}
+    window: unbounded
+    window_stated: true
+  irreversible_writes:
+  - operation: DELETE /volumes/{volume_guid}/filers/{filer_serial}/shares/{share_id}/
+    note: No undelete. The share must be recreated with POST and its configuration re-entered.
+  - operation: DELETE /volumes/{volume_guid}/filers/{filer_serial}/exports/{export_id}/
+    note: No undelete.
+  - operation: DELETE /volumes/{volume_guid}/folder-quotas/{folder_quota_id}/
+    note: No undelete.
+  - operation: DELETE /messages/{message_id}/
+    note: No undelete.
+  - operation: POST /volumes/ (create volume)
+    note: >-
+      The NMC API has no volume-delete operation at all, so a volume created through the API cannot
+      be removed through the API. Portal's delete_stack_volume removes a volume from a UaaS stack,
+      which is a different action.
+  - operation: DELETE /cloud-credentials/{credential_id} (Portal)
+    note: No undelete; credentials must be re-created and re-validated.
+  - operation: DELETE /iam/service_keys/{service_key_id} and DELETE /iam/user_keys/{user_key_id} (Portal)
+    note: Key material is not recoverable; a new key must be issued.
+  missing:
+  - >-
+      No snapshot-restore, file-restore or previous-version operation is exposed by ANY published
+      contract, even though continuous versioning and rapid recovery are the platform's headline
+      capabilities. This is the single largest gap between what Nasuni does and what its APIs let an
+      agent do.

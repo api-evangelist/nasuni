@@ -1,0 +1,27 @@
+generated: '2026-08-26'
+method: derived
+source: openapi/nasuni-portal-v0-openapi.yml
+schemes:
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-portal-v0-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service key) and `client_secret`
+    (service secret) as form-encoded body parameters to the token endpoint.
+scopes: []
+name: Nasuni Portal API OAuth scopes
+docs: https://docs.api.nasuni.com/api/portal/v0/introduction/
+note: 'The Portal API declares an OAuth 2.0 clientCredentials flow but publishes an EMPTY scopes map, and no operation
+  carries a scope requirement. Authorization is not scope-based: it is role-based and resolved server-side from
+  the caller''s Portal IAM role. The permission vocabulary is retrievable at runtime — GET /iam/permissions lists
+  every permission in the system, GET /iam/roles/{role_id}/permissions the set attached to a role, and GET /iam/me
+  the caller''s own — but Nasuni publishes no static scope or permission reference page, so there is nothing to
+  search for and enrich. scope_count is a real zero, not a gap in this harvest.'
+authorization_model: role-based (Portal IAM), not scope-based
+runtime_permission_endpoints:
+- GET /iam/permissions
+- GET /iam/roles
+- GET /iam/roles/{role_id}/permissions
+- GET /iam/me
+scope_count: 0

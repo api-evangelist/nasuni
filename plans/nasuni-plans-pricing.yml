@@ -1,0 +1,73 @@
+generated: '2026-08-26'
+method: searched
+source: https://www.nasuni.com/pricing/
+name: Nasuni plans and pricing
+note: >-
+  Nasuni publishes a pricing PAGE that names the product and every add-on, together with the
+  billing unit and contract term for each, but publishes NO price. Every tier is quote-only
+  ("contact sales"), sold on a three-year contract paid annually. There is no self-serve tier,
+  no free tier, and no published API-usage-based pricing — API access is a property of the
+  platform subscription rather than a separately-priced product.
+currency: USD
+billing_model: subscription
+contract_term: 3 years, paid annually
+self_serve: false
+free_tier: false
+published_prices: false
+plans:
+- name: Nasuni File Data Platform
+  kind: core
+  price: null
+  price_published: false
+  currency: USD
+  billing_period: annual
+  billing_unit: TB/year
+  contract_term: 3 years
+  quota: null
+  overage: null
+  includes:
+  - SMB and NFS file shares
+  - UniFS global file system
+  - Unlimited immutable snapshots
+  - Disaster recovery
+  - Centralized management
+  - Unlimited edge caching VMs
+  - Encrypted data path
+  - Multi-site synchronization
+  - Analytics connector
+  - Object storage connectors
+  - Software updates and support
+  - Identity integration
+  - Audit trails
+  - API-ready platform
+- name: Nasuni Ransomware Protection Add-On
+  kind: add-on
+  price: null
+  price_published: false
+  billing_unit: fixed capacity tier/year
+  contract_term: 3 years
+  includes: [Edge detection, Mitigation policies, Targeted recovery, Incident reporting, SecOps tool integration]
+- name: Nasuni File IQ Premium Add-On
+  kind: add-on
+  price: null
+  price_published: false
+  billing_unit: fixed capacity tier/year
+  contract_term: 3 years
+  includes: [File usage visibility, Anomaly alerts, Advanced reporting, Cost optimization insights, 20+ dashboards]
+  note: >-
+    The File IQ Alert Webhook surface documented in asyncapi/ is a Premium feature of this add-on.
+- name: Nasuni Advanced Web Access Add-On
+  kind: add-on
+  price: null
+  price_published: false
+  billing_unit: per user/year
+  contract_term: 3 years
+  includes: [Web-based file access, Secure sharing, Policy controls, Real-time file access, Microsoft 365 integration]
+- name: Nasuni Multi-Site Collaboration Add-On
+  kind: add-on
+  price: null
+  price_published: false
+  billing_unit: fixed capacity tier/year
+  contract_term: 3 years
+  includes: [Global File Lock, Global File Acceleration]
+plan_count: 5

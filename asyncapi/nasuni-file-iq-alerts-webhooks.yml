@@ -1,0 +1,114 @@
+generated: '2026-08-26'
+method: searched
+source: https://docs.nasuni.com/docs/file-iq-webhooks (HTTP 200, fetched 2026-08-26)
+name: Nasuni File IQ Alert Webhooks
+type: Webhooks
+asyncapi_published: false
+note: >-
+  Nasuni publishes NO AsyncAPI document. It does publish a real, outbound webhook surface — File IQ
+  Alerting Webhooks, introduced in File IQ 10.2 — including a full JSON Schema (draft 2020-12) for
+  the custom-destination payload, which is saved verbatim at
+  json-schema/nasuni-file-iq-alert-webhook-payload.schema.json. This is an OUTBOUND-only surface:
+  File IQ pushes alerts to an endpoint the customer configures in the File IQ UI. There is no API
+  operation to register, list or delete a webhook subscription, so an agent cannot manage
+  subscriptions programmatically.
+availability:
+  feature: Nasuni File IQ Alerting Webhooks
+  tier: Premium (Nasuni File IQ Premium Add-On)
+  introduced: File IQ 10.2
+  configuration: File IQ UI -> Configuration -> Webhook Configuration
+  api_manageable: false
+transport:
+  protocol: HTTPS
+  direction: outbound (provider -> subscriber)
+  method: configurable per destination
+  content_type: application/json
+  tls: >-
+    A Server CA Certificate can be supplied so the webhook client establishes a trusted TLS
+    connection with the configured endpoint.
+  validation: "Validate Configuration checkbox validates the endpoint during save."
+security:
+  schemes:
+  - none
+  - basic
+  - authorization-header
+  note: >-
+    Subscriber-side authentication only — the destination tells File IQ how to authenticate to it.
+    There is no HMAC request signature, no timestamp header and no replay protection documented, so
+    a receiver cannot cryptographically verify that a payload came from Nasuni.
+destinations:
+- name: Slack
+  kind: prebuilt
+  format: Slack incoming-webhook message
+  docs: https://docs.slack.dev/messaging/sending-messages-using-incoming-webhooks/
+- name: Microsoft Teams
+  kind: prebuilt
+  format: Adaptive Card JSON
+  docs: https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook
+- name: Custom
+  kind: generic
+  format: Nasuni File IQ Alert Webhook Payload (JSON Schema draft 2020-12)
+  schema: json-schema/nasuni-file-iq-alert-webhook-payload.schema.json
+events:
+- name: alert.firing
+  description: An alert instance crossed its configured threshold.
+  status_field_value: firing
+- name: alert.resolved
+  description: A previously firing alert instance returned within threshold.
+  status_field_value: resolved
+- name: alert.repeat
+  description: >-
+    Re-notification of an unresolved alert after the configured "Repeat After" interval elapses.
+  note: Delivered as the same payload shape; distinguished by the Repeat After configuration, not by a distinct type field.
+payload:
+  schema_file: json-schema/nasuni-file-iq-alert-webhook-payload.schema.json
+  schema_version: '1.0'
+  required: [alert_name, alert_description, version, source_appliance, alerts, configuration]
+  fields:
+  - name: alert_name
+    type: string
+    description: The alert name.
+  - name: alert_description
+    type: string
+    description: The alert description.
+  - name: version
+    type: string
+    description: Schema version identifier for this payload (e.g. "1.0").
+  - name: source_appliance
+    type: object
+    description: Metadata about the originating File IQ appliance — description (required) and grafana_url (optional URI).
+  - name: alerts
+    type: array
+    description: >-
+      One or more alert instances from the same source. Each carries entity, name, value,
+      start_timestamp (RFC3339), end_timestamp (RFC3339 or null while active) and status
+      (firing | resolved).
+  - name: configuration
+    type: object
+    description: >-
+      How the alert is configured — parameter_friendly_name, description, value and optional unit.
+gaps:
+- No AsyncAPI document is published for this surface.
+- No subscription management API — webhooks are UI-configured only.
+- No signature or shared-secret verification for the receiver.
+- >-
+  The NMC and Portal APIs both expose a Notifications resource but only as a pollable REST
+  collection; there is no push/streaming channel for NMC or Portal events.
+related_event_surfaces:
+- name: AMQP audit destinations
+  api: Nasuni Management Console (NMC) API
+  operations:
+  - 'POST /filers/{filer_serial}/amqp-audit-destinations/'
+  - 'PATCH /filers/{filer_serial}/amqp-audit-destinations/{amqp_destination_name}'
+  - 'DELETE /filers/{filer_serial}/amqp-audit-destinations/{amqp_destination_name}'
+  description: >-
+    Manageable via the NMC API — configures AMQP destinations for file-system audit event
+    forwarding off the Edge Appliance. Introduced NMC 8.5. The message schema is not published.
+- name: Syslog forwarding
+  description: >-
+    Notifications and file-system audit events can be forwarded over syslog; nasuni-labs publishes
+    an Azure syslog proxy for Sentinel/Log Analytics ingestion.
+- name: Notifications (poll)
+  apis:
+  - 'NMC API: GET /notifications/'
+  - 'Portal API: GET /notifications'

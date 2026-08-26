@@ -1,0 +1,28 @@
+generated: '2026-08-26'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: www.nasuni.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct  4 19:33:03 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+- host: docs.api.nasuni.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct  3 16:59:36 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+- host: am1.portal.api.nasuni.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Feb 20 23:59:59 2027 GMT
+  hsts: null
+domains:
+- domain: nasuni.com
+  dnssec: true
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: quarantine

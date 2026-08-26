@@ -1,0 +1,3735 @@
+openapi: 3.0.3
+info:
+  title: Nasuni Management Console (NMC) API
+  description: A web-based API to monitor and configure the Nasuni service, emulating the Nasuni Management Console (NMC).
+  version: 1.0.0
+servers:
+- url: https://hostname/api/v1
+security:
+- AuthToken: []
+paths:
+  /auth/login/:
+    post:
+      tags:
+      - Auth
+      summary: Login
+      description: Authenticate a user's credentials to get an access token.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+        required: false
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission Denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security: []
+      x-codegen-request-body-name: body
+  /auth/logout/:
+    post:
+      tags:
+      - Auth
+      summary: Logout
+      description: De-authenticate user access token.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  logged_out:
+                    type: boolean
+                    description: If true, the user access token was successfully de-authenticated.
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /:
+    get:
+      tags:
+      - Index
+      summary: View top-level endpoints
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  auth:
+                    type: string
+                    description: A link to the authentication resource.
+                  volumes:
+                    type: string
+                    description: A link to the volumes resource.
+                  filers:
+                    type: string
+                    description: A link to the filers resource.
+                  messages:
+                    type: string
+                    description: A link to the messages resource.
+                  notifications:
+                    type: string
+                    description: A link to the notifications resource.
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /filers/:
+    get:
+      tags:
+      - Filers
+      summary: List all Filers
+      parameters:
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: OK - Return status and configuration for all managed Filers.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Filer'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    description: The reason why the agent couldn't be authorized.
+                    enum:
+                    - Authentication credentials were not provided.
+                    - Invalid token.
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /filers/{filer_serial}/:
+    get:
+      tags:
+      - Filers
+      summary: Get a Filer
+      parameters:
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK - Return status and configuration for the specified managed Filer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filer'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /filers/cifsclients/:
+    get:
+      tags:
+      - Filers
+      summary: Retrieve a list of all Filers, each with a list of CIFS clients connected to it.
+      parameters:
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: OK - Return a list of Filers with lists of their CIFS clients
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/FilerCIFSClients'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /filers/{filer_serial}/cifsclients/:
+    get:
+      tags:
+      - Filers
+      summary: Retrieve a Filer with a list of CIFS clients connected to it.
+      parameters:
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK - Return the specified Filer with a list of its CIFS clients
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilerCIFSClients'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /filers/cifslocks/:
+    get:
+      tags:
+      - Filers
+      summary: Retrieve a list of all Filers, each with a list of CIFS file locks that clients have on its shares.
+      parameters:
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: OK - Return a list of Filers with lists of their CIFS file locks
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/FilerCIFSLocks'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /filers/{filer_serial}/cifslocks/:
+    get:
+      tags:
+      - Filers
+      summary: Retrieve a Filer with a list of CIFS file locks that clients have on its shares.
+      parameters:
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK - Return the specified Filer with a list of its CIFS file locks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilerCIFSLocks'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /filers/ftpclients/:
+    get:
+      tags:
+      - Filers
+      summary: Retrieve a list of all Filers, each with a list of FTP clients connected to it.
+      parameters:
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: OK - Return a list of Filers with lists of their FTP clients
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/FilerFTPClients'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /filers/{filer_serial}/ftpclients/:
+    get:
+      tags:
+      - Filers
+      summary: Retrieve a Filer with a list of FTP clients connected to it.
+      parameters:
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK - Return the specified Filer with a list of its FTP clients
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilerFTPClients'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/:
+    get:
+      tags:
+      - Volumes
+      summary: List all volumes
+      parameters:
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Volume'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/:
+    get:
+      tags:
+      - Volumes
+      summary: Get a volume
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Volume'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filers/:
+    get:
+      tags:
+      - Volumes
+      summary: List filer specific settings of a volume.
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/VolumeFilerSetting'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filers/{filer_serial}/:
+    get:
+      tags:
+      - Volumes
+      summary: Get volume settings for a specific filer.
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolumeFilerSetting'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/filers/shares/:
+    get:
+      tags:
+      - Volumes
+      summary: List all shares across all volumes and filers.
+      parameters:
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Share'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filers/shares/:
+    get:
+      tags:
+      - Volumes
+      summary: List all shares of a volume.
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Share'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filers/{filer_serial}/shares/:
+    get:
+      tags:
+      - Volumes
+      summary: List all shares of a volume on a specific filer.
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Share'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filers/{filer_serial}/shares/{share_id}/:
+    get:
+      tags:
+      - Volumes
+      summary: Get a share
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      - name: share_id
+        in: path
+        description: Share object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Share'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/filers/exports/:
+    get:
+      tags:
+      - Volumes
+      summary: List all exports.
+      parameters:
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Export'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filers/exports/:
+    get:
+      tags:
+      - Volumes
+      summary: List all exports of a volume.
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Export'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filers/{filer_serial}/exports/:
+    get:
+      tags:
+      - Volumes
+      summary: List exports of a volume for a specific filer.
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Export'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filers/{filer_serial}/exports/{export_id}/:
+    get:
+      tags:
+      - Volumes
+      summary: Get an export
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      - name: export_id
+        in: path
+        description: Export object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Export'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/filers/ftp-directories/:
+    get:
+      tags:
+      - Volumes
+      summary: List all FTP directories.
+      parameters:
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/FtpDirectory'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filers/ftp-directories/:
+    get:
+      tags:
+      - Volumes
+      summary: List all FTP directories of a volume.
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/FtpDirectory'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filers/{filer_serial}/ftp-directories/:
+    get:
+      tags:
+      - Volumes
+      summary: List FTP directories of a volume for a specific filer.
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/FtpDirectory'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filers/{filer_serial}/ftp-directories/{ftpdir_id}/:
+    get:
+      tags:
+      - Volumes
+      summary: Get a FTP directory.
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      - name: ftpdir_id
+        in: path
+        description: FTP directory object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FtpDirectory'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/filer-connections/:
+    get:
+      tags:
+      - Volumes
+      summary: List all volume connections.
+      parameters:
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/VolumeConnection'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filer-connections/:
+    get:
+      tags:
+      - Volumes
+      summary: List all volume connections for a specific volume.
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/VolumeConnection'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filer-connections/{filer_serial}/:
+    get:
+      tags:
+      - Volumes
+      summary: Get a volume connection.
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolumeConnection'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/filers/antivirus-violations/:
+    get:
+      tags:
+      - Volumes
+      summary: List all antivirus violations.
+      parameters:
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/AntivirusViolation'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filers/antivirus-violations/:
+    get:
+      tags:
+      - Volumes
+      summary: List all antivirus violations of a volume.
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/AntivirusViolation'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filers/{filer_serial}/antivirus-violations/:
+    get:
+      tags:
+      - Volumes
+      summary: List antivirus violations of a volume for a specific filer.
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/AntivirusViolation'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /volumes/{volume_guid}/filers/{filer_serial}/antivirus-violations/{antivirus_id}/:
+    get:
+      tags:
+      - Volumes
+      summary: Get an antivirus violation.
+      parameters:
+      - name: volume_guid
+        in: path
+        description: Volume identifier
+        required: true
+        schema:
+          type: string
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      - name: antivirus_id
+        in: path
+        description: Antivirus violation object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AntivirusViolation'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /notifications/:
+    get:
+      tags:
+      - Notifications
+      summary: List all notifications
+      parameters:
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Notification'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /notifications/{notification_id}/:
+    get:
+      tags:
+      - Notifications
+      summary: Get a notification
+      parameters:
+      - name: notification_id
+        in: path
+        description: Notification object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /messages/:
+    get:
+      tags:
+      - Messages
+      summary: List all messages
+      parameters:
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Message'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /messages/{message_id}/:
+    get:
+      tags:
+      - Messages
+      summary: Get a message
+      parameters:
+      - name: message_id
+        in: path
+        description: Message object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '303':
+          description: See Other
+          headers:
+            Location:
+              description: A link to the affected setting where the browser should redirect.
+              schema:
+                type: string
+          content: {}
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+      - Messages
+      description: Clear a failed or synced message
+      parameters:
+      - name: message_id
+        in: path
+        description: Message object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No Content
+          content: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    AuthToken:
+      type: object
+      properties:
+        token:
+          type: string
+        expires:
+          type: string
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+    Export:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Export identifier
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+        volume_guid:
+          type: string
+          description: Unique identifier for the associated volume.
+        name:
+          type: string
+          description: Name of the export.
+        path:
+          type: string
+          description: Path of the exported directory.
+        comment:
+          type: string
+          description: Any comments regarding the export.
+        readonly:
+          $ref: '#/components/schemas/ExportReadOnlyField'
+        hostspec:
+          $ref: '#/components/schemas/ExportHostSpecField'
+        access_mode:
+          $ref: '#/components/schemas/ExportAccessModeField'
+        perf_mode:
+          $ref: '#/components/schemas/ExportPerfModeField'
+        sec_options:
+          $ref: '#/components/schemas/ExportSecOptionsField'
+        nfs_host_options:
+          type: array
+          description: List of NFS Export Host options
+          items:
+            type: object
+            properties:
+              hostspec:
+                $ref: '#/components/schemas/ExportHostSpecField'
+              readonly:
+                $ref: '#/components/schemas/ExportReadOnlyField'
+              access_mode:
+                $ref: '#/components/schemas/ExportAccessModeField'
+              perf_mode:
+                $ref: '#/components/schemas/ExportPerfModeField'
+              sec_options:
+                $ref: '#/components/schemas/ExportSecOptionsField'
+            description: Host specific options for the exported directory.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+            volume:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: Export object
+    FilerFTPClients:
+      type: object
+      properties:
+        serial_number:
+          type: string
+          description: Serial number of the Filer.
+        description:
+          type: string
+          description: The Filer's description.
+        ftp_clients:
+          type: array
+          items:
+            type: object
+            properties:
+              user:
+                type: string
+                description: The username of the connected client.
+              client:
+                type: string
+                description: The IP Address of the client machine.
+              protocol:
+                type: string
+                description: The connection's protocol.
+                enum:
+                - ftp
+                - sftp
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: A description of a Filer's connected FTP clients.
+    FtpDirectory:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: FTP directory identifier.
+        name:
+          type: string
+          description: Name of the FTP directory.
+        path:
+          type: string
+          description: Path of the FTP directory.
+        comment:
+          type: string
+          description: Any comments regarding the FTP directory.
+        readonly:
+          type: boolean
+          description: If true, users cannot change the contents of the directory.
+        visibility:
+          type: string
+          description: 'Controls what files and directories users can see.
+
+            * "default" - Every file is visible to user, even if user does not have access permissions. * "hide" - Users only
+            see files they have permission to access. * "invisible" - No files are visible to user. If user has filename and
+            permission, user can access file.'
+          enum:
+          - default
+          - hide
+          - invisible
+        allow_from:
+          type: string
+          description: 'Comma-separated list of IP addresses or subnet addresses of hosts
+
+            allowed to access FTP directory. If blank, all hosts on your
+
+            network have access. This feature cannot be used in conjunction
+
+            with Users/Groups restrictions.
+
+            '
+        allow_users:
+          type: string
+          description: The users that will be allowed to access the FTP directory.
+        allow_groups:
+          type: string
+          description: The groups that will be allowed to access the FTP directory.
+        anonymous:
+          type: boolean
+          description: If true, allow anonymous FTP access.
+        anonymous_only:
+          type: boolean
+          description: 'If true, only the anonymous user will be granted access. This feature
+
+            cannot be used in conjunction with IP address restrictions.
+
+            '
+        umask:
+          type: string
+          description: 'Normally, newly created files and directories have read and write
+
+            access for the owner, groups and other users. This option allows
+
+            you to restrict read and write access for groups or others.
+
+
+            * ''000'' - No Extra Restrictions (Default)
+
+            * ''002'' - Read-Only Others
+
+            * ''022'' - Read-Only Groups and Others
+
+            * ''006'' - Restrict Others
+
+            * ''066'' - Restrict Groups and Others
+
+            * ''026'' - Read-Only Groups, Restrict Others
+
+            '
+          enum:
+          - '000'
+          - '002'
+          - '022'
+          - '006'
+          - '066'
+          - '026'
+        hide_ownership:
+          type: boolean
+          description: 'All directory listings will show owner and group information as "ftp",
+
+            hiding the underlying owner and group. This may also be used to work
+
+            around directory listing issues on some non-interactive clients.
+
+            '
+        hidden_stores:
+          type: boolean
+          description: 'File uploads are done in two steps using a temporary file. This prevents
+
+            issues with incomplete uploads and file use before upload is complete.
+
+            This feature prevents resuming uploads. This is automatically enabled for
+
+            anonymous uploads.
+
+            '
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+        volume_guid:
+          type: string
+          description: Unique identifier for the associated volume.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+            volume:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: FTP directory object
+    AntivirusViolation:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Antivirus violation identifier
+        fpath:
+          type: string
+          description: The file path of the infected source file.
+        vname:
+          type: string
+          description: The name of the virus.
+        volume_uri:
+          type: string
+          description: The URI of the file, including the associated volume identifier.
+        seqno:
+          type: integer
+          description: Sequence number of the violation.
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+        volume_guid:
+          type: string
+          description: Unique identifier for the associated volume.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+            volume:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: Antivirus violation object
+    FieldError:
+      type: object
+      properties:
+        field:
+          type: string
+          description: The field to which the validation error applies, or "__all__" if it is a non-field error.
+        errors:
+          type: array
+          items:
+            type: string
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+        method:
+          type: string
+          description: HTTP method to use on the link.
+    Filer:
+      type: object
+      properties:
+        build:
+          type: string
+          description: Current version and build number of the Filer's software.
+        description:
+          type: string
+          description: The Filer's description.
+        guid:
+          type: string
+          description: Unique identifier of the Filer instance.
+        management_state:
+          type: string
+          description: 'Current NMC Management state of the Filer. Possible values:
+
+
+            * ''self'' - Filer is NOT managed by NMC.
+
+            * ''nmc'' -  Filer is managed by NMC.
+
+            * ''pending_self'' - Filer is pending self management.
+
+            * ''pending_nmc'' - Filer is pending NMC management.
+
+            '
+          enum:
+          - self
+          - nmc
+          - pending_self
+          - pending_nmc
+        serial_number:
+          type: string
+          description: Serial number of the Filer.
+        settings:
+          type: object
+          properties:
+            alert_thresholds:
+              type: object
+              properties:
+                cpu_alert_settings:
+                  type: object
+                  properties:
+                    cpu_enabled:
+                      type: boolean
+                      description: If true, will enable alerts for CPU usage.
+                    cpu_threshold:
+                      type: integer
+                      description: Percentage of CPU usage that can trigger an alert.
+                    cpu_duration:
+                      type: integer
+                      description: Time in minutes that the system will allow CPU usage over the cpu_threshold before trigging
+                        an alert.
+                  description: Configuration values for alerting on Filer CPU usage.
+                memory_alert_settings:
+                  type: object
+                  properties:
+                    memory_enabled:
+                      type: boolean
+                      description: If true, will enable alerts for memory usage.
+                    memory_threshold:
+                      type: integer
+                      description: Percentage of memory usage that can trigger and alert.
+                    memory_duration:
+                      type: integer
+                      description: Time in minutes that the system will allow memory usage over the memory_threshold before
+                        trigging an alert.
+                  description: Configuration values for alerting on Filer memory usage.
+                snapshot_alert_settings:
+                  type: object
+                  properties:
+                    snapshot_enabled:
+                      type: boolean
+                      description: If true, will enable alerts for snapshots.
+                    snapshot_duration:
+                      type: integer
+                      description: Time in hours to trigger an alert if a snapshot has not completed.
+                  description: Configuration values for alerting on Snapshots.
+              description: Filer system alert configuration.
+            autoupdate:
+              $ref: '#/components/schemas/FilerConfigurationAutoupdate'
+            cache_reserved:
+              type: object
+              properties:
+                reserved:
+                  type: string
+                  description: Set the percentage of the cache reserved for new, incoming data. A string representing a multiple-of-five
+                    integer between 5-90, or the string "unset" if the Filer automatically manages this.
+                  enum:
+                  - unset
+                  - '5'
+                  - '10'
+                  - '15'
+                  - '20'
+                  - '25'
+                  - '30'
+                  - '35'
+                  - '40'
+                  - '45'
+                  - '50'
+                  - '55'
+                  - '60'
+                  - '65'
+                  - '70'
+                  - '75'
+                  - '80'
+                  - '85'
+                  - '90'
+                maxv:
+                  type: integer
+                  description: Read only. Maximum percentage of the cache reserved for new, incoming data.
+                minv:
+                  type: integer
+                  description: Read only. Minimum percentage of the cache reserved for new, incoming data.
+            cifs:
+              $ref: '#/components/schemas/FilerConfigurationCIFS'
+            ftp:
+              $ref: '#/components/schemas/FilerConfigurationFTP'
+            gl_settings:
+              type: object
+              properties:
+                degrade_to_read_locks:
+                  type: boolean
+                  description: Set whether or not to degrade all locks to read locks. Enabling this feature will cause all
+                    locks that are not read locks to be denied. This feature should only be enabled if the lock server is
+                    not available for an extended period of time. This feature effectively makes any directories with global
+                    locks enabled read only.
+              description: Settings that control certain aspects of Global Locking.
+            mobile_service:
+              $ref: '#/components/schemas/FilerServicesMobile'
+            qos:
+              type: object
+              properties:
+                rules:
+                  type: array
+                  description: QoS rules
+                  items:
+                    type: object
+                    properties:
+                      days:
+                        type: object
+                        properties:
+                          mon:
+                            type: boolean
+                          tue:
+                            type: boolean
+                          wed:
+                            type: boolean
+                          thu:
+                            type: boolean
+                          fri:
+                            type: boolean
+                          sat:
+                            type: boolean
+                          sun:
+                            type: boolean
+                        description: Days of the week to apply the QoS rule.
+                      start:
+                        type: integer
+                        description: Hour of the day (0-23) to start applying the QoS rule.
+                      stop:
+                        type: integer
+                        description: Hour of the day (0-23) to stop applying the QoS rule.
+                      limit:
+                        type: integer
+                        description: The maximum outbound data rate in bytes. Specify zero for no limit.
+                      ingress_limit:
+                        type: integer
+                        description: The maximum inbound data rate in bytes. Specify zero for no limit.
+              description: Quality of Service configuration.
+            quota_report_schedule:
+              $ref: '#/components/schemas/FilerConfigurationQuotaReportSchedule'
+            remote_support:
+              $ref: '#/components/schemas/FilerServicesSupport'
+            snmp:
+              type: object
+              properties:
+                v2_enabled:
+                  type: boolean
+                  description: If true, will enable v1,v2c support.
+                v2_community:
+                  type: string
+                  description: 'SNMP Community name (ex: ''public'').
+
+                    '
+                v3_enabled:
+                  type: boolean
+                  description: If true, will enable v3 support.
+                v3_username:
+                  type: string
+                  description: Username for SNMP v3 authentication.
+                v3_password:
+                  type: string
+                  description: Password for SNMP v3 authentication. SHA authentication and optional privileged security using
+                    AES encryption are used to communicate to the SNMP agent. Will display a masked value of '*****' if a
+                    password exists, otherwise will be blank.
+                sys_location:
+                  type: string
+                  description: 'SNMP System Location (ex: ''Boston Colo - Rack 1'').
+
+                    '
+                sys_contact:
+                  type: string
+                  description: 'SNMP system contact (ex: ''Support <support@example.com>'').
+
+                    '
+                trap_ips:
+                  type: array
+                  description: List of IPs or hostnames listening for SNMP traps. Leave blank if you wish not to listen for
+                    SNMP traps. Traps will be sent using SNMP v3 settings above and the Filer's unique engine id.
+                  items:
+                    type: string
+                    description: IPs or hostnames listening for SNMP traps.
+              description: Filer SNMP Settings
+            time:
+              type: object
+              properties:
+                ntpservers:
+                  type: array
+                  items:
+                    type: string
+                    description: A host running the Network Time Protocol (NTP).
+                timezone:
+                  type: string
+                  description: Timezone of the Filer.
+                current_time_utc:
+                  type: string
+                  description: Current time reported by the Filer. Last report time will only be updated periodically unless
+                    manually refreshed.
+              description: Filer Time Configuration
+          description: Settings that are associated with this Filer.
+        status:
+          type: object
+          properties:
+            offline:
+              type: boolean
+              description: If true, the Filer has not reported back to the NMC within the last hour.
+            osversion:
+              type: string
+              description: The version of the Operating System running on this filer.
+            platform:
+              $ref: '#/components/schemas/FilerPlatform'
+            updates:
+              type: object
+              properties:
+                updates_available:
+                  type: boolean
+                  description: Indicates whether or not there are software updates available for the Filer.
+                current_version:
+                  type: string
+                  description: The current version of the software running on this Filer.
+                new_version:
+                  type: string
+                  description: If an update is available, this indicates the new version of the software which will be installed.
+              description: Information about the current software version and the availability of updates.
+            uptime:
+              type: integer
+              description: Uptime of this Filer, in seconds.
+          description: Filer status.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            cifsclients:
+              $ref: '#/components/schemas/Link'
+            cifslocks:
+              $ref: '#/components/schemas/Link'
+            ftpclients:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: Complete Filer object with all associated settings and statuses.
+    FilerCIFSClients:
+      type: object
+      properties:
+        serial_number:
+          type: string
+          description: Serial number of the Filer.
+        description:
+          type: string
+          description: The Filer's description.
+        cifs_clients:
+          type: array
+          items:
+            type: object
+            properties:
+              share:
+                type: string
+                description: The name of the CIFS share that the client is connected to.
+              user:
+                type: string
+                description: The username of the connected client.
+              client:
+                type: string
+                description: The IP Address of the client machine.
+              client_name:
+                type: string
+                description: The hostname of the connected client.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: A description of a Filer's connected CIFS clients.
+    FilerCIFSLocks:
+      type: object
+      properties:
+        serial_number:
+          type: string
+          description: Serial number of the Filer.
+        description:
+          type: string
+          description: The Filer's description.
+        cifs_locks:
+          type: array
+          items:
+            type: object
+            properties:
+              share:
+                type: string
+                description: The name of the CIFS share that this file lock is on.
+              file_path:
+                type: string
+                description: The path to the locked file.
+              type:
+                type: string
+                description: The type of lock.
+              user:
+                type: string
+                description: The username of the connected client.
+              client:
+                type: string
+                description: The IP Address of the client machine.
+              client_name:
+                type: string
+                description: The hostname of the connected client.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: A description of the CIFS File Locks that CIFS clients have on this Filer's shares.
+    FilerConfigurationAutoupdate:
+      type: object
+      properties:
+        hour:
+          type: integer
+          description: Hour of the day to perform automatic updates. An integer between 0 and 23, with 0 = '12 AM', 1 = '1
+            AM', ... 23 = '11 PM'.
+        sun:
+          type: boolean
+          description: Whether the Filer runs automatic updates on Sunday.
+        mon:
+          type: boolean
+          description: Whether the Filer runs automatic updates on Monday.
+        tue:
+          type: boolean
+          description: Whether the Filer runs automatic updates on Tuesday.
+        wed:
+          type: boolean
+          description: Whether the Filer runs automatic updates on Wednesday.
+        thu:
+          type: boolean
+          description: Whether the Filer runs automatic updates on Thursday.
+        fri:
+          type: boolean
+          description: Whether the Filer runs automatic updates on Friday.
+        sat:
+          type: boolean
+          description: Whether the Filer runs automatic updates on Saturday.
+    FilerConfigurationCIFS:
+      type: object
+      properties:
+        aio_support:
+          type: boolean
+          description: Read only. Indicates whether Async IO is supported.
+        deny_access:
+          type: boolean
+          description: Read only. Indicates whether denying a user access to a share is supported
+        fruit_support:
+          type: boolean
+          description: Read only. Indicates whether Mac OS X Extensions are available.
+        proto_level:
+          type: string
+          description: 'Read only. Indicates the CIFS protocol level of the Filer.
+
+
+            * *SMB3* -- CIFS & SMB3 support.
+
+            * *SMB2* -- CIFS & SMB2 support.
+
+            * '''' -- CIFS support.
+
+            '
+          enum:
+          - SMB3
+          - SMB2
+          - ''
+        restrict_anonymous:
+          type: boolean
+          description: Set whether to restrict anonymous user access.
+        roundup_size:
+          type: string
+          description: 'Set the Allocation roundup size.
+
+            This rounds the file size on disk reported to clients. Disabled by
+
+            default, this should only be enabled when the system is being
+
+            accessed by older SMBv1 clients; otherwise, there may be a
+
+            performance impact.
+
+            May also affect file size reporting on some platforms.
+
+
+            * `` - Allocation roundup size is 1 MiB (default value for Filers older than version 9.0).
+
+            * `0` - Allocation roundup is disabled (default value for Filers version 9.0 and newer).
+
+            * `1048576` - Allocation roundup size is 1 MiB.
+
+            '
+        smb3:
+          type: boolean
+          description: Read only. Indicates whether SMB3 is supported.
+        smb_encrypt:
+          type: boolean
+          description: Read only. Indicates whether SMB Encryption is supported.
+        unix_ext:
+          type: boolean
+          description: Set whether Enhanced Support for POSIX clients is enabled.
+        veto_files:
+          type: boolean
+          description: Read only. Indicates whether blocking files is supported. This can be configured through Shares settings.
+    FilerConfigurationFTP:
+      type: object
+      properties:
+        masq_address:
+          type: string
+          description: Set the Masquerade address. This IP address is presented to the client instead of the local server's
+            IP.
+        idle_timeout:
+          type: integer
+          description: Set the amount of time (in seconds) that a user can stay connected while idle before being disconnected.
+        anon_user:
+          type: string
+          description: 'Set the username a user must log in with in order to access FTP directories anonymously. This field
+            is case sensitive. (default: anonymous)'
+        anon_group:
+          type: string
+          description: 'Set the Group assigned to the Anonymous User for file permissions. Note: This does not give all members
+            of this group anonymous access. (default: anonymous)'
+        protocols:
+          type: array
+          description: Read only. List of FTP protocols supported by the Filer.
+          items:
+            type: string
+    FilerConfigurationQuotaReportSchedule:
+      type: object
+      properties:
+        schedules:
+          type: array
+          items:
+            type: object
+            properties:
+              days:
+                type: object
+                properties:
+                  sun:
+                    type: boolean
+                    description: Whether the Filer runs automatic updates on Sunday.
+                  mon:
+                    type: boolean
+                    description: Whether the Filer runs automatic updates on Monday.
+                  tue:
+                    type: boolean
+                    description: Whether the Filer runs automatic updates on Tuesday.
+                  wed:
+                    type: boolean
+                    description: Whether the Filer runs automatic updates on Wednesday.
+                  thu:
+                    type: boolean
+                    description: Whether the Filer runs automatic updates on Thursday.
+                  fri:
+                    type: boolean
+                    description: Whether the Filer runs automatic updates on Friday.
+                  sat:
+                    type: boolean
+                    description: Whether the Filer runs automatic updates on Saturday.
+                description: Set the days of the week on which the reports should be generated, at the hour specified in "activation_hour".
+              activation_hour:
+                type: integer
+                description: Hour of the day to generate and send the quota report. An integer between 0 and 23, with 0 =
+                  '12 AM', 1 = '1 AM', ... 23 = '11 PM'.
+              admin_report:
+                type: boolean
+                description: Set whether to generate the administrative report. This reports on all Directory Quota Violations,
+                  and is sent to the addresses set to receive email in Email Settings and Configurations.
+              user_report:
+                type: boolean
+                description: Set whether to generate the user report. This reports on individual Directory Quota Violations
+                  and will be sent to the address specifed in the Quota or the owner of the directory, if available (CIFS/AD
+                  mode only).
+              threshold:
+                type: integer
+                description: Report on Quotas where the usage is at or above the specified percent of the limit.
+    FilerPlatform:
+      type: object
+      properties:
+        platform_name:
+          type: string
+          description: A description of the hardware platform this Filer runs on.
+        cpu:
+          type: object
+          properties:
+            model:
+              type: string
+              description: Human-readable description of the CPU model.
+            frequency:
+              type: number
+              description: CPU Frequency in MHz.
+            sockets:
+              type: integer
+              description: Number of CPU sockets currently used on this Filer's platform.
+            cores:
+              type: integer
+              description: Total number of CPU cores across all CPUs.
+        memory:
+          type: string
+          description: A string representing an integer. The size in megabytes of the Filer's memory.
+        cache_status:
+          type: object
+          properties:
+            size:
+              type: integer
+              description: The size in bytes of the Filer's cache.
+            used:
+              type: integer
+              description: The amount in bytes of the Filer's cache currently in use.
+            dirty:
+              type: integer
+              description: The amount of data in bytes belonging to files currently marked as needing to be written to storage
+                or re-read into the cache.
+            free:
+              type: integer
+              description: The amount in bytes of the Filer's cache currently available.
+            percent_used:
+              type: number
+              description: The percentage of the cache currently in use, i.e. used/size.
+      description: Information about a Filer's platform, including hardware type and information about CPU, Memory, and cache.
+    FilerServicesMobile:
+      type: object
+      properties:
+        limit_single_device:
+          type: boolean
+          description: Set whether to restrict users to using a single mobile device. If true, each user account can only
+            have one mobile device associated with it which is allowed to connect to Mobile Service. If false, each user account
+            can have any number of mobile devices registered.
+        additional_api_port:
+          type: integer
+          description: If set, allow access to Mobile service on the specified port. Set to a valid port number 1-65535. Set
+            to null to disable.
+        session_expiration_time:
+          type: integer
+          description: If set, users must reauthenticate after their session has expired. Enter a value in hours. If set to
+            0, the sessions never expire.
+        allowed_devices:
+          type: array
+          items:
+            type: string
+            enum:
+            - OSX
+            - WINDOWS
+            - IOS
+            - LINUX
+            - ANDROID
+    FilerServicesSupport:
+      type: object
+      properties:
+        connected:
+          type: boolean
+          description: Read only. Indicates if Nasuni Support is currently connected for Remote Support.
+        enabled:
+          type: boolean
+          description: Enable or disable Remote Support.
+        running:
+          type: boolean
+          description: ''
+        timeout:
+          type: integer
+          description: Set the timeout in seconds after which Remote Support is automatically disabled.
+      description: Enable or disable Remote Support, set the timeout before it is automatically disabled, and report if there
+        is an active connection from Nasuni Support.
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the message.
+        filer_serial_number:
+          type: string
+          description: Identifier to the Filer the message is associated with.
+        description:
+          type: string
+          description: Description of the intent of message.
+        code:
+          type: string
+          description: A code identifying the intent of the message.
+        status:
+          type: string
+          description: 'Current status of the message.
+
+            * ''synced'' - Message has been received by the Filer, and the Filer returned a success response. * ''pending''
+            - Message is currently in transit. * ''failure'' - Messages has been received by the Filer, but returned an error
+            response.'
+          enum:
+          - synced
+          - pending
+          - failure
+        send_time:
+          type: string
+          description: Time the message was sent.
+        expiration_time:
+          type: string
+          description: Time a synced message will expire and be removed from the messages list.
+        response_time:
+          type: string
+          description: Time a message response was received.
+        initiated_by:
+          type: string
+          description: The username of the user who triggered the message, or '[console]' if triggered by the NMC itself.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+            acknowledge:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+        error:
+          $ref: '#/components/schemas/Error'
+      description: The message object is used to track an action that we want the Filer to perform.
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Notification identifier.
+        date:
+          type: string
+          description: The date the notification was triggered.
+        priority:
+          type: string
+          description: The priority level of the notification.
+          enum:
+          - noop
+          - alert
+          - admin
+          - error
+          - warning
+          - info
+        name:
+          type: string
+          description: 'A name describing the type of notification. Notifications registered to pre-7.11
+
+            filers will be coded as "UNKNOWN".
+
+            '
+        message:
+          type: string
+          description: The notification message body.
+        group:
+          type: string
+          description: The group (category) the notification belongs to.
+        acknowledged:
+          type: boolean
+          description: A flag indicating whether the notification has been acknowledged.
+        sticky:
+          type: boolean
+          description: A flag indicating whether the notification is transient in the application UI.
+        urgent:
+          type: boolean
+          description: A flag indicating whether the notification is urgent.
+        remoteid:
+          type: string
+          description: The remote notification ID (if filer is not null).
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: Representation of a Notification object.
+    Paging:
+      type: object
+      properties:
+        href:
+          type: string
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type: string
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type: string
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size
+        of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
+    Share:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Share identifier.
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+        volume_guid:
+          type: string
+          description: Unique identifier for the associated volume.
+        name:
+          type: string
+          description: The name of the CIFS share.
+        path:
+          type: string
+          description: Path of the share.
+        comment:
+          type: string
+          description: Any comments regarding the share.
+        readonly:
+          type: boolean
+          description: If enabled, users can not change the contents of the share.
+        browseable:
+          type: boolean
+          description: If enabled, this share will appear when browsing.
+        hosts_allow:
+          type: string
+          description: Hosts allowed to access the share. IP addresses or IP address/netmask values separated by spaces. Blank
+            allows all hosts
+        hide_unreadable:
+          type: boolean
+          description: Files and folders that the user cannot access do not appear in folder listings.
+        enable_previous_vers:
+          type: boolean
+          description: Allow users to view and restore files using the Previous Versions tab in Windows
+        case_sensitive:
+          type: boolean
+          description: Files and folders are considered different if the case of letters in the name differs. (Enabling case
+            sensitivity aids performance)
+        enable_snapshot_dirs:
+          type: boolean
+          description: Allows clients to access the hidden snapshot directories, showing previous versions of the file system
+            (requires enabling Snapshot Directory Access for the volume).
+        homedir_support:
+          type: integer
+          description: 'When enabled, the target folder path for the share is automatically
+
+            appended with a folder named for the user. Possible values:
+
+
+            * 0 - Disable
+
+            * 2 - Enable
+
+            '
+        mobile:
+          type: boolean
+          description: Enable desktop and/or mobile device support
+        browser_access:
+          type: boolean
+          description: Enable web access
+        browser_access_settings:
+          type: object
+          properties:
+            shared_links_enabled:
+              type: boolean
+              description: Allow creating shared links to Web Access.
+            link_force_password:
+              type: boolean
+              description: Require passwords for all shared links.
+            link_allow_rw:
+              type: boolean
+              description: Allow the user to create writable shared links to directories.
+            external_share_url:
+              type: string
+              description: External hostname for shared links.
+            link_expire_limit:
+              type: integer
+            link_auth:
+              type: object
+              properties:
+                authall:
+                  type: boolean
+                  description: 'When true, all users will be allowed to create shared links.
+
+                    When false, no user will have access to the shared links until a user,
+
+                    or a group the user is a member of, is specified.
+
+                    '
+                allow_groups_ro:
+                  type: array
+                  description: Groups with read-only access to shared links.
+                  items:
+                    $ref: '#/components/schemas/GroupNameField'
+                allow_groups_rw:
+                  type: array
+                  description: Groups with read-write access to shared links.
+                  items:
+                    $ref: '#/components/schemas/GroupNameField'
+                deny_groups:
+                  type: array
+                  description: Groups denied access to shared links.
+                  items:
+                    $ref: '#/components/schemas/GroupNameField'
+                allow_users_ro:
+                  type: array
+                  description: Users with read-only access to shared links.
+                  items:
+                    $ref: '#/components/schemas/UserNameField'
+                allow_users_rw:
+                  type: array
+                  description: Users with read-write access to shared links.
+                  items:
+                    $ref: '#/components/schemas/UserNameField'
+                deny_users:
+                  type: array
+                  description: Users denied access to shared links.
+                  items:
+                    $ref: '#/components/schemas/UserNameField'
+              description: Shared link authentication settings.
+          description: Settings that can be applied to web access.
+        aio_enabled:
+          type: boolean
+          description: Asynchronous I/O. Enable concurrent read/write access per client connection.
+        veto_files:
+          type: string
+          description: 'Block files. Specify file or directory name patterns that the share will make both
+
+            invisible and inaccessible. Enter one pattern per line.
+
+            The wildcard characters ''*'' and ''?'' may be used to specify multiple files
+
+            or directories. The ''/'' character is not valid. Note: This feature can break compatibility with some clients.
+
+            '
+        fruit_enabled:
+          type: boolean
+          description: Enhances share behavior, including SMB2 protocol support, for Mac OS X Clients when possible.
+        smb_encrypt:
+          type: string
+          description: Control if clients are desired or required to use SMB encryption when connecting to the share. Includes
+            SMB3 encryption for Windows clients. Empty string indicates that client usage of encryption is optional.
+          enum:
+          - ''
+          - desired
+          - required
+        auth:
+          type: object
+          properties:
+            authall:
+              type: boolean
+              description: 'When true, all Users can authenticate. When false, only specific
+
+                Groups and Users can authenticate. In this situation, no user will
+
+                have access to the share until a user, or a group the user is a member of, is specified.
+
+                '
+            rw_groups:
+              type: array
+              description: Groups with read-write access to the share.
+              items:
+                $ref: '#/components/schemas/GroupNameField'
+            ro_groups:
+              type: array
+              description: Groups with read-only access to the share.
+              items:
+                $ref: '#/components/schemas/GroupNameField'
+            deny_groups:
+              type: array
+              description: Groups to deny access to the share.
+              items:
+                $ref: '#/components/schemas/GroupNameField'
+            ro_users:
+              type: array
+              description: Users with read-only access to the share.
+              items:
+                $ref: '#/components/schemas/UserNameField'
+            rw_users:
+              type: array
+              description: Users with read-write access to the share.
+              items:
+                $ref: '#/components/schemas/UserNameField'
+            deny_users:
+              type: array
+              description: Users to deny access to the share.
+              items:
+                $ref: '#/components/schemas/UserNameField'
+          description: Share authentication settings.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+            volume:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: CIFS Share
+    ValidationError:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldError'
+    Volume:
+      type: object
+      properties:
+        guid:
+          type: string
+          description: Volume identifier.
+        filer_serial_number:
+          type: string
+          description: Identifier to the Filer the volume was created on.
+        name:
+          type: string
+          description: The name of the volume.
+        nmc_managed:
+          type: boolean
+          description: Indicates if the volume is fully managed by the NMC.
+        protocols:
+          type: object
+          properties:
+            permissions_policy:
+              type: string
+              description: 'Permission policy of the volume. Possible values:
+
+
+                * ''NTFS60'' - NTFS Compatible Mode
+
+                * ''NTFSONLY710'' - NTFS Exclusive Mode
+
+                * ''POSIX60'' - POSIX Mixed Mode
+
+                * ''MODEBITS60'' - UNIX/NFS Permissions Only Mode
+
+                * ''PUBLICMODE60'' - Unauthenticated Access Mode
+
+                '
+              enum:
+              - NTFS60
+              - NTFSONLY710
+              - POSIX60
+              - MODEBITS60
+              - PUBLICMODE60
+            protocols:
+              type: array
+              items:
+                type: string
+                description: Protocols enabled on the volume.
+                enum:
+                - CIFS
+                - NFS
+                - FTP
+          description: Volume protocol settings.
+        antivirus_service:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            days:
+              type: object
+              properties:
+                sun:
+                  type: boolean
+                mon:
+                  type: boolean
+                tue:
+                  type: boolean
+                wed:
+                  type: boolean
+                thu:
+                  type: boolean
+                fri:
+                  type: boolean
+                sat:
+                  type: boolean
+              description: Days of the week the antivirus service will run.
+            check_files_immediately:
+              type: boolean
+              description: If true, files will be checked as they are written (CIFS volumes only).
+            allday:
+              type: boolean
+              description: If true, the antivirus service will run all day.
+            start:
+              type: integer
+              description: Hour of the day to start the antivirus service. An integer between 0 and 23, with 0 = '12 AM',
+                1 = '1 AM', ... 23 = '11 PM'.
+            stop:
+              type: integer
+              description: Hour of the day to stop the antivirus service. An integer between 0 and 23, with 0 = '12 AM', 1
+                = '1 AM', ... 23 = '11 PM'.
+            frequency:
+              type: integer
+              description: Frequency the service will run (minutes).
+          description: Volume Antivirus Service settings
+        remote_access:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              description: If true, remote access is enabled for the volume.
+            access_permissions:
+              type: string
+              description: 'The remote access permission for this volume applies to all other Nasuni Filers on your account.
+
+                A value of ''custom'' allows providing access permissions per Nasuni Filer (see ''filer_access'' property).
+
+                '
+              enum:
+              - readonly
+              - readwrite
+              - custom
+            filer_access:
+              type: array
+              items:
+                type: object
+                properties:
+                  filer_guid:
+                    type: string
+                    description: Filer identifier
+                  permission:
+                    type: string
+                    description: Access permission for the Filer.
+                    enum:
+                    - disabled
+                    - readonly
+                    - readwrite
+                description: Apply volume remote access permissions for an individual Filer.
+          description: Volume remote access settings
+        quota:
+          type: integer
+          description: Maximum volume capacity in gigabytes. Set to 0 for unlimited. Quotas are applied after each successful
+            snapshot.
+        case_sensitive:
+          type: boolean
+          description: If true, the volume is case-sensitive. CIFS-only volumes perform better when volume is case-insensitive
+            (value of false).
+        snapshot_retention:
+          type: object
+          properties:
+            retain:
+              type: string
+              description: 'Type of snapshot retention imposed. Possible values:
+
+
+                * ''INFINITE'' - All snapshots
+
+                * ''BY_COUNT'' - Set number of snapshots
+
+                * ''BY_AGE'' - Snapshots within a range
+
+                '
+              enum:
+              - INFINITE
+              - BY_COUNT
+              - BY_AGE
+            number:
+              type: integer
+              description: Number of snapshots to retain.
+            years:
+              type: integer
+              description: Years to retain snapshots.
+            months:
+              type: integer
+              description: Months to retain snapshots.
+            days:
+              type: integer
+              description: Days to retain snapshots.
+          description: Volume snapshot retention
+        cloud_io:
+          type: object
+          properties:
+            dedupe:
+              type: boolean
+              description: If true, deduplication is enabled. Deduplication is a data compression technique for eliminating
+                duplicate copies of repeating data.
+            compression:
+              type: boolean
+              description: If true, compression (via zlib) is enabled.
+            chunk_size:
+              type: integer
+              description: Chunk size in bytes for cloud I/O. Value of zero means the default value will be used.
+          description: Volume Cloud I/O settings.
+        provider:
+          type: object
+          properties:
+            cred_id:
+              type: string
+              description: Credential identifier.
+            name:
+              type: string
+              description: Full name of the cloud provider.
+            shortname:
+              type: string
+              description: Shortname (code) of the cloud provider.
+            location:
+              type: string
+              description: Location/region the volume was created in.
+        auth:
+          type: object
+          properties:
+            authenticated_access:
+              type: boolean
+              description: If true, the users must authenticate to access the volume. If false, the volume is publicly available
+                to all users.
+            policy:
+              type: string
+              description: Authentication policy.
+              enum:
+              - ads
+              - ldapds
+              - public
+            policy_label:
+              type: string
+              description: Full name of the Authentication policy.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+            filer_settings:
+              $ref: '#/components/schemas/Link'
+            filer_connections:
+              $ref: '#/components/schemas/Link'
+            shares:
+              $ref: '#/components/schemas/Link'
+            exports:
+              $ref: '#/components/schemas/Link'
+            ftp_directories:
+              $ref: '#/components/schemas/Link'
+            antivirus_violations:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: Representation of a Volume object.
+    VolumeConnection:
+      type: object
+      properties:
+        connected:
+          type: boolean
+          description: If true, the specified filer is connected to the volume.
+        volume_guid:
+          type: string
+          description: Volume identifier.
+        filer_serial_number:
+          type: string
+          description: Filer identifier.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: Volume to filer connection.
+    VolumeFilerSetting:
+      type: object
+      properties:
+        guid:
+          type: string
+          description: Volume identifier.
+        filer_serial_number:
+          type: string
+          description: Filer identifier.
+        name:
+          type: string
+          description: Display name for the volume on the specified filer.
+        type:
+          type: string
+          description: 'Type of Volume. Possible values:
+
+
+            * ''master'' - This volume is owned by  this filer.
+
+            * ''remote'' - This volume is remote, relative to this filer.
+
+            '
+          enum:
+          - master
+          - remote
+        sync_schedule:
+          type: object
+          properties:
+            days:
+              type: object
+              properties:
+                sun:
+                  type: boolean
+                mon:
+                  type: boolean
+                tue:
+                  type: boolean
+                wed:
+                  type: boolean
+                thu:
+                  type: boolean
+                fri:
+                  type: boolean
+                sat:
+                  type: boolean
+              description: Days of the week to perform syncs.
+            allday:
+              type: boolean
+              description: If true, will sync all day.
+            start:
+              type: integer
+              description: Hour of the day to start the sync. An integer between 0 and 23, with 0 = '12 AM', 1 = '1 AM', ...
+                23 = '11 PM'.
+            stop:
+              type: integer
+              description: Hour of the day to stop the sync. An integer between 0 and 23, with 0 = '12 AM', 1 = '1 AM', ...
+                23 = '11 PM'.
+            frequency:
+              type: integer
+              description: Frequency that sync will run (minutes).
+            auto_cache_allowed:
+              type: boolean
+              description: If true, auto cache will be enabled for the entire volume. When enabled, auto cache may be enabled
+                at a folder level.
+            auto_cache_min_file_size:
+              type: integer
+              description: Auto Cache Minimum File Size in bytes. When Auto Cache is enabled, only files greater than or equal
+                to the specified size will be automatically brought into cache.
+          description: Sync schedule
+        snapshot_schedule:
+          type: object
+          properties:
+            days:
+              type: object
+              properties:
+                sun:
+                  type: boolean
+                mon:
+                  type: boolean
+                tue:
+                  type: boolean
+                wed:
+                  type: boolean
+                thu:
+                  type: boolean
+                fri:
+                  type: boolean
+                sat:
+                  type: boolean
+              description: Days of the week to allow snapshots to occur.
+            allday:
+              type: boolean
+              description: If true, will allow snapshots all day.
+            start:
+              type: integer
+              description: Hour of the day to start allowing snapshots. An integer between 0 and 23, with 0 = '12 AM', 1 =
+                '1 AM', ... 23 = '11 PM'.
+            stop:
+              type: integer
+              description: Hour of the day to stop allowing snapshots. An integer between 0 and 23, with 0 = '12 AM', 1 =
+                '1 AM', ... 23 = '11 PM'.
+            frequency:
+              type: integer
+              description: Frequency that snapshots will occur (minutes).
+          description: Snapshot schedule
+        snapshot_access:
+          type: boolean
+          description: If true, the snapshot directory is accessible.
+        file_alerts_service:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              description: If true, the file alert service is enabled.
+            patterns:
+              type: array
+              description: File/Directory patterns.
+              items:
+                type: string
+                description: Name pattern for files or directories. The wildcard character "*" is used to represent multiple
+                  possible characters. For example, "*.mp3" will cause an alert on all files with the mp3 extension.
+          description: File Alert service configuration.
+        auditing:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              description: If true, file system auditing is enabled for the volume.
+            events:
+              type: object
+              properties:
+                create:
+                  type: boolean
+                  description: If true, will log file, directory, and link creation operations.
+                delete:
+                  type: boolean
+                  description: If true, will log file and directory delete operations.
+                rename:
+                  type: boolean
+                  description: If true, will log file and directory rename operations.
+                close:
+                  type: boolean
+                  description: If true, will log file close operations.
+                security:
+                  type: boolean
+                  description: If true, will log file and directory ownership and permission changes.
+                metadata:
+                  type: boolean
+                  description: If true, will log changes to update time and extended attributes.
+                write:
+                  type: boolean
+                  description: If true, will log file write and truncate operations.
+                read:
+                  type: boolean
+                  description: If true, will log file and directory read operations.
+              description: Various file system events that can be audited.
+            logs:
+              type: object
+              properties:
+                write_audit_logs:
+                  type: boolean
+                  description: If true, audit logs will be wrote to the .nasuni directory for this volume.
+                prune_audit_logs:
+                  type: boolean
+                  description: If true, audit logs older than the specified number of days will be deleted. The number of
+                    days can be specified by the 'days_to_keep' property.
+                days_to_keep:
+                  type: integer
+                  description: Number of days to keep audit logs. A value of 0 will disable pruning of audit logs.
+                exclude_by_default:
+                  type: boolean
+                  description: Do not audit operations for any path not matching an entry in the include list (see 'include_patterns').
+                include_takes_priority:
+                  type: boolean
+                  description: Operations on items matching an entry in the include list will always be included even if matching
+                    an entry in the exclude list (see 'exclude_patterns').
+                include_patterns:
+                  type: array
+                  description: List of path patterns to include in the audit logs.
+                  items:
+                    type: string
+                    description: Path to include in the audit logs. The path can use the glob syntax to match a pattern such
+                      as */example*/*.
+                exclude_patterns:
+                  type: array
+                  description: List of path patterns to exclude from the audit logs.
+                  items:
+                    type: string
+                    description: Path to exclude from the audit logs. The path can use the glob syntax to match a pattern
+                      such as */example*/*.
+              description: Audit log settings.
+          description: Volume auditing settings.
+        status:
+          type: object
+          properties:
+            accessible_data:
+              type: integer
+              description: Number of bytes of data that are accessible via this volume.
+            data_not_yet_protected:
+              type: integer
+              description: Number of bytes of data that have not been protected.
+            first_snapshot:
+              type: string
+              description: Datetime of the first snapshot that occurred on the volume.
+            last_snapshot:
+              type: string
+              description: Datetime of the last snapshot that occurred on the volume.
+            last_snapshot_start:
+              type: string
+              description: Datetime of the start of the last snapshot.
+            last_snapshot_end:
+              type: string
+              description: Datetime of the end of the last snapshot.
+            last_snapshot_version:
+              type: integer
+              description: The version number of the last snapshot that occurred.
+            snapshot_status:
+              type: string
+              description: 'Current snapshot status. Possible values:
+
+
+                * ''idle'' - No snapshots are in progress.
+
+                * ''pending'' - A snapshot is pending and will be performed soon.
+
+                * ''in_progress'' - A snapshot is in progress.
+
+                '
+              enum:
+              - idle
+              - pending
+              - in_progress
+            snapshot_percent:
+              type: integer
+              description: If a snapshot is 'in_progress', this will show the percentage that it is complete.
+            ftp_dir_count:
+              type: integer
+              description: Number of FTP directories accessible via this volume.
+            export_count:
+              type: integer
+              description: Number of Exports accessible via this volume.
+            share_count:
+              type: integer
+              description: Number of Shares accessible via this volume.
+          description: Volume status for a particular Filer.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            shares:
+              $ref: '#/components/schemas/Link'
+            exports:
+              $ref: '#/components/schemas/Link'
+            ftp_directories:
+              $ref: '#/components/schemas/Link'
+            antivirus_violations:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: Filer specfic volume settings.
+    ExportAccessModeField:
+      type: string
+      description: 'Controls what User IDs are allowed when a client writes
+
+        to the exported directory. Possible values:
+
+
+        * ''root_squash'' - Normal Users Permitted
+
+        * ''no_root_squash'' - All Users Permitted
+
+        * ''all_squash'' - Anonymize All Users
+
+        '
+      enum:
+      - root_squash
+      - no_root_squash
+      - all_squash
+    ExportHostSpecField:
+      type: string
+      description: Hostname, IP address with optional netmask, or @-prefixed netgroup names allowed to access the export.
+        If blank, all hosts on your network can access the export. Hostnames may contain the * character as a wildcard.
+    ExportPerfModeField:
+      type: string
+      description: 'Controls the method in which the NFS server replies to clients.
+
+        Changing this may impact the safety of data if the Nasuni Filer is shut down abnormally!
+
+        Possible values:
+
+
+        * ''sync'' - Default
+
+        * ''no_wdelay'' - No Write Delay
+
+        * ''async'' - Asynchronous Replies
+
+        '
+      enum:
+      - sync
+      - no_wdelay
+      - async
+    ExportReadOnlyField:
+      type: boolean
+      description: If true, files and directories cannot be changed on the exported directory.
+    ExportSecOptionsField:
+      type: array
+      description: Security options in use by the exported directory. Multiple options may be applied, but they cannot be
+        repeated.
+      items:
+        type: string
+        description: 'Possible values:
+
+
+          * ''sys'' - Traditional
+
+          * ''krb5'' - Authentication
+
+          * ''krb5i'' - Integrity Protection
+
+          * ''krb5p'' - Privacy Protection
+
+          '
+        enum:
+        - sys
+        - krb5
+        - krb5i
+        - krb5p
+    GroupNameField:
+      type: string
+      description: Group name
+    UserNameField:
+      type: string
+      description: User name
+  responses:
+    AuthFailure:
+      description: Authentication failure
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: Validation Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+    PermissionDenied:
+      description: Permission Denied
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Throttled:
+      description: Request throttled
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    filer_serial:
+      name: filer_serial
+      in: path
+      description: Filer object identifier
+      required: true
+      schema:
+        type: string
+    volume_guid:
+      name: volume_guid
+      in: path
+      description: Volume identifier
+      required: true
+      schema:
+        type: string
+    share_id:
+      name: share_id
+      in: path
+      description: Share object identifier
+      required: true
+      schema:
+        type: string
+    export_id:
+      name: export_id
+      in: path
+      description: Export object identifier
+      required: true
+      schema:
+        type: string
+    ftpdir_id:
+      name: ftpdir_id
+      in: path
+      description: FTP directory object identifier
+      required: true
+      schema:
+        type: string
+    antivirus_id:
+      name: antivirus_id
+      in: path
+      description: Antivirus violation object identifier
+      required: true
+      schema:
+        type: string
+    notification_id:
+      name: notification_id
+      in: path
+      description: Notification object identifier
+      required: true
+      schema:
+        type: string
+    message_id:
+      name: message_id
+      in: path
+      description: Message object identifier
+      required: true
+      schema:
+        type: string
+    paging_limit:
+      name: limit
+      in: query
+      description: The maximum number of objects to return
+      schema:
+        maximum: 100
+        minimum: 1
+        type: integer
+        default: 50
+    paging_offset:
+      name: offset
+      in: query
+      description: The index of the first object to return
+      schema:
+        type: integer
+        default: 0
+  securitySchemes:
+    AuthToken:
+      type: apiKey
+      description: 'This header is required to make authenticated requests. The value format is:
+
+
+        Token [your_auth_token]
+
+        '
+      name: Authorization
+      in: header
+x-original-swagger-version: '2.0'

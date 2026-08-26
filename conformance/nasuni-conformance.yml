@@ -1,0 +1,166 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  openapi/_original/*.json (all seven harvested specs),
+  https://docs.api.nasuni.com/api/portal/v0/introduction/ ,
+  https://docs.nasuni.com/docs/portal-mcp-server ,
+  https://trust.nasuni.com/ ,
+  https://www.nasuni.com/press-release/nasuni-strengthens-commitment-to-customer-data-security-through-soc-2-csa-star-and-hipaa/
+name: Nasuni standards and compliance conformance
+standards:
+- id: openapi
+  conforms: true
+  evidence: >-
+    Seven published contracts: OpenAPI 3.0.3 (NMC 1.0/1.1/1.2), 3.1.0 (Portal 0.1.0, NDS Azure,
+    NDS AWS) and 3.0.0 (GFA Telemetry). All are served publicly from docs.api.nasuni.com; the NMC
+    spec is additionally downloadable from the appliance itself (Console Settings -> NMC API Keys).
+- id: json-schema
+  conforms: true
+  evidence: >-
+    json-schema/nasuni-file-iq-alert-webhook-payload.schema.json — a published JSON Schema
+    draft 2020-12 document describing the File IQ Alert Webhook payload, at
+    https://docs.nasuni.com/docs/file-iq-webhooks
+- id: oauth2
+  conforms: true
+  evidence: >-
+    Portal API declares an `OAuth2ClientCredentials` securityScheme with a clientCredentials flow
+    and tokenUrl /auth/token, described in the spec as "Standard OAuth2 Client Credentials flow
+    (RFC 6749 §4.4)". The Portal MCP Server uses the OAuth 2.0 Authorization Code flow.
+- id: oauth2-dcr
+  conforms: true
+  evidence: >-
+    Portal MCP Server documents Dynamic Client Registration (RFC 7591) as the client registration
+    method — ChatGPT and Copilot Studio setup instructions both select DCR/dynamic discovery.
+    Source https://docs.nasuni.com/docs/portal-mcp-server
+- id: oidc
+  conforms: false
+  evidence: >-
+    No openIdConnect securityScheme in any spec; /.well-known/openid-configuration returned 404 on
+    every probed host. Portal SSO configuration operations exist (GET/PUT /configuration/sso) but
+    the protocol is not declared in the contract.
+- id: mcp
+  conforms: true
+  evidence: >-
+    Model Context Protocol server published and documented (Portal MCP Server, hosted OAuth 2.0,
+    45 tools) plus two open-source local MCP servers in the nasuni-labs GitHub org. The Portal API
+    carries a dedicated POST /auth/mcp operation and per-volume MCP configuration operations under
+    AI Activate.
+- id: rfc9457
+  conforms: false
+  evidence: >-
+    No API returns application/problem+json. Three mutually incompatible error envelopes are in
+    use — see errors/nasuni-problem-types.yml.
+- id: rfc8594
+  conforms: false
+  evidence: >-
+    No Sunset or Deprecation headers documented; no deprecation policy published; no operation in
+    any spec is marked deprecated.
+- id: pagination
+  conforms: true
+  evidence: >-
+    NMC API documents `limit` (default 50) and `offset` query parameters at
+    https://docs.api.nasuni.com/api/nmc/v120/introduction/
+- id: idempotency
+  conforms: false
+  evidence: >-
+    No Idempotency-Key header, no idempotency section in any reference, and no idempotency
+    parameter in any of the seven specs. Writes are not safely retryable by key.
+- id: rate-limit-headers
+  conforms: partial
+  evidence: >-
+    Portal API returns Retry-After on burst-limit exhaustion (429). The NMC API documents 429 +
+    "Request throttled" with no Retry-After and no RateLimit-* headers. Neither implements
+    draft-ietf-httpapi-ratelimit-headers.
+- id: json:api
+  conforms: false
+  evidence: No API uses the JSON:API media type or document structure.
+- id: odata
+  conforms: false
+  evidence: No $metadata surface and no OData query options in any spec.
+- id: scim
+  conforms: false
+  evidence: >-
+    Portal API ships a first-class IAM surface (users, roles, permissions, service keys, user keys)
+    but uses proprietary shapes — no urn:ietf:params:scim:schemas:* URN appears in any spec. This
+    is the domain-standard gap most visible in the contract.
+- id: fapi
+  conforms: false
+  evidence: Not a financial-services API; regime does not apply.
+domain_standards:
+- id: s3-api
+  name: Amazon S3 REST API
+  conforms: true
+  evidence: >-
+    Nasuni Data Service (NDS) for AWS declares S3-compatible operations directly in the contract:
+    paths `/?list-type=2` (ListObjectsV2), `/{key}` (GetObject/HeadObject), an
+    `Error/Code/Message/Resource/RequestId` XML envelope, and an `awsSigV4` securityScheme with
+    presigned-URL support. The S3 Edge API is a second S3-compatible surface on the Edge Appliance.
+  spec_location: openapi/_original/nasuni-nasuni-data-service-aws-openapi.json
+  buyer_impact: >-
+    Any tool that already speaks S3 — AWS SDKs, boto3, s3fs, Athena, SageMaker, DuckDB — reads a
+    Nasuni volume with no bespoke connector.
+- id: azure-blob-storage-api
+  name: Azure Blob Storage REST API
+  conforms: true
+  evidence: >-
+    Nasuni Data Service (NDS) for Azure declares Azure Blob-compatible endpoints in the contract:
+    `/` (List Containers), `/{container}/` (List Blobs), `/{container}/{blob}` (Get Blob / Get Blob
+    Properties), Shared Key authorization in the Authorization header, and the full SAS query
+    parameter set (sv, ss, srt, sp, se, st, sig) declared as securitySchemes.
+  spec_location: openapi/_original/nasuni-nasuni-data-service-azure-openapi.json
+  buyer_impact: >-
+    Azure-native analytics and AI services (Synapse, Fabric, Azure AI Search, azcopy) read Nasuni
+    volumes as if they were blob containers.
+- id: smb
+  name: SMB / CIFS
+  conforms: true
+  evidence: >-
+    NMC API exposes CIFS shares, CIFS clients and CIFS locks as first-class resources
+    (/filers/cifsclients/, /filers/cifslocks/, share management under volumes); the Portal API
+    reports SMB connection telemetry.
+  buyer_impact: The platform's primary access protocol; no API-level connector needed for file access.
+- id: nfs
+  name: NFS
+  conforms: true
+  evidence: NMC API 1.1.0+ adds NFS Exports operations (create/update/delete exports and host options), added in NMC 21.2.
+- id: snmp
+  name: SNMP
+  conforms: true
+  evidence: >-
+    Edge Appliance SNMP is a documented monitoring source consumed by the first-party
+    nasuni-dashboards project and by the community Zabbix template in nasuni-labs.
+- id: amqp
+  name: AMQP
+  conforms: true
+  evidence: NMC API 1.1.0 added AMQP Destinations management (NMC 8.5) for event/notification forwarding.
+- id: syslog
+  name: Syslog
+  conforms: true
+  evidence: >-
+    nasuni-labs/nasuni-azure-syslog-proxy forwards Nasuni notifications and file-system audit events
+    over syslog into Log Analytics / Microsoft Sentinel.
+compliance:
+  source: >-
+    https://trust.nasuni.com/ (Vanta-hosted trust center, JS-rendered — certification list not
+    machine-readable) and Nasuni's own press release announcing the audits.
+  certifications:
+  - name: SOC 2 Type II
+    verified_from: https://www.nasuni.com/press-release/nasuni-strengthens-commitment-to-customer-data-security-through-soc-2-csa-star-and-hipaa/
+  - name: SOC 2 Type I
+    verified_from: https://www.nasuni.com/press-release/nasuni-strengthens-commitment-to-customer-data-security-through-soc-2-csa-star-and-hipaa/
+  - name: ISO 27001
+    verified_from: https://trust.nasuni.com/
+  - name: HIPAA
+    verified_from: https://www.nasuni.com/press-release/nasuni-strengthens-commitment-to-customer-data-security-through-soc-2-csa-star-and-hipaa/
+  - name: CSA STAR
+    verified_from: https://www.nasuni.com/press-release/nasuni-strengthens-commitment-to-customer-data-security-through-soc-2-csa-star-and-hipaa/
+  privacy:
+  - name: GDPR — Data Processing Addendum
+    url: https://www.nasuni.com/legal/data-processing-addendum-2026/
+  - name: Sub-processor list
+    url: https://www.nasuni.com/legal/nasuni-sub-processors/
+  note: >-
+    trust.nasuni.com is a Vanta trust center rendered entirely client-side; the certification list
+    could not be read from the served HTML (title tag only). The certifications above are recorded
+    against Nasuni's own press release and the trust center's existence, not against a machine-
+    readable document. No FedRAMP authorization was found on any Nasuni surface.
