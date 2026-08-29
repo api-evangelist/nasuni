@@ -10,6 +10,18 @@ description: 'Nasuni is an enterprise hybrid-cloud file data platform that conso
   Telemetry API; Nasuni Data Service (NDS) endpoints that present Nasuni volumes through Azure Blob- and Amazon S3-compatible
   interfaces; the Nasuni Data API for appliance filesystem access; and a hosted, OAuth 2.0 Portal MCP Server plus open-source
   local MCP servers that make the platform callable by AI agents.'
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://www.nasuni.com/wp-content/uploads/2026/04/nasuni-featured-image-logo-540x283.png
 url: https://raw.githubusercontent.com/api-evangelist/nasuni/refs/heads/main/apis.yml
 x-type: company
