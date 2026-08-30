@@ -30,16 +30,16 @@ specificationVersion: '0.20'
 created: '2026-08-26'
 modified: '2026-08-26'
 tags:
-- Company
-- File Storage
-- Hybrid Cloud
-- Object Storage
-- Enterprise Storage
-- Data Management
-- Backup and Recovery
-- Ransomware Protection
+- company
+- file-storage
+- hybrid-cloud
+- object-storage
+- enterprise-storage
+- data-management
+- backup-and-recovery
+- ransomware-protection
 - Infrastructure
-- Observability
+- observability
 - MCP
 - agent-native
 tags_raw:
@@ -215,6 +215,8 @@ apis:
   humanURL: https://docs.api.nasuni.com/api/nmc/v120/introduction/
   baseURL: https://hostname/api/v1.2
   tags:
+  - Authentication
+  tags_raw:
   - Auth
   properties:
   - type: OpenAPI
@@ -525,6 +527,8 @@ apis:
   humanURL: https://docs.api.nasuni.com/api/nmc/v120/introduction/
   baseURL: https://hostname/api/v1.2
   tags:
+  - Job
+  tags_raw:
   - Jobs
   properties:
   - type: OpenAPI
@@ -581,6 +585,8 @@ apis:
   humanURL: https://docs.api.nasuni.com/api/nmc/v120/introduction/
   baseURL: https://hostname/api/v1.2
   tags:
+  - Message
+  tags_raw:
   - Messages
   properties:
   - type: OpenAPI
@@ -668,6 +674,8 @@ apis:
   humanURL: https://docs.api.nasuni.com/api/nmc/v120/introduction/
   baseURL: https://hostname/api/v1.2
   tags:
+  - Notification
+  tags_raw:
   - Notifications
   properties:
   - type: OpenAPI
