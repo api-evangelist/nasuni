@@ -1,0 +1,537 @@
+openapi: 3.2.0
+info:
+  title: Nasuni Messages API
+  version: '1.0'
+  description: 'Operations tagged Messages across 3 of this provider''s published API definitions: nasuni-nmc-v1-0-openapi.yml, nasuni-nmc-v1-1-openapi.yml, nasuni-nmc-v1-2-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://hostname/api/v1
+- url: https://hostname/api/v1.1
+- url: https://hostname/api/v1.2
+security:
+- AuthToken: []
+tags:
+- name: Messages
+paths:
+  /messages/:
+    get:
+      tags:
+      - Messages
+      summary: List all messages
+      parameters:
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Message'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://hostname/api/v1
+  /messages/{message_id}/:
+    get:
+      tags:
+      - Messages
+      summary: Get a message
+      parameters:
+      - name: message_id
+        in: path
+        description: Message object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '303':
+          description: See Other
+          headers:
+            Location:
+              description: A link to the affected setting where the browser should redirect.
+              schema:
+                type: string
+          content: {}
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+      - Messages
+      description: Clear a failed or synced message
+      parameters:
+      - name: message_id
+        in: path
+        description: Message object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: No Content
+          content: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    servers:
+    - url: https://hostname/api/v1
+components:
+  schemas:
+    Paging:
+      type: object
+      properties:
+        href:
+          type: string
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type: string
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type: string
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+        method:
+          type: string
+          description: HTTP method to use on the link.
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the message.
+        filer_serial_number:
+          type: string
+          description: Identifier to the Filer the message is associated with.
+        description:
+          type: string
+          description: Description of the intent of message.
+        code:
+          type: string
+          description: A code identifying the intent of the message.
+        status:
+          type: string
+          description: 'Current status of the message.
+
+            * ''synced'' - Message has been received by the Filer, and the Filer returned a success response. * ''pending'' - Message is currently in transit. * ''failure'' - Messages has been received by the Filer, but returned an error response.'
+          enum:
+          - synced
+          - pending
+          - failure
+        send_time:
+          type: string
+          description: Time the message was sent.
+        expiration_time:
+          type: string
+          description: Time a synced message will expire and be removed from the messages list.
+        response_time:
+          type: string
+          description: Time a message response was received.
+        initiated_by:
+          type: string
+          description: The username of the user who triggered the message, or '[console]' if triggered by the NMC itself.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+            acknowledge:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+        error:
+          $ref: '#/components/schemas/Error'
+      description: The message object is used to track an action that we want the Filer to perform.
+    Error_2:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "unmanaged_error" - Resource is not managed.
+
+            * "conflict_error" - Conflict error
+
+            * "unsupported_error" - Current filer version does not support this type of request.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          readOnly: true
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - unmanaged_error
+          - conflict_error
+          - unsupported_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+          readOnly: true
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error_2'
+    Message_2:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the message.
+        filer_serial_number:
+          type: string
+          description: Identifier to the Filer the message is associated with.
+        description:
+          type: string
+          description: Description of the intent of message.
+        code:
+          type: string
+          description: A code identifying the intent of the message.
+        status:
+          type: string
+          description: 'Current status of the message.
+
+            * ''synced'' - Message has been received by the Filer, and the Filer returned a success response. * ''pending'' - Message is currently in transit. * ''failure'' - Messages has been received by the Filer, but returned an error response.'
+          enum:
+          - synced
+          - pending
+          - failure
+        send_time:
+          type: string
+          description: Time the message was sent.
+        expiration_time:
+          type: string
+          description: Time a synced message will expire and be removed from the messages list.
+        response_time:
+          type: string
+          description: Time a message response was received.
+        initiated_by:
+          type: string
+          description: The username of the user who triggered the message, or '[console]' if triggered by the NMC itself.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_2'
+            filer:
+              $ref: '#/components/schemas/Link_2'
+            acknowledge:
+              $ref: '#/components/schemas/Link_2'
+            applied_resource:
+              type: object
+              properties:
+                href:
+                  type: string
+                  description: Hyperlink to the resource.
+                method:
+                  type: string
+                  description: HTTP method to use on the link.
+              description: Provides a link to the resource being acted on or that was created. When creating a resource, this link will only be available after the message is successfully synced ('status' is 'synced').
+          description: Links to related resources, collections, and actions.
+        error:
+          $ref: '#/components/schemas/Error_2'
+      description: The message object is used to track an action that we want the Filer to perform.
+    Link_2:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+          readOnly: true
+        method:
+          type: string
+          description: HTTP method to use on the link.
+          readOnly: true
+    Paging_2:
+      type: object
+      properties:
+        href:
+          type: string
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type:
+          - string
+          - 'null'
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type:
+          - string
+          - 'null'
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
+    Error_3:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "unmanaged_error" - Resource is not managed.
+
+            * "conflict_error" - Conflict error
+
+            * "unsupported_error" - Current filer version does not support this type of request.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          readOnly: true
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - unmanaged_error
+          - conflict_error
+          - unsupported_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+          readOnly: true
+    ErrorResponse_2:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error_3'
+    Message_3:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the message.
+        filer_serial_number:
+          type: string
+          description: Identifier to the Filer the message is associated with.
+        description:
+          type: string
+          description: Description of the intent of message.
+        code:
+          type: string
+          description: A code identifying the intent of the message.
+        status:
+          type: string
+          description: 'Current status of the message.
+
+            * ''synced'' - Message has been received by the Filer, and the Filer returned a success response. * ''pending'' - Message is currently in transit. * ''failure'' - Messages has been received by the Filer, but returned an error response.'
+          enum:
+          - synced
+          - pending
+          - failure
+        send_time:
+          type: string
+          description: Time the message was sent.
+        expiration_time:
+          type:
+          - string
+          - 'null'
+          description: Time a synced message will expire and be removed from the messages list.
+        response_time:
+          type:
+          - string
+          - 'null'
+          description: Time a message response was received.
+        initiated_by:
+          type: string
+          description: The username of the user who triggered the message, or '[console]' if triggered by the NMC itself.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_3'
+            filer:
+              $ref: '#/components/schemas/Link_3'
+            acknowledge:
+              $ref: '#/components/schemas/Link_3'
+            applied_resource:
+              type: object
+              properties:
+                href:
+                  type: string
+                  description: Hyperlink to the resource.
+                method:
+                  type: string
+                  description: HTTP method to use on the link.
+              description: Provides a link to the resource being acted on or that was created. When creating a resource, this link will only be available after the message is successfully synced ('status' is 'synced').
+          description: Links to related resources, collections, and actions.
+        error:
+          $ref: '#/components/schemas/Error_3'
+      description: The message object is used to track an action that we want the Filer to perform.
+    Link_3:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+          readOnly: true
+        method:
+          type: string
+          description: HTTP method to use on the link.
+          readOnly: true
+  securitySchemes:
+    AuthToken:
+      type: apiKey
+      description: 'This header is required to make authenticated requests. The value format is:
+
+
+        Token [your_auth_token]
+
+        '
+      name: Authorization
+      in: header
+x-refined-from:
+- nasuni-nmc-v1-0-openapi.yml
+- nasuni-nmc-v1-1-openapi.yml
+- nasuni-nmc-v1-2-openapi.yml

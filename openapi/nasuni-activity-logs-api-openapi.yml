@@ -1,0 +1,2199 @@
+openapi: 3.2.0
+info:
+  title: Portal Activity Logs API
+  version: 0.1.0
+servers:
+- url: https://am1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the US region.
+- url: https://eu1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the EU region.
+- url: https://ap1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the Asia-Pacific region.
+security:
+- HTTPBearer: []
+tags:
+- name: Activity Logs
+paths:
+  /activity-logs/records:
+    get:
+      tags:
+      - Activity Logs
+      summary: Get Activity Logs
+      operationId: get_records_activity_logs_records_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Date
+      - name: user_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: User Id
+      - name: target
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/ActivityLogTarget'
+          - type: 'null'
+          title: Target
+      - name: action
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/ActivityLogAction'
+          - type: 'null'
+          title: Action
+      - name: transaction_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Transaction Id
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 500
+          title: Limit
+      - name: iterator_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Iterator Id
+      - name: page
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Page
+      - name: sort_by
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/ActivityLogSortBy'
+          default: timestamp
+      - name: sort_direction
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortDirection'
+          default: descending
+      responses:
+        '200':
+          description: Activity logs retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityLogResultDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /activity-logs/records/{record_id}:
+    get:
+      tags:
+      - Activity Logs
+      summary: Get Activity Log
+      operationId: get_record_activity_logs_records__record_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: record_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Record Id
+      responses:
+        '200':
+          description: Activity log retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityLogDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    CloudCredentialErrorAcknowledged:
+      properties:
+        action:
+          type: string
+          const: Cloud Credential Error Acknowledged
+          title: Action
+        name:
+          type: string
+          title: Name
+        edge_name:
+          type: string
+          title: Edge Name
+      type: object
+      required:
+      - action
+      - name
+      - edge_name
+      title: CloudCredentialErrorAcknowledged
+    StackVolumeRemoved:
+      properties:
+        action:
+          type: string
+          const: Stack Volume Removed
+          title: Action
+        volume_id:
+          type: string
+          title: Volume Id
+        old:
+          anyOf:
+          - $ref: '#/components/schemas/UaasVolumeNdsDto'
+          - type: 'null'
+      type: object
+      required:
+      - action
+      - volume_id
+      title: StackVolumeRemoved
+    S3EdgeConfigDto:
+      properties:
+        buckets:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/Bucket'
+            - $ref: '#/components/schemas/BucketSDDL'
+          type: array
+          title: Buckets
+        keys:
+          items:
+            $ref: '#/components/schemas/Key'
+          type: array
+          title: Keys
+      type: object
+      required:
+      - buckets
+      - keys
+      title: S3EdgeConfigDto
+    AiActivateMcpConfigUpdated:
+      properties:
+        action:
+          type: string
+          const: AI Activate MCP Config Updated
+          title: Action
+        volume_id:
+          type: string
+          title: Volume Id
+        volume_name:
+          type: string
+          title: Volume Name
+          default: ''
+        old:
+          anyOf:
+          - $ref: '#/components/schemas/AiActivateMcpVolumeConfigDto'
+          - type: 'null'
+        new:
+          anyOf:
+          - $ref: '#/components/schemas/AiActivateMcpVolumeConfigDto'
+          - type: 'null'
+      type: object
+      required:
+      - action
+      - volume_id
+      title: AiActivateMcpConfigUpdated
+    UaasStackNdsSimplifiedDto:
+      properties:
+        azure_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Azure Enabled
+        s3:
+          anyOf:
+          - $ref: '#/components/schemas/UaasS3ConfigDto'
+          - $ref: '#/components/schemas/UaasS3ConfigRevealedDto'
+          - type: 'null'
+          title: S3
+        azure_keys:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/UaasBlobAccessKeyBaseDto'
+            type: array
+          - type: 'null'
+          title: Azure Keys
+        excluded_paths:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Excluded Paths
+        included_paths:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Included Paths
+        azure_volumes:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Azure Volumes
+      type: object
+      title: UaasStackNdsSimplifiedDto
+    AiActivateIndexDetailsDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        volume_name:
+          type: string
+          title: Volume Name
+        provider:
+          type: string
+          title: Provider
+        volume_region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Region
+          description: Storage region of the volume. May be null when NOC has no volume metadata.
+        status:
+          $ref: '#/components/schemas/AiActivateIndexStatus'
+        file_count:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          title: File Count
+          description: Number of files indexed for the volume. May be null until NOC reports a count.
+        volume_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Size
+          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until indexing progresses.
+        include_paths:
+          items:
+            type: string
+          type: array
+          title: Include Paths
+        exclude_paths:
+          items:
+            type: string
+          type: array
+          title: Exclude Paths
+        mcp_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Mcp Enabled
+          deprecated: true
+      type: object
+      required:
+      - volume_guid
+      - volume_name
+      - provider
+      - status
+      title: AiActivateIndexDetailsDto
+      description: 'Full AI Activate index detail for a volume — list-item fields plus search configuration.
+
+
+        Returned by the webapi GET/POST/PATCH ``/ai_activate/indexes/{volume_id}``
+
+        endpoints so external API consumers see the same volume/index metadata as
+
+        the list endpoint alongside the search configuration in a single response.'
+    CloudCredentialDeleteFailed:
+      properties:
+        action:
+          type: string
+          const: Cloud Credential Delete Failed
+          title: Action
+        name:
+          type: string
+          title: Name
+        edge_name:
+          type: string
+          title: Edge Name
+        error:
+          type: string
+          title: Error
+      type: object
+      required:
+      - action
+      - name
+      - edge_name
+      - error
+      title: CloudCredentialDeleteFailed
+    UaasS3ConfigDto:
+      properties:
+        aws_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Aws Enabled
+        aws_volumes:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Aws Volumes
+      type: object
+      title: UaasS3ConfigDto
+    UaasBlobAccessKeyDto:
+      properties:
+        access_key:
+          type: string
+          format: password
+          title: Access Key
+          writeOnly: true
+        generated:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Generated
+        id:
+          type: string
+          format: uuid
+          title: Id
+        connection_string:
+          type: string
+          title: Connection String
+      type: object
+      required:
+      - access_key
+      - id
+      - connection_string
+      title: UaasBlobAccessKeyDto
+      description: DTO for Azure Blob Access Keys used in UaaS stacks
+    Key:
+      properties:
+        name:
+          type: string
+          title: Name
+        access:
+          type: string
+          title: Access
+        secret:
+          type: string
+          title: Secret
+      type: object
+      required:
+      - name
+      - access
+      - secret
+      title: Key
+    portal__api__dto__activity_logs__EventDetails__Role:
+      properties:
+        action:
+          type: string
+          enum:
+          - Role Created
+          - Role Deleted
+          title: Action
+        item:
+          $ref: '#/components/schemas/ActivityLogsRoleDto'
+      type: object
+      required:
+      - action
+      - item
+      title: Role
+    FiqEdgeDto:
+      properties:
+        serial_number:
+          type: string
+          format: uuid
+          title: Serial Number
+        id:
+          type: string
+          format: uuid
+          title: Id
+        build:
+          type: string
+          title: Build
+        description:
+          type: string
+          title: Description
+        fiq_service_enabled:
+          type: boolean
+          title: Fiq Service Enabled
+      type: object
+      required:
+      - serial_number
+      - id
+      - build
+      - description
+      - fiq_service_enabled
+      title: FiqEdgeDto
+    AiActivateRemoteSupportDto:
+      properties:
+        remote_support:
+          type: boolean
+          title: Remote Support
+      type: object
+      required:
+      - remote_support
+      title: AiActivateRemoteSupportDto
+    StackNDSConfigUpdate:
+      properties:
+        action:
+          type: string
+          const: Stack NDS Configuration Updated
+          title: Action
+        old:
+          anyOf:
+          - $ref: '#/components/schemas/UaasStackNdsSimplifiedDto'
+          - $ref: '#/components/schemas/UaasStackNdsConfigDto'
+          - type: 'null'
+          title: Old
+        new:
+          anyOf:
+          - $ref: '#/components/schemas/UaasStackNdsSimplifiedDto'
+          - $ref: '#/components/schemas/UaasStackNdsConfigDto'
+          - type: 'null'
+          title: New
+      type: object
+      required:
+      - action
+      title: StackNDSConfigUpdate
+    AuthCode:
+      properties:
+        action:
+          type: string
+          enum:
+          - Auth Code Requested
+          - Auth Code Reset
+          - Serial Number Decommission
+          title: Action
+      type: object
+      required:
+      - action
+      title: AuthCode
+    SnapshotEvent:
+      properties:
+        action:
+          type: string
+          enum:
+          - Snapshot Started
+          - Snapshot Cancelled
+          title: Action
+        volume_id:
+          type: string
+          title: Volume Id
+        volume_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Name
+        edge_id:
+          type: string
+          format: uuid
+          title: Edge Id
+        task_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Task Id
+      type: object
+      required:
+      - action
+      - volume_id
+      - edge_id
+      title: SnapshotEvent
+    RoleUpdated:
+      properties:
+        action:
+          type: string
+          const: Role Updated
+          title: Action
+        old:
+          anyOf:
+          - $ref: '#/components/schemas/ActivityLogsRoleDto'
+          - type: 'null'
+        new:
+          anyOf:
+          - $ref: '#/components/schemas/ActivityLogsRoleDto'
+          - type: 'null'
+        item:
+          anyOf:
+          - $ref: '#/components/schemas/ActivityLogsRoleDto'
+          - type: 'null'
+      type: object
+      required:
+      - action
+      title: RoleUpdated
+    ActivityLogTarget:
+      type: string
+      enum:
+      - Portal
+      - Edge
+      - File IQ
+      - Stack
+      title: ActivityLogTarget
+    S3EdgeConfigUpdate:
+      properties:
+        action:
+          type: string
+          const: S3 Edge Config Updated
+          title: Action
+        old:
+          anyOf:
+          - $ref: '#/components/schemas/S3EdgeConfigDto'
+          - type: 'null'
+        new:
+          anyOf:
+          - $ref: '#/components/schemas/S3EdgeConfigDto'
+          - type: 'null'
+      type: object
+      required:
+      - action
+      title: S3EdgeConfigUpdate
+    AnalyticsConnectorUpdate:
+      properties:
+        action:
+          type: string
+          const: Analytics Connector Updated
+          title: Action
+        old:
+          anyOf:
+          - $ref: '#/components/schemas/AnalyticsConnectorDto'
+          - type: 'null'
+        new:
+          anyOf:
+          - $ref: '#/components/schemas/AnalyticsConnectorDto'
+          - type: 'null'
+      type: object
+      required:
+      - action
+      title: AnalyticsConnectorUpdate
+    CreatedOrDeleted:
+      properties:
+        action:
+          type: string
+          enum:
+          - Service Key Created
+          - Service Key Deleted
+          - User Key Created
+          - User Key Deleted
+          - GFA API Key Created
+          - GFA API Key Deleted
+          title: Action
+        id:
+          type: string
+          format: uuid
+          title: Id
+      type: object
+      required:
+      - action
+      - id
+      title: CreatedOrDeleted
+    AiActivateIndexConfigUpdated:
+      properties:
+        action:
+          type: string
+          const: AI Activate Index Config Updated
+          title: Action
+        volume_id:
+          type: string
+          title: Volume Id
+        volume_name:
+          type: string
+          title: Volume Name
+          default: ''
+        new:
+          $ref: '#/components/schemas/AiActivateIndexDetailsDto'
+      type: object
+      required:
+      - action
+      - volume_id
+      - new
+      title: AiActivateIndexConfigUpdated
+    StackConfigUpdate:
+      properties:
+        action:
+          type: string
+          const: Stack Configuration Updated
+          title: Action
+        old:
+          anyOf:
+          - $ref: '#/components/schemas/UaasStackDetailDto'
+          - type: 'null'
+        new:
+          anyOf:
+          - $ref: '#/components/schemas/UaasStackDetailDto'
+          - type: 'null'
+      type: object
+      required:
+      - action
+      title: StackConfigUpdate
+    AnalyticsConnectorDto:
+      properties:
+        key:
+          type: string
+          format: uuid
+          title: Key
+        nac_link:
+          type: string
+          title: Nac Link
+        launchable:
+          type: boolean
+          title: Launchable
+        unlicensed:
+          type: boolean
+          title: Unlicensed
+        nac_run_history:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/NacRunHistoryDto'
+            type: array
+          - type: 'null'
+          title: Nac Run History
+        can_generate:
+          type: boolean
+          title: Can Generate
+        can_view:
+          type: boolean
+          title: Can View
+        unifx_aws_ids:
+          type: string
+          title: Unifx Aws Ids
+      type: object
+      required:
+      - key
+      - nac_link
+      - launchable
+      - unlicensed
+      - nac_run_history
+      - can_generate
+      - can_view
+      - unifx_aws_ids
+      title: AnalyticsConnectorDto
+    KeyType:
+      type: string
+      enum:
+      - service
+      - user
+      title: KeyType
+    Authentication:
+      properties:
+        action:
+          type: string
+          enum:
+          - Authorized Login
+          - Authorized Logout
+          title: Action
+        auth_method:
+          anyOf:
+          - $ref: '#/components/schemas/AuthMethod'
+          - type: 'null'
+      type: object
+      required:
+      - action
+      title: Authentication
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    UaasBlobAccessKeyRevealedDto:
+      properties:
+        access_key:
+          type: string
+          format: password
+          title: Access Key
+          writeOnly: true
+        generated:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Generated
+        id:
+          type: string
+          format: uuid
+          title: Id
+        connection_string:
+          type: string
+          title: Connection String
+      type: object
+      required:
+      - access_key
+      - id
+      - connection_string
+      title: UaasBlobAccessKeyRevealedDto
+    AiActivateIndexCreated:
+      properties:
+        action:
+          type: string
+          const: AI Activate Index Created
+          title: Action
+        volume_id:
+          type: string
+          title: Volume Id
+        volume_name:
+          type: string
+          title: Volume Name
+          default: ''
+      type: object
+      required:
+      - action
+      - volume_id
+      title: AiActivateIndexCreated
+    FiqApplianceDto:
+      properties:
+        serial_number:
+          type: string
+          format: uuid
+          title: Serial Number
+        id:
+          type: string
+          format: uuid
+          title: Id
+        description:
+          type: string
+          title: Description
+        build:
+          type: string
+          title: Build
+        enabled:
+          type: boolean
+          title: Enabled
+        connections:
+          $ref: '#/components/schemas/FiqConnections'
+      type: object
+      required:
+      - serial_number
+      - id
+      - description
+      - build
+      - enabled
+      - connections
+      title: FiqApplianceDto
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    StackVolumeUpdated:
+      properties:
+        action:
+          type: string
+          const: Stack Volume Updated
+          title: Action
+        volume_id:
+          type: string
+          title: Volume Id
+        old:
+          anyOf:
+          - $ref: '#/components/schemas/UaasVolumeNdsDto'
+          - type: 'null'
+        new:
+          anyOf:
+          - $ref: '#/components/schemas/UaasVolumeNdsDto'
+          - type: 'null'
+      type: object
+      required:
+      - action
+      - volume_id
+      title: StackVolumeUpdated
+    ActivityLogsKeyDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        type:
+          $ref: '#/components/schemas/KeyType'
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+      type: object
+      required:
+      - id
+      - type
+      title: ActivityLogsKeyDto
+    SoftwareDownloadConfigurationUpdate:
+      properties:
+        action:
+          type: string
+          const: Software Download Configuration Updated
+          title: Action
+        old:
+          $ref: '#/components/schemas/SoftwareDownloadsConfigurationDto'
+        new:
+          $ref: '#/components/schemas/SoftwareDownloadsConfigurationDto'
+      type: object
+      required:
+      - action
+      - old
+      - new
+      title: SoftwareDownloadConfigurationUpdate
+    SoftwareDownloadsConfigurationDto:
+      properties:
+        linked_amazon_account_ids:
+          items:
+            type: string
+          type: array
+          title: Linked Amazon Account Ids
+      type: object
+      title: SoftwareDownloadsConfigurationDto
+    FiqConfigUpdate:
+      properties:
+        action:
+          type: string
+          const: File IQ Config Updated
+          title: Action
+        old:
+          anyOf:
+          - $ref: '#/components/schemas/FiqApplianceDto'
+          - type: 'null'
+        new:
+          anyOf:
+          - $ref: '#/components/schemas/FiqApplianceDto'
+          - type: 'null'
+      type: object
+      required:
+      - action
+      title: FiqConfigUpdate
+    ActivityLogTargetDto:
+      properties:
+        id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Id
+        type:
+          $ref: '#/components/schemas/ActivityLogTarget'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - type
+      title: ActivityLogTargetDto
+    CloudCredentialCreateFailed:
+      properties:
+        action:
+          type: string
+          const: Cloud Credential Create Failed
+          title: Action
+        name:
+          type: string
+          title: Name
+        edge_name:
+          type: string
+          title: Edge Name
+        error:
+          type: string
+          title: Error
+      type: object
+      required:
+      - action
+      - name
+      - edge_name
+      - error
+      title: CloudCredentialCreateFailed
+    ActivityLogsUserDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+      type: object
+      required:
+      - id
+      title: ActivityLogsUserDto
+    UserCreated:
+      properties:
+        action:
+          type: string
+          const: User Created
+          title: Action
+        item:
+          $ref: '#/components/schemas/UserDto'
+      type: object
+      required:
+      - action
+      - item
+      title: UserCreated
+    CloudCredentialUpdateFailed:
+      properties:
+        action:
+          type: string
+          const: Cloud Credential Update Failed
+          title: Action
+        name:
+          type: string
+          title: Name
+        edge_name:
+          type: string
+          title: Edge Name
+        error:
+          type: string
+          title: Error
+      type: object
+      required:
+      - action
+      - name
+      - edge_name
+      - error
+      title: CloudCredentialUpdateFailed
+    SSOConfigUpdate:
+      properties:
+        action:
+          type: string
+          const: SSO Config Updated
+          title: Action
+        old:
+          anyOf:
+          - $ref: '#/components/schemas/SSOConfigDto'
+          - type: 'null'
+        new:
+          anyOf:
+          - $ref: '#/components/schemas/SSOConfigDto'
+          - type: 'null'
+      type: object
+      required:
+      - action
+      title: SSOConfigUpdate
+    BucketSDDL:
+      properties:
+        name:
+          type: string
+          title: Name
+        path:
+          type: string
+          title: Path
+        volume:
+          type: string
+          title: Volume
+        roles:
+          anyOf:
+          - additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+          - type: 'null'
+          title: Roles
+        file_sddl:
+          type: string
+          title: File Sddl
+        dir_sddl:
+          type: string
+          title: Dir Sddl
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - path
+      - volume
+      - file_sddl
+      - dir_sddl
+      title: BucketSDDL
+    AiActivateIndexStatus:
+      type: string
+      enum:
+      - in_progress
+      - complete
+      - failed
+      - queued_for_deletion
+      title: AiActivateIndexStatus
+    UaasStackNdsConfigDto:
+      properties:
+        enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabled
+        azure_keys:
+          anyOf:
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/UaasBlobAccessKeyDto'
+              - $ref: '#/components/schemas/UaasBlobAccessKeyRevealedDto'
+            type: array
+          - type: 'null'
+          title: Azure Keys
+      type: object
+      title: UaasStackNdsConfigDto
+      description: Response DTO for NDS config endpoint — only config-level fields.
+    UaasS3ConfigRevealedDto:
+      properties:
+        aws_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Aws Enabled
+        aws_volumes:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Aws Volumes
+        keys:
+          anyOf:
+          - items:
+              additionalProperties:
+                type: string
+                format: password
+                writeOnly: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Keys
+      type: object
+      title: UaasS3ConfigRevealedDto
+    ActivityLogsRoleDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        created:
+          type: string
+          format: date-time
+          title: Created
+        last_updated:
+          type: string
+          format: date-time
+          title: Last Updated
+        name:
+          type: string
+          title: Name
+        sso_group_names:
+          items:
+            type: string
+          type: array
+          title: Sso Group Names
+          default: []
+        editable:
+          type: boolean
+          title: Editable
+          default: true
+        deletable:
+          type: boolean
+          title: Deletable
+          default: true
+        permissions:
+          items:
+            type: string
+          type: array
+          title: Permissions
+      type: object
+      required:
+      - id
+      - created
+      - last_updated
+      - name
+      title: ActivityLogsRoleDto
+    UaasStackDetailDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        serial_number:
+          type: string
+          format: uuid
+          title: Serial Number
+        name:
+          type: string
+          title: Name
+        build:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Build
+        uaas_build:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Uaas Build
+        cloud_provider:
+          $ref: '#/components/schemas/NocStackCloudProvider'
+        region:
+          type: string
+          title: Region
+        created_date:
+          type: string
+          format: date-time
+          title: Created Date
+        last_used_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Used Date
+        uaas_api_url:
+          anyOf:
+          - type: string
+            maxLength: 2083
+            minLength: 1
+            format: uri
+          - type: 'null'
+          title: Uaas Api Url
+        blob_endpoint_url:
+          anyOf:
+          - type: string
+            maxLength: 2083
+            minLength: 1
+            format: uri
+          - type: 'null'
+          title: Blob Endpoint Url
+        s3_obj_lambda_buckets:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: S3 Obj Lambda Buckets
+        log_level:
+          anyOf:
+          - $ref: '#/components/schemas/NocUaasLogLevel'
+          - type: 'null'
+        log_retention:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Log Retention
+        remote_support_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Remote Support Enabled
+        volume_refresh_interval:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Volume Refresh Interval
+      type: object
+      required:
+      - id
+      - serial_number
+      - name
+      - cloud_provider
+      - region
+      - created_date
+      title: UaasStackDetailDto
+    CloudCredentialDeleted:
+      properties:
+        action:
+          type: string
+          const: Cloud Credential Deleted
+          title: Action
+        name:
+          type: string
+          title: Name
+        edge_name:
+          type: string
+          title: Edge Name
+      type: object
+      required:
+      - action
+      - name
+      - edge_name
+      title: CloudCredentialDeleted
+    ActivityLogResultDto:
+      properties:
+        metadata:
+          $ref: '#/components/schemas/PaginatedCollectionMetadataDto'
+        items:
+          items:
+            $ref: '#/components/schemas/ActivityLogDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - metadata
+      title: ActivityLogResultDto
+    AuthMethod:
+      type: string
+      enum:
+      - noc_token
+      - service_key
+      - user_key
+      - mcp
+      title: AuthMethod
+    WebAccessSSOConfigDto:
+      properties:
+        provider:
+          type: string
+          title: Provider
+        client_id:
+          type: string
+          maxLength: 191
+          title: Client Id
+        secret:
+          type: string
+          format: password
+          title: Secret
+          writeOnly: true
+        key:
+          type: string
+          maxLength: 191
+          title: Key
+        login_button_label:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Login Button Label
+      type: object
+      required:
+      - provider
+      - client_id
+      - secret
+      - key
+      title: WebAccessSSOConfigDto
+    AiActivateMcpVolumeConfigDto:
+      properties:
+        mcp_enabled:
+          type: boolean
+          title: Mcp Enabled
+          description: Whether the MCP server is enabled for this volume.
+        allowed_file_extensions:
+          items:
+            type: string
+          type: array
+          title: Allowed File Extensions
+          description: File extensions the MCP server filters results to. Empty list returns all file types.
+          examples:
+          - - pdf
+            - docx
+        period:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Period
+          description: Time-window filter applied to query results. Accepts an ISO 8601 duration (e.g. 'P30D') or explicit interval null means 'all time' — ISO 8601 has no valid 'all time' representation.
+          examples:
+          - P7D
+          - P30D
+          - P90D
+          - P1Y
+          - null
+        ignore_principals:
+          items:
+            type: string
+          type: array
+          title: Ignore Principals
+          description: Principal names (users or groups) whose ALLOW permissions the MCP server ignores.
+          examples:
+          - - DOMAIN\\contractors
+            - service-account@example.com
+        ignore_everyone:
+          type: boolean
+          title: Ignore Everyone
+          description: When true, the MCP server ignores the Everyone principal.
+          default: false
+        ignore_domain_users:
+          type: boolean
+          title: Ignore Domain Users
+          description: When true, the MCP server ignores the Domain Users principal.
+          default: false
+      type: object
+      required:
+      - mcp_enabled
+      title: AiActivateMcpVolumeConfigDto
+      description: 'MCP query-scope configuration for a single indexed volume.
+
+
+        Returned by GET /ai_activate/indexes/{volume_id}/mcp and by
+
+        PATCH /ai_activate/indexes/{volume_id}/mcp after a successful update.'
+    Bucket:
+      properties:
+        name:
+          type: string
+          title: Name
+        path:
+          type: string
+          title: Path
+        volume:
+          type: string
+          title: Volume
+        roles:
+          anyOf:
+          - additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+          - type: 'null'
+          title: Roles
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - path
+      - volume
+      title: Bucket
+    ActivityLogSortBy:
+      type: string
+      enum:
+      - timestamp
+      - action
+      - target
+      - target_description
+      - initiated_by
+      title: ActivityLogSortBy
+    AccountInformationDto:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+        first_name:
+          type: string
+          title: First Name
+        last_name:
+          type: string
+          title: Last Name
+        company:
+          type: string
+          title: Company
+        phone:
+          type: string
+          title: Phone
+        created:
+          type: string
+          format: date-time
+          title: Created
+        id:
+          type: string
+          format: uuid
+          title: Id
+      type: object
+      required:
+      - email
+      - first_name
+      - last_name
+      - company
+      - phone
+      - created
+      - id
+      title: AccountInformationDto
+      description: Response model for account infromation for webbff/account
+    UserDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        username:
+          type: string
+          title: Username
+        account_owner:
+          type: boolean
+          title: Account Owner
+          default: false
+        created:
+          type: string
+          format: date-time
+          title: Created
+        last_login:
+          type: string
+          format: date-time
+          title: Last Login
+      type: object
+      required:
+      - id
+      - username
+      - created
+      - last_login
+      title: UserDto
+    EdgeFiqServiceDto:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+        connected_file_iq_serial:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Connected File Iq Serial
+      type: object
+      required:
+      - enabled
+      title: EdgeFiqServiceDto
+    AiActivateInventoryCreated:
+      properties:
+        action:
+          type: string
+          const: AI Activate Inventory Created
+          title: Action
+        provider:
+          type: string
+          title: Provider
+        volume_id:
+          type: string
+          title: Volume Id
+        volume_name:
+          type: string
+          title: Volume Name
+        region:
+          type: string
+          title: Region
+      type: object
+      required:
+      - action
+      - provider
+      - volume_id
+      - volume_name
+      - region
+      title: AiActivateInventoryCreated
+    NocStackCloudProvider:
+      type: string
+      enum:
+      - aws
+      - azure
+      title: NocStackCloudProvider
+    EdgeFiqServiceConfigUpdate:
+      properties:
+        action:
+          type: string
+          const: Edge FIQ Service Config Updated
+          title: Action
+        old:
+          $ref: '#/components/schemas/EdgeFiqServiceDto'
+        new:
+          $ref: '#/components/schemas/EdgeFiqServiceDto'
+      type: object
+      required:
+      - action
+      - old
+      - new
+      title: EdgeFiqServiceConfigUpdate
+    AccountInformationUpdate:
+      properties:
+        action:
+          type: string
+          const: Account Information Updated
+          title: Action
+        old:
+          $ref: '#/components/schemas/AccountInformationDto'
+        new:
+          $ref: '#/components/schemas/AccountInformationDto'
+      type: object
+      required:
+      - action
+      - old
+      - new
+      title: AccountInformationUpdate
+    SortDirection:
+      type: string
+      enum:
+      - ascending
+      - descending
+      title: SortDirection
+    PaginatedCollectionMetadataDto:
+      properties:
+        iterator_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Iterator Id
+          description: The iterator ID to use when querying the next page of results
+        page:
+          type: integer
+          title: Page
+          default: 1
+        page_size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Page Size
+        total_pages:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Pages
+        total_items:
+          type: integer
+          title: Total Items
+      type: object
+      required:
+      - iterator_id
+      - total_items
+      title: PaginatedCollectionMetadataDto
+    AiActivateRemoteSupportUpdate:
+      properties:
+        action:
+          type: string
+          const: AI Activate Remote Support Updated
+          title: Action
+        old:
+          anyOf:
+          - $ref: '#/components/schemas/AiActivateRemoteSupportDto'
+          - type: 'null'
+        new:
+          anyOf:
+          - $ref: '#/components/schemas/AiActivateRemoteSupportDto'
+          - type: 'null'
+      type: object
+      required:
+      - action
+      title: AiActivateRemoteSupportUpdate
+    ActivityLogAction:
+      type: string
+      enum:
+      - Auth Code Requested
+      - Auth Code Reset
+      - Account Information Updated
+      - Serial Number Decommission
+      - Email Updated
+      - SSO Config Updated
+      - Web Access SSO Config Updated
+      - S3 Edge Config Updated
+      - S3 Edge Enabled
+      - S3 Edge Disabled
+      - Analytics Connector Updated
+      - Analytics Connector Key Generated
+      - User Created
+      - Role Created
+      - Role Deleted
+      - Role Updated
+      - Edge FIQ Service Config Updated
+      - File IQ Config Updated
+      - Service Key Created
+      - Service Key Deleted
+      - Service Key Role Added
+      - Service Key Role Removed
+      - GFA API Key Deleted
+      - GFA API Key Created
+      - Cloud Credential Deleted
+      - User Key Created
+      - User Key Deleted
+      - Authorized Login
+      - Authorized Logout
+      - Software Download Configuration Updated
+      - Stack Configuration Updated
+      - Stack NDS Configuration Updated
+      - Stack Volume Added
+      - Stack Volume Updated
+      - Stack Volume Removed
+      - Stack NDS SAS Token Generated
+      - Snapshot Started
+      - Snapshot Cancelled
+      - AI Activate Inventory Created
+      - AI Activate Index Created
+      - AI Activate Index Config Updated
+      - AI Activate Remote Support Updated
+      - AI Activate MCP Config Updated
+      - Cloud Credential Created
+      - Cloud Credential Updated
+      - Cloud Credential Create Failed
+      - Cloud Credential Update Failed
+      - Cloud Credential Delete Failed
+      - Cloud Credential Error Acknowledged
+      - Legacy
+      title: ActivityLogAction
+    EmailUpdate:
+      properties:
+        action:
+          type: string
+          const: Email Updated
+          title: Action
+        old:
+          type: string
+          format: email
+          title: Old
+        new:
+          type: string
+          format: email
+          title: New
+      type: object
+      required:
+      - action
+      - old
+      - new
+      title: EmailUpdate
+    UaasVolumeNdsDto:
+      properties:
+        nds:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Nds
+        nds_excluded_paths:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Nds Excluded Paths
+        nds_included_paths:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Nds Included Paths
+      type: object
+      title: UaasVolumeNdsDto
+    WebAccessSSOConfigUpdate:
+      properties:
+        action:
+          type: string
+          const: Web Access SSO Config Updated
+          title: Action
+        old:
+          anyOf:
+          - $ref: '#/components/schemas/WebAccessSSOConfigDto'
+          - type: 'null'
+        new:
+          anyOf:
+          - $ref: '#/components/schemas/WebAccessSSOConfigDto'
+          - type: 'null'
+      type: object
+      required:
+      - action
+      title: WebAccessSSOConfigUpdate
+    UaasBlobAccessKeyBaseDto:
+      properties:
+        access_key:
+          type: string
+          format: password
+          title: Access Key
+          writeOnly: true
+        generated:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Generated
+      type: object
+      required:
+      - access_key
+      title: UaasBlobAccessKeyBaseDto
+    FiqConnections:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/FiqEdgeDto'
+          type: array
+          title: Edges
+      type: object
+      required:
+      - edges
+      title: FiqConnections
+    NacRunHistoryDto:
+      properties:
+        error_count:
+          type: integer
+          title: Error Count
+          default: 0
+        run_id:
+          type: string
+          title: Run Id
+        unifx_version:
+          type: string
+          title: Unifx Version
+        start_timestamp:
+          type: string
+          format: date-time
+          title: Start Timestamp
+        destination_type:
+          type: string
+          title: Destination Type
+        failed_file_count:
+          type: integer
+          title: Failed File Count
+          default: 0
+        elapsed_time:
+          type: integer
+          title: Elapsed Time
+        source_type:
+          type: string
+          title: Source Type
+        exported_files:
+          type: integer
+          title: Exported Files
+        average_throughput:
+          type: integer
+          title: Average Throughput
+        end_time:
+          type: integer
+          title: End Time
+        volume_name:
+          type: string
+          title: Volume Name
+        percent_complete:
+          type: integer
+          title: Percent Complete
+        exported_dirs:
+          type: integer
+          title: Exported Dirs
+        volume_guid:
+          type: string
+          title: Volume Guid
+        exported_bytes:
+          type: integer
+          title: Exported Bytes
+      type: object
+      required:
+      - run_id
+      - unifx_version
+      - start_timestamp
+      - destination_type
+      - elapsed_time
+      - source_type
+      - exported_files
+      - average_throughput
+      - end_time
+      - volume_name
+      - percent_complete
+      - exported_dirs
+      - volume_guid
+      - exported_bytes
+      title: NacRunHistoryDto
+    SSOConfigDto:
+      properties:
+        provider:
+          type: string
+          title: Provider
+        name:
+          type: string
+          maxLength: 40
+          title: Name
+        client_id:
+          type: string
+          maxLength: 191
+          title: Client Id
+        secret:
+          type: string
+          format: password
+          title: Secret
+          writeOnly: true
+        key:
+          type: string
+          maxLength: 191
+          title: Key
+      type: object
+      required:
+      - provider
+      - name
+      - client_id
+      - secret
+      - key
+      title: SSOConfigDto
+    CloudCredentialUpdated:
+      properties:
+        action:
+          type: string
+          const: Cloud Credential Updated
+          title: Action
+        name:
+          type: string
+          title: Name
+        cred_type:
+          type: string
+          title: Cred Type
+        edge_name:
+          type: string
+          title: Edge Name
+        changed_fields:
+          items:
+            type: string
+          type: array
+          title: Changed Fields
+      type: object
+      required:
+      - action
+      - name
+      - cred_type
+      - edge_name
+      title: CloudCredentialUpdated
+    StackVolumeAdded:
+      properties:
+        action:
+          type: string
+          const: Stack Volume Added
+          title: Action
+        volume_id:
+          type: string
+          title: Volume Id
+        new:
+          anyOf:
+          - $ref: '#/components/schemas/UaasVolumeNdsDto'
+          - type: 'null'
+      type: object
+      required:
+      - action
+      - volume_id
+      title: StackVolumeAdded
+    ActivityLogDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        transaction_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Transaction Id
+        target:
+          anyOf:
+          - $ref: '#/components/schemas/ActivityLogTargetDto'
+          - type: 'null'
+        action:
+          anyOf:
+          - $ref: '#/components/schemas/ActivityLogAction'
+          - type: 'null'
+        summary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Summary
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        user:
+          anyOf:
+          - $ref: '#/components/schemas/ActivityLogsUserDto'
+          - type: 'null'
+        key:
+          anyOf:
+          - $ref: '#/components/schemas/ActivityLogsKeyDto'
+          - type: 'null'
+        roles:
+          items:
+            type: string
+          type: array
+          title: Roles
+        source_ip:
+          anyOf:
+          - type: string
+            format: ipv4
+          - type: string
+            format: ipv6
+          - type: 'null'
+          title: Source Ip
+        details:
+          anyOf:
+          - oneOf:
+            - $ref: '#/components/schemas/SoftwareDownloadConfigurationUpdate'
+            - $ref: '#/components/schemas/AuthCode'
+            - $ref: '#/components/schemas/AccountInformationUpdate'
+            - $ref: '#/components/schemas/EdgeTarget'
+            - $ref: '#/components/schemas/EdgeFiqServiceConfigUpdate'
+            - $ref: '#/components/schemas/EmailUpdate'
+            - $ref: '#/components/schemas/SSOConfigUpdate'
+            - $ref: '#/components/schemas/WebAccessSSOConfigUpdate'
+            - $ref: '#/components/schemas/S3EdgeConfigUpdate'
+            - $ref: '#/components/schemas/AnalyticsConnectorUpdate'
+            - $ref: '#/components/schemas/UserCreated'
+            - $ref: '#/components/schemas/portal__api__dto__activity_logs__EventDetails__Role'
+            - $ref: '#/components/schemas/RoleUpdated'
+            - $ref: '#/components/schemas/FiqConfigUpdate'
+            - $ref: '#/components/schemas/CreatedOrDeleted'
+            - $ref: '#/components/schemas/ServiceKeyRole'
+            - $ref: '#/components/schemas/StackConfigUpdate'
+            - $ref: '#/components/schemas/StackNDSConfigUpdate'
+            - $ref: '#/components/schemas/StackVolumeAdded'
+            - $ref: '#/components/schemas/StackVolumeUpdated'
+            - $ref: '#/components/schemas/StackVolumeRemoved'
+            - $ref: '#/components/schemas/Authentication'
+            - $ref: '#/components/schemas/SnapshotEvent'
+            - $ref: '#/components/schemas/AiActivateInventoryCreated'
+            - $ref: '#/components/schemas/AiActivateIndexCreated'
+            - $ref: '#/components/schemas/AiActivateIndexConfigUpdated'
+            - $ref: '#/components/schemas/AiActivateRemoteSupportUpdate'
+            - $ref: '#/components/schemas/AiActivateMcpConfigUpdated'
+            - $ref: '#/components/schemas/CloudCredentialCreated'
+            - $ref: '#/components/schemas/CloudCredentialUpdated'
+            - $ref: '#/components/schemas/CloudCredentialDeleted'
+            - $ref: '#/components/schemas/CloudCredentialCreateFailed'
+            - $ref: '#/components/schemas/CloudCredentialUpdateFailed'
+            - $ref: '#/components/schemas/CloudCredentialDeleteFailed'
+            - $ref: '#/components/schemas/CloudCredentialErrorAcknowledged'
+            discriminator:
+              propertyName: action
+              mapping:
+                AI Activate Index Config Updated: '#/components/schemas/AiActivateIndexConfigUpdated'
+                AI Activate Index Created: '#/components/schemas/AiActivateIndexCreated'
+                AI Activate Inventory Created: '#/components/schemas/AiActivateInventoryCreated'
+                AI Activate MCP Config Updated: '#/components/schemas/AiActivateMcpConfigUpdated'
+                AI Activate Remote Support Updated: '#/components/schemas/AiActivateRemoteSupportUpdate'
+                Account Information Updated: '#/components/schemas/AccountInformationUpdate'
+                Analytics Connector Updated: '#/components/schemas/AnalyticsConnectorUpdate'
+                Auth Code Requested: '#/components/schemas/AuthCode'
+                Auth Code Reset: '#/components/schemas/AuthCode'
+                Authorized Login: '#/components/schemas/Authentication'
+                Authorized Logout: '#/components/schemas/Authentication'
+                Cloud Credential Create Failed: '#/components/schemas/CloudCredentialCreateFailed'
+                Cloud Credential Created: '#/components/schemas/CloudCredentialCreated'
+                Cloud Credential Delete Failed: '#/components/schemas/CloudCredentialDeleteFailed'
+                Cloud Credential Deleted: '#/components/schemas/CloudCredentialDeleted'
+                Cloud Credential Error Acknowledged: '#/components/schemas/CloudCredentialErrorAcknowledged'
+                Cloud Credential Update Failed: '#/components/schemas/CloudCredentialUpdateFailed'
+                Cloud Credential Updated: '#/components/schemas/CloudCredentialUpdated'
+                Edge FIQ Service Config Updated: '#/components/schemas/EdgeFiqServiceConfigUpdate'
+                Email Updated: '#/components/schemas/EmailUpdate'
+                File IQ Config Updated: '#/components/schemas/FiqConfigUpdate'
+                GFA API Key Created: '#/components/schemas/CreatedOrDeleted'
+                GFA API Key Deleted: '#/components/schemas/CreatedOrDeleted'
+                Role Created: '#/components/schemas/portal__api__dto__activity_logs__EventDetails__Role'
+                Role Deleted: '#/components/schemas/portal__api__dto__activity_logs__EventDetails__Role'
+                Role Updated: '#/components/schemas/RoleUpdated'
+                S3 Edge Config Updated: '#/components/schemas/S3EdgeConfigUpdate'
+                S3 Edge Disabled: '#/components/schemas/EdgeTarget'
+                S3 Edge Enabled: '#/components/schemas/EdgeTarget'
+                SSO Config Updated: '#/components/schemas/SSOConfigUpdate'
+                Serial Number Decommission: '#/components/schemas/AuthCode'
+                Service Key Created: '#/components/schemas/CreatedOrDeleted'
+                Service Key Deleted: '#/components/schemas/CreatedOrDeleted'
+                Service Key Role Added: '#/components/schemas/ServiceKeyRole'
+                Service Key Role Removed: '#/components/schemas/ServiceKeyRole'
+                Snapshot Cancelled: '#/components/schemas/SnapshotEvent'
+                Snapshot Started: '#/components/schemas/SnapshotEvent'
+                Software Download Configuration Updated: '#/components/schemas/SoftwareDownloadConfigurationUpdate'
+                Stack Configuration Updated: '#/components/schemas/StackConfigUpdate'
+                Stack NDS Configuration Updated: '#/components/schemas/StackNDSConfigUpdate'
+                Stack Volume Added: '#/components/schemas/StackVolumeAdded'
+                Stack Volume Removed: '#/components/schemas/StackVolumeRemoved'
+                Stack Volume Updated: '#/components/schemas/StackVolumeUpdated'
+                User Created: '#/components/schemas/UserCreated'
+                User Key Created: '#/components/schemas/CreatedOrDeleted'
+                User Key Deleted: '#/components/schemas/CreatedOrDeleted'
+                Web Access SSO Config Updated: '#/components/schemas/WebAccessSSOConfigUpdate'
+          - type: 'null'
+          title: Details
+      type: object
+      required:
+      - id
+      - timestamp
+      - details
+      title: ActivityLogDto
+    ServiceKeyRole:
+      properties:
+        action:
+          type: string
+          enum:
+          - Service Key Role Added
+          - Service Key Role Removed
+          title: Action
+        id:
+          type: string
+          format: uuid
+          title: Id
+        role_id:
+          type: string
+          format: uuid
+          title: Role Id
+        role_name:
+          type: string
+          title: Role Name
+      type: object
+      required:
+      - action
+      - id
+      - role_id
+      - role_name
+      title: ServiceKeyRole
+    CloudCredentialCreated:
+      properties:
+        action:
+          type: string
+          const: Cloud Credential Created
+          title: Action
+        name:
+          type: string
+          title: Name
+        cred_type:
+          type: string
+          title: Cred Type
+        edge_name:
+          type: string
+          title: Edge Name
+      type: object
+      required:
+      - action
+      - name
+      - cred_type
+      - edge_name
+      title: CloudCredentialCreated
+    EdgeTarget:
+      properties:
+        action:
+          type: string
+          enum:
+          - S3 Edge Enabled
+          - S3 Edge Disabled
+          title: Action
+      type: object
+      required:
+      - action
+      title: EdgeTarget
+    NocUaasLogLevel:
+      type: string
+      enum:
+      - DEBUG
+      - INFO
+      - WARNING
+      - ERROR
+      - CRITICAL
+      title: NocUaasLogLevel
+  securitySchemes:
+    ServiceKeyHeader:
+      type: apiKey
+      in: header
+      name: x-service-key
+      description: Service key for programmatic API access. Must be used together with x-service-secret.
+    ServiceSecretHeader:
+      type: apiKey
+      in: header
+      name: x-service-secret
+      description: Service secret for programmatic API access. Must be used together with x-service-key.
+    UserKeyHeader:
+      type: apiKey
+      in: header
+      name: x-user-key
+      description: User key for user-specific API access.
+    HTTPBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token obtained from /auth/token endpoint.
+    OAuth2ClientCredentials:
+      type: oauth2
+      description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes: {}

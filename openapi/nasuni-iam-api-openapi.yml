@@ -1,0 +1,1587 @@
+openapi: 3.2.0
+info:
+  title: Portal IAM API
+  version: 0.1.0
+servers:
+- url: https://am1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the US region.
+- url: https://eu1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the EU region.
+- url: https://ap1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the Asia-Pacific region.
+security:
+- HTTPBearer: []
+tags:
+- name: IAM
+paths:
+  /iam/users:
+    get:
+      tags:
+      - IAM
+      summary: Get Users
+      operationId: get_users_iam_users_get
+      responses:
+        '200':
+          description: Users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /iam/users/{user_id}:
+    get:
+      tags:
+      - IAM
+      summary: Get User
+      operationId: get_user_iam_users__user_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: User Id
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /iam/users/{user_id}/roles:
+    get:
+      tags:
+      - IAM
+      summary: Get User Roles
+      operationId: get_user_roles_iam_users__user_id__roles_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: User Id
+      responses:
+        '200':
+          description: User roles retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoleDto'
+                title: Response 200 Get User Roles Iam Users  User Id  Roles Get
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /iam/roles:
+    get:
+      tags:
+      - IAM
+      summary: Get Roles
+      operationId: get_roles_iam_roles_get
+      responses:
+        '200':
+          description: Roles retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RolesDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+    post:
+      tags:
+      - IAM
+      summary: Create Role
+      operationId: create_role_iam_roles_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRoleDto'
+        required: true
+      responses:
+        '200':
+          description: Role created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /iam/roles/duplicate:
+    post:
+      tags:
+      - IAM
+      summary: Duplicate Role
+      operationId: duplicate_role_iam_roles_duplicate_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DuplicateRoleDto'
+        required: true
+      responses:
+        '200':
+          description: Role duplicated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /iam/roles/{role_id}:
+    patch:
+      tags:
+      - IAM
+      summary: Update Role
+      operationId: update_role_iam_roles__role_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: role_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Role Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRoleDto'
+      responses:
+        '200':
+          description: Role updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+      - IAM
+      summary: Delete Role
+      operationId: delete_role_iam_roles__role_id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: role_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Role Id
+      responses:
+        '200':
+          description: Operation completed successfully
+          content:
+            application/json:
+              schema: {}
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+      - IAM
+      summary: Get Role
+      operationId: get_role_iam_roles__role_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: role_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Role Id
+      responses:
+        '200':
+          description: Role retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /iam/roles/{role_id}/permissions:
+    get:
+      tags:
+      - IAM
+      summary: Get Role Permissions
+      operationId: get_permissions_for_role_iam_roles__role_id__permissions_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: role_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Role Id
+      responses:
+        '200':
+          description: Role permissions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionsDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /iam/permissions:
+    get:
+      tags:
+      - IAM
+      summary: Get Permissions
+      operationId: get_permissions_iam_permissions_get
+      responses:
+        '200':
+          description: Permissions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionsDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /iam/me:
+    get:
+      tags:
+      - IAM
+      summary: Get My Roles and Permissions
+      operationId: get_my_roles_and_permissions_iam_me_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RolesAndPermissionsDto'
+      security:
+      - HTTPBearer: []
+  /iam/service_keys:
+    get:
+      tags:
+      - IAM
+      summary: Get Service Keys
+      operationId: get_service_keys_iam_service_keys_get
+      responses:
+        '200':
+          description: Service keys retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceKeysDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+    post:
+      tags:
+      - IAM
+      summary: Create Service Key
+      operationId: create_service_key_iam_service_keys_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateServiceKeyRequestBodyDto'
+        required: true
+      responses:
+        '200':
+          description: Service key created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateServiceKeyResponseDto'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /iam/service_keys/{service_key_id}:
+    get:
+      tags:
+      - IAM
+      summary: Get Service Key
+      operationId: get_service_key_iam_service_keys__service_key_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: service_key_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Service Key Id
+      responses:
+        '200':
+          description: Service key retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceKeyDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      tags:
+      - IAM
+      summary: Update Service Key
+      operationId: update_service_key_iam_service_keys__service_key_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: service_key_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Service Key Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateServiceKeyRequestBodyDto'
+      responses:
+        '200':
+          description: Service key updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceKeyDto'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+      - IAM
+      summary: Delete Service Key
+      operationId: delete_service_key_iam_service_keys__service_key_id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: service_key_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Service Key Id
+      responses:
+        '200':
+          description: Operation completed successfully
+          content:
+            application/json:
+              schema: {}
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /iam/user_keys:
+    get:
+      tags:
+      - IAM
+      summary: Get User Keys
+      operationId: get_user_keys_iam_user_keys_get
+      responses:
+        '200':
+          description: User keys retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserKeysDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+    post:
+      tags:
+      - IAM
+      summary: Create User Key
+      operationId: create_user_key_iam_user_keys_post
+      responses:
+        '200':
+          description: User key created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserKeyDto'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /iam/user_keys/{user_key_id}:
+    get:
+      tags:
+      - IAM
+      summary: Get User Key
+      operationId: get_user_key_iam_user_keys__user_key_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: user_key_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: User Key Id
+      responses:
+        '200':
+          description: User key retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserKeyDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+      - IAM
+      summary: Delete User Key
+      operationId: delete_user_key_iam_user_keys__user_key_id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: user_key_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: User Key Id
+      responses:
+        '200':
+          description: Operation completed successfully
+          content:
+            application/json:
+              schema: {}
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    RolesDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/BaseRoleDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: RolesDto
+    PermissionKey:
+      type: string
+      enum:
+      - Configure FIQ Service
+      - View Edge S3 Edge Service
+      - Configure Edge S3 Edge Service
+      - View FIQ Appliances
+      - Configure FIQ Appliances
+      - View UaaS Stacks
+      - Edit UaaS Stacks
+      - View SRaaS
+      - View NDS Setup
+      - Edit NDS Setup
+      - View NDS Access Keys
+      - Edit NDS Access Keys
+      - Generate NDS Shared Access Signature (SAS)
+      - View Service API Keys
+      - Create Service API Keys
+      - Edit Service API Keys
+      - Delete Service API Keys
+      - View User API Keys
+      - Create User API Keys
+      - Delete User API Keys
+      - Manage Own User API Keys
+      - View Account Info
+      - Edit Account Info
+      - Manage Licenses
+      - View Analytics Connector
+      - Edit Analytics Connector
+      - Create Analytics Connector
+      - View Activity Logs
+      - View Appliance Installs
+      - Download Appliance Software
+      - Create GFA Keys
+      - View GFA Keys
+      - Delete GFA Keys
+      - View Active Portal Users
+      - View Roles and Permissions
+      - Delete Roles
+      - Edit Roles
+      - Create Roles
+      - View S3 Edge Configuration
+      - Edit S3 Edge Configuration
+      - Delete S3 Edge Configuration
+      - View Serial Numbers
+      - View Serial Auth Codes
+      - Decommission Appliances
+      - Perform Disaster Recovery
+      - View SSO Configuration
+      - Edit SSO Configuration
+      - View Web Access SSO Configuration
+      - Edit Web Access SSO Configuration
+      - View Ops IQ Appliance Dashboard
+      - View Ops IQ Volume Dashboard
+      - Install New Appliances
+      - Manage MFA Configuration
+      - View Volume Info
+      - Manage Snapshot
+      - View Notifications
+      - View AI Activate Indexes
+      - Edit AI Activate Indexes
+      - View AI Activate Consumption
+      - View AI Activate MCP Server
+      - Edit AI Activate MCP Server
+      - View AI Activate Remote Support
+      - Edit AI Activate Remote Support
+      - View Cloud Credentials
+      - Create / Edit Cloud Credentials
+      - Delete Cloud Credentials
+      title: PermissionKey
+      description: 'Enum representing all possible permission keys for the Portal API, including NDS (Nasuni Data Service) permissions.
+
+
+        This enum is used to define and manage access control for various features and operations
+
+        within the Portal API, including appliance management, authentication, account operations,
+
+        analytics, activity logs, downloads, GFA, IAM, S3 Edge, serials, SSO, Ops IQ, and UI features.'
+    ServiceKeysDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/ServiceKeyDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: ServiceKeysDto
+    PermissionDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        key:
+          $ref: '#/components/schemas/PermissionKey'
+        description:
+          type: string
+          title: Description
+      type: object
+      required:
+      - id
+      - key
+      - description
+      title: PermissionDto
+    BaseRoleDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        created:
+          type: string
+          format: date-time
+          title: Created
+        last_updated:
+          type: string
+          format: date-time
+          title: Last Updated
+        name:
+          type: string
+          title: Name
+        sso_group_names:
+          items:
+            type: string
+          type: array
+          title: Sso Group Names
+          default: []
+        editable:
+          type: boolean
+          title: Editable
+          default: true
+        deletable:
+          type: boolean
+          title: Deletable
+          default: true
+      type: object
+      required:
+      - id
+      - created
+      - last_updated
+      - name
+      title: BaseRoleDto
+    DuplicateRoleDto:
+      properties:
+        source_role_id:
+          type: string
+          format: uuid
+          title: Source Role Id
+        name:
+          type: string
+          title: Name
+        sso_group_names:
+          items:
+            type: string
+          type: array
+          title: Sso Group Names
+          default: []
+      type: object
+      required:
+      - source_role_id
+      - name
+      title: DuplicateRoleDto
+    PermissionsDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/PermissionDto'
+          type: array
+          title: Items
+      type: object
+      title: PermissionsDto
+    CreateServiceKeyResponseDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          type: string
+          title: Name
+        key:
+          type: string
+          title: Key
+        roles:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Roles
+        date_created:
+          type: string
+          format: date-time
+          title: Date Created
+        last_accessed:
+          type: string
+          format: date-time
+          title: Last Accessed
+        secret:
+          type: string
+          title: Secret
+      type: object
+      required:
+      - id
+      - name
+      - key
+      - roles
+      - date_created
+      - last_accessed
+      - secret
+      title: CreateServiceKeyResponseDto
+    UpdateRoleDto:
+      properties:
+        name:
+          type: string
+          title: Name
+        sso_group_names:
+          items:
+            type: string
+          type: array
+          title: Sso Group Names
+        permissions:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Permissions
+      type: object
+      title: UpdateRoleDto
+    UserKeysDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/UserKeyDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: UserKeysDto
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    CreateServiceKeyRequestBodyDto:
+      properties:
+        name:
+          type: string
+          title: Name
+        roles:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Roles
+      type: object
+      required:
+      - name
+      - roles
+      title: CreateServiceKeyRequestBodyDto
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    RoleDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        created:
+          type: string
+          format: date-time
+          title: Created
+        last_updated:
+          type: string
+          format: date-time
+          title: Last Updated
+        name:
+          type: string
+          title: Name
+        sso_group_names:
+          items:
+            type: string
+          type: array
+          title: Sso Group Names
+          default: []
+        editable:
+          type: boolean
+          title: Editable
+          default: true
+        deletable:
+          type: boolean
+          title: Deletable
+          default: true
+        permissions:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Permissions
+      type: object
+      required:
+      - id
+      - created
+      - last_updated
+      - name
+      - permissions
+      title: RoleDto
+    UserKeyDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        username:
+          type: string
+          title: Username
+        user:
+          type: string
+          format: uuid
+          title: User
+        key:
+          type: string
+          title: Key
+        expiration:
+          type: string
+          format: date-time
+          title: Expiration
+        date_created:
+          type: string
+          format: date-time
+          title: Date Created
+        last_accessed:
+          type: string
+          format: date-time
+          title: Last Accessed
+      type: object
+      required:
+      - id
+      - username
+      - user
+      - key
+      - expiration
+      - date_created
+      - last_accessed
+      title: UserKeyDto
+    UsersDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/UserDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: UsersDto
+    UserDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        username:
+          type: string
+          title: Username
+        account_owner:
+          type: boolean
+          title: Account Owner
+          default: false
+        created:
+          type: string
+          format: date-time
+          title: Created
+        last_login:
+          type: string
+          format: date-time
+          title: Last Login
+      type: object
+      required:
+      - id
+      - username
+      - created
+      - last_login
+      title: UserDto
+    ServiceKeyDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          type: string
+          title: Name
+        key:
+          type: string
+          title: Key
+        roles:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Roles
+        date_created:
+          type: string
+          format: date-time
+          title: Date Created
+        last_accessed:
+          type: string
+          format: date-time
+          title: Last Accessed
+      type: object
+      required:
+      - id
+      - name
+      - key
+      - roles
+      - date_created
+      - last_accessed
+      title: ServiceKeyDto
+    UpdateServiceKeyRequestBodyDto:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        roles:
+          anyOf:
+          - items:
+              type: string
+              format: uuid
+            type: array
+          - type: 'null'
+          title: Roles
+      type: object
+      title: UpdateServiceKeyRequestBodyDto
+    CreateRoleDto:
+      properties:
+        name:
+          type: string
+          title: Name
+        sso_group_names:
+          items:
+            type: string
+          type: array
+          title: Sso Group Names
+          default: []
+        permissions:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Permissions
+          default: []
+      type: object
+      required:
+      - name
+      title: CreateRoleDto
+    RolesAndPermissionsDto:
+      properties:
+        roles:
+          items:
+            $ref: '#/components/schemas/RoleDto'
+          type: array
+          title: Roles
+        permissions:
+          items:
+            $ref: '#/components/schemas/PermissionDto'
+          type: array
+          title: Permissions
+        is_sso_configured:
+          type: boolean
+          title: Is Sso Configured
+          default: false
+      type: object
+      title: RolesAndPermissionsDto
+  securitySchemes:
+    ServiceKeyHeader:
+      type: apiKey
+      in: header
+      name: x-service-key
+      description: Service key for programmatic API access. Must be used together with x-service-secret.
+    ServiceSecretHeader:
+      type: apiKey
+      in: header
+      name: x-service-secret
+      description: Service secret for programmatic API access. Must be used together with x-service-key.
+    UserKeyHeader:
+      type: apiKey
+      in: header
+      name: x-user-key
+      description: User key for user-specific API access.
+    HTTPBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token obtained from /auth/token endpoint.
+    OAuth2ClientCredentials:
+      type: oauth2
+      description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes: {}

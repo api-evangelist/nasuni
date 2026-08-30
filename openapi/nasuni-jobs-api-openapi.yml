@@ -1,0 +1,331 @@
+openapi: 3.2.0
+info:
+  title: Portal Jobs API
+  version: 0.1.0
+servers:
+- url: https://am1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the US region.
+- url: https://eu1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the EU region.
+- url: https://ap1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the Asia-Pacific region.
+security:
+- HTTPBearer: []
+tags:
+- name: Jobs
+paths:
+  /jobs:
+    get:
+      tags:
+      - Jobs
+      summary: Get Jobs
+      description: "Get all jobs for the account filtered by resource type and action.\n\nReturns the customer `TaskSummaryDto` view — the rolled-up task `state`\nonly. Internal steps and their engineering-facing `reason`s, plus the\ncaptured `auth_context`, deliberately do not cross this boundary;\nbackend services that need the full view consume `TaskDto` directly off\n`task_repo.get_task` / `task_repo.get_tasks`.\n\nArgs:\n    resource: The type of resource (e.g., volume)\n    action: The action performed on the resource (edge-api Command enum value, e.g., rename_volume)\n\nReturns:\n    TasksSummaryDto: List of jobs (tasks)."
+      operationId: get_jobs_jobs_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: resource
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/TaskResource'
+          - type: 'null'
+          title: Resource
+      - name: action
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Action
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TasksSummaryDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /jobs/{job_id}:
+    get:
+      tags:
+      - Jobs
+      summary: Get Job
+      description: "Get a single job.\n\nReturns the customer `TaskSummaryDto` view (rolled-up `state` only); see\n`get_jobs` for why steps / reasons / auth_context are omitted.\n\nArgs:\n    job_id: The ID of the job (task) to retrieve\n\nReturns:\n    TaskSummaryDto: The job."
+      operationId: get_job_jobs__job_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Job Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskSummaryDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /jobs/{job_id}/acknowledge:
+    post:
+      tags:
+      - Jobs
+      summary: Acknowledge Failed Job
+      description: 'User-dismiss a failed job (PORTAL-2357).
+
+
+        Returns 204 on success or when already acknowledged (idempotent), 400 if not
+
+        failed, 404 if missing or not a Cloud Credentials job.'
+      operationId: acknowledge_failed_job_jobs__job_id__acknowledge_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Job Id
+      responses:
+        '204':
+          description: Successful Response
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    TaskSummaryDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        resource:
+          type: string
+          title: Resource
+        resource_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: string
+          - type: 'null'
+          title: Resource Id
+        action:
+          type: string
+          title: Action
+        executor:
+          $ref: '#/components/schemas/TaskExecutor'
+        executor_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Executor Id
+        initiated_by:
+          $ref: '#/components/schemas/TaskInitiator'
+        initiator_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Initiator Id
+        activity_log_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Activity Log Id
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        state:
+          $ref: '#/components/schemas/TaskState'
+        last_updated_at:
+          type: string
+          format: date-time
+          title: Last Updated At
+        user_acknowledged_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: User Acknowledged At
+        deletion_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Deletion Time
+      type: object
+      required:
+      - id
+      - created_at
+      - resource
+      - action
+      - executor
+      - initiated_by
+      - state
+      - last_updated_at
+      title: TaskSummaryDto
+      description: 'Customer-facing job view: the rolled-up task `state` plus an optional,
+
+        curated task-level `reason`.
+
+
+        Deliberately carries no `steps`. Internal step `reason`s — unstructured,
+
+        engineering-facing strings (often raw exception detail) — stay in the
+
+        backend and never ride on this DTO. The task-level `reason` is a separate,
+
+        customer-safe contract: it''s surfaced only when a caller deliberately sets
+
+        it on the task (it is not auto-promoted from a failed step), and is null
+
+        otherwise. The deliberate partial-failure aggregation policy that decides
+
+        *what* to put there remains deferred (see the PORTAL-2195 ledger, FU-3).'
+    TaskState:
+      type: string
+      enum:
+      - in_progress
+      - completed
+      - failed
+      title: TaskState
+    TaskResource:
+      type: string
+      enum:
+      - edge
+      - volume
+      - cloud_credential
+      title: TaskResource
+    HTTPValidationError:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    TaskInitiator:
+      type: string
+      enum:
+      - portal
+      - edge
+      title: TaskInitiator
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    TaskExecutor:
+      type: string
+      enum:
+      - edge
+      title: TaskExecutor
+    TasksSummaryDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/TaskSummaryDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: TasksSummaryDto
+  securitySchemes:
+    ServiceKeyHeader:
+      type: apiKey
+      in: header
+      name: x-service-key
+      description: Service key for programmatic API access. Must be used together with x-service-secret.
+    ServiceSecretHeader:
+      type: apiKey
+      in: header
+      name: x-service-secret
+      description: Service secret for programmatic API access. Must be used together with x-service-key.
+    UserKeyHeader:
+      type: apiKey
+      in: header
+      name: x-user-key
+      description: User key for user-specific API access.
+    HTTPBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token obtained from /auth/token endpoint.
+    OAuth2ClientCredentials:
+      type: oauth2
+      description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes: {}

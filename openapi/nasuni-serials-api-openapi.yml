@@ -1,0 +1,488 @@
+openapi: 3.2.0
+info:
+  title: Portal Serials API
+  version: 0.1.0
+servers:
+- url: https://am1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the US region.
+- url: https://eu1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the EU region.
+- url: https://ap1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the Asia-Pacific region.
+security:
+- HTTPBearer: []
+tags:
+- name: Serials
+paths:
+  /serials:
+    get:
+      tags:
+      - Serials
+      summary: Get Serials
+      operationId: get_serials_serials_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - enum:
+            - edge
+            - nmc
+            - file_iq
+            - naa
+            - uaas
+            type: string
+          - type: 'null'
+          title: Type
+      - name: description
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      - name: in_use
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: In Use
+      responses:
+        '200':
+          description: Serials retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SerialsDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /serials/{serial_id}:
+    get:
+      tags:
+      - Serials
+      summary: Get Serial
+      operationId: get_serial_serials__serial_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: serial_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Serial Id
+      responses:
+        '200':
+          description: Serial retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SerialDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      tags:
+      - Serials
+      summary: Decommission Serial
+      operationId: update_serial_serials__serial_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: serial_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Serial Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SerialPatchRequestDto'
+      responses:
+        '200':
+          description: Appliance decommissioned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SerialDto'
+        '409':
+          description: Appliance owns volumes or is in a state that does not allow for decommission
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SerialPatchErrorResponseDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /serials/{serial_id}/auth_code:
+    patch:
+      tags:
+      - Serials
+      summary: Generate Serial Auth Code
+      operationId: update_serials_serial_auth_serials__serial_id__auth_code_patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: serial_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Serial Id
+      responses:
+        '200':
+          description: Auth code generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthCodeDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+      - Serials
+      summary: Get Serial Auth Code
+      operationId: get_serials_serial_auth_serials__serial_id__auth_code_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: serial_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Serial Id
+      responses:
+        '200':
+          description: Auth code retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthCodeDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    AuthCodeDto:
+      properties:
+        auth_code:
+          type: string
+          title: Auth Code
+      type: object
+      required:
+      - auth_code
+      title: AuthCodeDto
+    SerialPatchRequestDto:
+      properties:
+        decommission:
+          type: boolean
+          title: Decommission
+          default: false
+      type: object
+      title: SerialPatchRequestDto
+    SerialDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        type:
+          type: string
+          enum:
+          - edge
+          - nmc
+          - file_iq
+          - naa
+          - uaas
+          title: Type
+        in_use:
+          type: boolean
+          title: In Use
+          default: false
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        build:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Build
+        available_build:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Available Build
+        users:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Users
+        fqdns:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Fqdns
+        last_config_backup_date:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Config Backup Date
+      type: object
+      required:
+      - id
+      - type
+      title: SerialDto
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    HTTPValidationError:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    SerialPatchErrorResponseDto:
+      properties:
+        eligible:
+          type: boolean
+          title: Eligible
+        owned_volumes:
+          type: integer
+          title: Owned Volumes
+        remotely_connected_volumes:
+          type: integer
+          title: Remotely Connected Volumes
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - eligible
+      - owned_volumes
+      - remotely_connected_volumes
+      - message
+      title: SerialPatchErrorResponseDto
+    SerialsDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/SerialDto'
+          type: array
+          title: Items
+      type: object
+      title: SerialsDto
+  securitySchemes:
+    ServiceKeyHeader:
+      type: apiKey
+      in: header
+      name: x-service-key
+      description: Service key for programmatic API access. Must be used together with x-service-secret.
+    ServiceSecretHeader:
+      type: apiKey
+      in: header
+      name: x-service-secret
+      description: Service secret for programmatic API access. Must be used together with x-service-key.
+    UserKeyHeader:
+      type: apiKey
+      in: header
+      name: x-user-key
+      description: User key for user-specific API access.
+    HTTPBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token obtained from /auth/token endpoint.
+    OAuth2ClientCredentials:
+      type: oauth2
+      description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes: {}

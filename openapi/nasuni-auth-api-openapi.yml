@@ -1,0 +1,631 @@
+openapi: 3.2.0
+info:
+  title: Nasuni Auth API
+  version: '1.0'
+  description: 'Operations tagged Auth across 4 of this provider''s published API definitions: nasuni-nmc-v1-0-openapi.yml, nasuni-nmc-v1-1-openapi.yml, nasuni-nmc-v1-2-openapi.yml, nasuni-portal-v0-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://hostname/api/v1
+- url: https://hostname/api/v1.1
+- url: https://hostname/api/v1.2
+- url: https://am1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the US region.
+- url: https://eu1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the EU region.
+- url: https://ap1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the Asia-Pacific region.
+tags:
+- name: Auth
+paths:
+  /auth/login/:
+    post:
+      tags:
+      - Auth
+      summary: Login
+      description: Authenticate a user's credentials to get an access token.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+        required: false
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Permission Denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security: []
+      x-codegen-request-body-name: body
+    servers:
+    - url: https://hostname/api/v1
+  /auth/logout/:
+    post:
+      tags:
+      - Auth
+      summary: Logout
+      description: De-authenticate user access token.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  logged_out:
+                    type: boolean
+                    description: If true, the user access token was successfully de-authenticated.
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - AuthToken: []
+    servers:
+    - url: https://hostname/api/v1
+  /auth/token:
+    post:
+      tags:
+      - Auth
+      summary: Authenticate
+      description: 'Authenticate using one of the following methods:
+
+        - **Service Keys (headers)**: Provide both `x-service-key` and `x-service-secret` headers
+
+        - **User Keys (header)**: Provide `x-user-key` header
+
+        - **OAuth2 Client Credentials (form body)**: POST `application/x-www-form-urlencoded` with `grant_type=client_credentials`, `client_id=<service_key>`, `client_secret=<service_secret>` (RFC 6749 §4.4). Compatible with standard OAuth2 client libraries such as Grafana Infinity, Datadog, Splunk, and ServiceNow.
+
+
+        Returns access and refresh tokens for subsequent API calls.'
+      operationId: authorize_auth_token_post
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokensDto'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse_3'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse_3'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse_3'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse_3'
+      security:
+      - ServiceKeyHeader: []
+        ServiceSecretHeader: []
+      - UserKeyHeader: []
+      - OAuth2ClientCredentials: []
+      requestBody:
+        required: false
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+              - grant_type
+              - client_id
+              - client_secret
+              properties:
+                grant_type:
+                  type: string
+                  enum:
+                  - client_credentials
+                  description: Must be `client_credentials`.
+                client_id:
+                  type: string
+                  description: Portal service key (equivalent to the `x-service-key` header).
+                client_secret:
+                  type: string
+                  format: uuid
+                  description: Portal service secret (equivalent to the `x-service-secret` header).
+    delete:
+      tags:
+      - Auth
+      summary: Revoke Access Token
+      description: 'Revoke the current access token and its entire token family.
+
+
+        This invalidates the current access token and all associated refresh tokens,
+
+        requiring the user to re-authenticate. Use this for logout functionality.
+
+
+        Requires: Valid access token in Authorization header (Bearer <token>)'
+      operationId: revoke_auth_token_delete
+      responses:
+        '200':
+          description: Operation completed successfully
+          content:
+            application/json:
+              schema: {}
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse_3'
+      security:
+      - HTTPBearer: []
+    servers:
+    - url: https://am1.portal.api.nasuni.com
+      description: Base URL for accounts assigned the US region.
+    - url: https://eu1.portal.api.nasuni.com
+      description: Base URL for accounts assigned the EU region.
+    - url: https://ap1.portal.api.nasuni.com
+      description: Base URL for accounts assigned the Asia-Pacific region.
+  /auth/token/refresh:
+    post:
+      tags:
+      - Auth
+      summary: Refresh Access Token
+      description: "Refresh an expired access token using a valid refresh token.\n\nWhen your access token expires, use this endpoint to obtain a new access token\nand refresh token pair without re-authenticating.\n\nArgs:\n    body: Request containing the refresh token\n\nReturns:\n    TokensDto: New access token and refresh token pair"
+      operationId: refresh_auth_token_refresh_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequestDto'
+        required: true
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokensDto'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse_3'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse_3'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse_3'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse_3'
+      security:
+      - HTTPBearer: []
+    servers:
+    - url: https://am1.portal.api.nasuni.com
+      description: Base URL for accounts assigned the US region.
+    - url: https://eu1.portal.api.nasuni.com
+      description: Base URL for accounts assigned the EU region.
+    - url: https://ap1.portal.api.nasuni.com
+      description: Base URL for accounts assigned the Asia-Pacific region.
+  /auth/mcp:
+    post:
+      tags:
+      - Auth
+      summary: Issue MCP-scoped tokens
+      description: 'Mint MCP-scoped tokens and log activity.
+
+
+        Authorization-Mcp header must contain the user''s Portal access token (the
+
+        cookie value forwarded by the webbff). WebBFF completes the MCP callback
+
+        server-side so WebAPI does not depend on the MCP stack URL.'
+      operationId: mcp_authorize_auth_mcp_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/McpAuthorizeRequest'
+        required: true
+      responses:
+        '200':
+          description: MCP-scoped tokens issued successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokensDto'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse_3'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse_3'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse_3'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse_3'
+      security:
+      - APIKeyHeader: []
+    servers:
+    - url: https://am1.portal.api.nasuni.com
+      description: Base URL for accounts assigned the US region.
+    - url: https://eu1.portal.api.nasuni.com
+      description: Base URL for accounts assigned the EU region.
+    - url: https://ap1.portal.api.nasuni.com
+      description: Base URL for accounts assigned the Asia-Pacific region.
+components:
+  schemas:
+    ValidationError:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldError'
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+    FieldError:
+      type: object
+      properties:
+        field:
+          type: string
+          description: The field to which the validation error applies, or "__all__" if it is a non-field error.
+        errors:
+          type: array
+          items:
+            type: string
+    AuthToken:
+      type: object
+      properties:
+        token:
+          type: string
+        expires:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error_2'
+    Error_2:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "unmanaged_error" - Resource is not managed.
+
+            * "conflict_error" - Conflict error
+
+            * "unsupported_error" - Current filer version does not support this type of request.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          readOnly: true
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - unmanaged_error
+          - conflict_error
+          - unsupported_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+          readOnly: true
+    ErrorResponse_2:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error_3'
+    Error_3:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "unmanaged_error" - Resource is not managed.
+
+            * "conflict_error" - Conflict error
+
+            * "unsupported_error" - Current filer version does not support this type of request.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          readOnly: true
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - unmanaged_error
+          - conflict_error
+          - unsupported_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+          readOnly: true
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    TokensDto:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+        refresh_token:
+          type: string
+          title: Refresh Token
+        token_type:
+          type: string
+          title: Token Type
+          default: bearer
+        expires_in:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Expires In
+      type: object
+      required:
+      - access_token
+      - refresh_token
+      title: TokensDto
+    TokenRequestDto:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: TokenRequestDto
+    ErrorResponse_3:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    McpAuthorizeRequest:
+      properties:
+        request_id:
+          type: string
+          title: Request Id
+      type: object
+      required:
+      - request_id
+      title: McpAuthorizeRequest
+  securitySchemes:
+    AuthToken:
+      type: apiKey
+      description: 'This header is required to make authenticated requests. The value format is:
+
+
+        Token [your_auth_token]
+
+        '
+      name: Authorization
+      in: header
+    ServiceKeyHeader:
+      type: apiKey
+      in: header
+      name: x-service-key
+      description: Service key for programmatic API access. Must be used together with x-service-secret.
+    ServiceSecretHeader:
+      type: apiKey
+      in: header
+      name: x-service-secret
+      description: Service secret for programmatic API access. Must be used together with x-service-key.
+    UserKeyHeader:
+      type: apiKey
+      in: header
+      name: x-user-key
+      description: User key for user-specific API access.
+    HTTPBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token obtained from /auth/token endpoint.
+    OAuth2ClientCredentials:
+      type: oauth2
+      description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes: {}
+x-refined-from:
+- nasuni-nmc-v1-0-openapi.yml
+- nasuni-nmc-v1-1-openapi.yml
+- nasuni-nmc-v1-2-openapi.yml
+- nasuni-portal-v0-openapi.yml

@@ -1,0 +1,1606 @@
+openapi: 3.2.0
+info:
+  title: Portal UniFS As A Service (UaaS) API
+  version: 0.1.0
+servers:
+- url: https://am1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the US region.
+- url: https://eu1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the EU region.
+- url: https://ap1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the Asia-Pacific region.
+security:
+- HTTPBearer: []
+tags:
+- name: UniFS As A Service (UaaS)
+paths:
+  /uaas/stacks:
+    get:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Get UaaS Stacks
+      description: Get the list of all UaaS Stacks in the account.
+      operationId: get_stacks_uaas_stacks_get
+      responses:
+        '200':
+          description: UaaS stacks retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UaasStacksDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions or license
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /uaas/stacks/{stack_id}:
+    get:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Get UaaS Stack
+      description: Get details of a specific UaaS Stack by its ID
+      operationId: get_stack_uaas_stacks__stack_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: stack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Stack Id
+      responses:
+        '200':
+          description: UaaS stack retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UaasStackDetailDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions or license
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Update UaaS Stack
+      description: Update UaaS stack configuration. Accepts partial updates with at least one field required.
+      operationId: update_stack_uaas_stacks__stack_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: stack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Stack Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UaasStackUpdateDetailDto'
+      responses:
+        '200':
+          description: UaaS stack updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UaasStackDetailDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions or license
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /uaas/stacks/{stack_id}/nds:
+    get:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Get NDS Configuration for an UaaS Stack
+      description: Get NDS configuration for a specific UaaS Stack.
+      operationId: get_stack_nds_uaas_stacks__stack_id__nds_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: stack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Stack Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UaasStackNdsDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Update NDS Configuration
+      description: Update NDS configuration (azure, aws settings).
+      operationId: update_nds_config_uaas_stacks__stack_id__nds_patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: stack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Stack Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UaasUpdateNdsConfigDto'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UaasStackNdsConfigDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /uaas/stacks/{stack_id}/volumes:
+    get:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: List Stack Volumes
+      description: Get all NDS-connected volumes for a UaaS Stack.
+      operationId: get_stack_volumes_uaas_stacks__stack_id__volumes_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: stack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Stack Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NdsVolumesResponseDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /uaas/stacks/{stack_id}/volumes/{volume_id}:
+    get:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Get Stack Volume
+      description: Get a specific volume for a UaaS Stack.
+      operationId: get_stack_volume_uaas_stacks__stack_id__volumes__volume_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: stack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Stack Id
+      - name: volume_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Volume Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UaasVolumeNdsDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Add a Volume to Stack
+      description: 'Add a volume to the stack. Creates a registration task and sends a command to the edge.
+
+
+        Returns a task DTO that can be queried to check the registration status.'
+      operationId: add_stack_volume_uaas_stacks__stack_id__volumes__volume_id__post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: stack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Stack Id
+      - name: volume_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Volume Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UaasVolumeNdsDto'
+      responses:
+        '202':
+          description: Volume registration accepted; command dispatched to edge
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Update a Stack Volume
+      description: Update a volume on the stack. Handles path rules as a partial update.
+      operationId: update_stack_volume_uaas_stacks__stack_id__volumes__volume_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: stack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Stack Id
+      - name: volume_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Volume Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUaasVolumeNdsDto'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UaasVolumeNdsDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Remove a Volume from Stack
+      description: Remove a volume from the NDS stack configuration.
+      operationId: delete_stack_volume_uaas_stacks__stack_id__volumes__volume_id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: stack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Stack Id
+      - name: volume_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Volume Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UaasVolumeNdsDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /uaas/stacks/{stack_id}/sraas:
+    get:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Get SRaaS Configuration for an UaaS Stack
+      description: Get SRaaS configuration for a specific UaaS Stack, including the metrics.
+      operationId: get_stack_sraas_uaas_stacks__stack_id__sraas_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: stack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Stack Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UaasStackSraasDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /uaas/analytics_connector:
+    get:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Get Analytics Connector Information
+      operationId: get_analytics_connector_info_uaas_analytics_connector_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsConnectorDto'
+      security:
+      - HTTPBearer: []
+    post:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Generate Analytics Connector Key
+      operationId: generate_analytics_connector_key_uaas_analytics_connector_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsConnectorKeyDto'
+      security:
+      - HTTPBearer: []
+    patch:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Update Analytics Connector
+      operationId: update_analytics_connector_uaas_analytics_connector_patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyticsConnectorAwsIdsDto'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsConnectorDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - HTTPBearer: []
+  /uaas/stacks/{stack_id}/nds/blob-keys:
+    get:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Get Blob Access Keys for UaaS Stack
+      description: Get the list of blob access keys in the NDS configuration of a given UaaS stack.
+      operationId: get_blob_access_keys_uaas_stacks__stack_id__nds_blob_keys_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: stack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Stack Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UaasBlobAccessKeysDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /uaas/stacks/{stack_id}/nds/blob-keys/{blob_key_id}:
+    patch:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Regenerate Blob Access Key
+      description: Generate a new blob key given the UaaS stack ID and the ID of blob key to replace.
+      operationId: regenerate_blob_access_key_uaas_stacks__stack_id__nds_blob_keys__blob_key_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: stack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Stack Id
+      - name: blob_key_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Blob Key Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UaasBlobAccessKeyRevealedDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Get a specific Blob Access Key for UaaS Stack
+      description: Get the details of a blob access key given the UaaS stack ID and the blob key ID.
+      operationId: get_blob_access_key_uaas_stacks__stack_id__nds_blob_keys__blob_key_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: stack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Stack Id
+      - name: blob_key_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Blob Key Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UaasBlobAccessKeyRevealedDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /uaas/stacks/{stack_id}/nds/sas-token:
+    post:
+      tags:
+      - UniFS As A Service (UaaS)
+      summary: Generate SAS Token for Blob Storage Access
+      description: 'Generate a SAS token for blob storage access.
+
+
+        This endpoint allows users with SAS generation permissions to create time-limited
+
+        access tokens for blob storage without exposing the underlying access keys.'
+      operationId: generate_sas_token_uaas_stacks__stack_id__nds_sas_token_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: stack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Stack Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UaasSasTokenRequestDto'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UaasSasTokenResponseDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    TaskStepState:
+      type: string
+      enum:
+      - pending
+      - in_progress
+      - completed
+      - failed
+      title: TaskStepState
+    UaasStackBaseDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        serial_number:
+          type: string
+          format: uuid
+          title: Serial Number
+        name:
+          type: string
+          title: Name
+        build:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Build
+        uaas_build:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Uaas Build
+        cloud_provider:
+          $ref: '#/components/schemas/NocStackCloudProvider'
+        region:
+          type: string
+          title: Region
+        created_date:
+          type: string
+          format: date-time
+          title: Created Date
+        last_used_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Used Date
+        uaas_api_url:
+          anyOf:
+          - type: string
+            maxLength: 2083
+            minLength: 1
+            format: uri
+          - type: 'null'
+          title: Uaas Api Url
+        blob_endpoint_url:
+          anyOf:
+          - type: string
+            maxLength: 2083
+            minLength: 1
+            format: uri
+          - type: 'null'
+          title: Blob Endpoint Url
+        s3_obj_lambda_buckets:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: S3 Obj Lambda Buckets
+      type: object
+      required:
+      - id
+      - serial_number
+      - name
+      - cloud_provider
+      - region
+      - created_date
+      title: UaasStackBaseDto
+    UaasStackSraasDto:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+        runs:
+          items:
+            $ref: '#/components/schemas/UaasRunMetricDto'
+          type: array
+          title: Runs
+      type: object
+      required:
+      - enabled
+      - runs
+      title: UaasStackSraasDto
+    UaasStackUpdateDetailDto:
+      properties:
+        log_level:
+          anyOf:
+          - $ref: '#/components/schemas/NocUaasLogLevel'
+          - type: 'null'
+        log_retention:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Log Retention
+        remote_support_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Remote Support Enabled
+        volume_refresh_interval:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Volume Refresh Interval
+      type: object
+      title: UaasStackUpdateDetailDto
+    UaasSasTokenResponseDto:
+      properties:
+        sas_token:
+          type: string
+          title: Sas Token
+        connection_string:
+          type: string
+          title: Connection String
+      type: object
+      required:
+      - sas_token
+      - connection_string
+      title: UaasSasTokenResponseDto
+    UaasStackNdsConfigDto:
+      properties:
+        enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabled
+        azure_keys:
+          anyOf:
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/UaasBlobAccessKeyDto'
+              - $ref: '#/components/schemas/UaasBlobAccessKeyRevealedDto'
+            type: array
+          - type: 'null'
+          title: Azure Keys
+      type: object
+      title: UaasStackNdsConfigDto
+      description: Response DTO for NDS config endpoint — only config-level fields.
+    UaasS3ConfigRevealedDto:
+      properties:
+        aws_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Aws Enabled
+        aws_volumes:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Aws Volumes
+        keys:
+          anyOf:
+          - items:
+              additionalProperties:
+                type: string
+                format: password
+                writeOnly: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Keys
+      type: object
+      title: UaasS3ConfigRevealedDto
+    UaasStackDetailDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        serial_number:
+          type: string
+          format: uuid
+          title: Serial Number
+        name:
+          type: string
+          title: Name
+        build:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Build
+        uaas_build:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Uaas Build
+        cloud_provider:
+          $ref: '#/components/schemas/NocStackCloudProvider'
+        region:
+          type: string
+          title: Region
+        created_date:
+          type: string
+          format: date-time
+          title: Created Date
+        last_used_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Used Date
+        uaas_api_url:
+          anyOf:
+          - type: string
+            maxLength: 2083
+            minLength: 1
+            format: uri
+          - type: 'null'
+          title: Uaas Api Url
+        blob_endpoint_url:
+          anyOf:
+          - type: string
+            maxLength: 2083
+            minLength: 1
+            format: uri
+          - type: 'null'
+          title: Blob Endpoint Url
+        s3_obj_lambda_buckets:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: S3 Obj Lambda Buckets
+        log_level:
+          anyOf:
+          - $ref: '#/components/schemas/NocUaasLogLevel'
+          - type: 'null'
+        log_retention:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Log Retention
+        remote_support_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Remote Support Enabled
+        volume_refresh_interval:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Volume Refresh Interval
+      type: object
+      required:
+      - id
+      - serial_number
+      - name
+      - cloud_provider
+      - region
+      - created_date
+      title: UaasStackDetailDto
+    UaasSasTokenPermissionType:
+      type: string
+      enum:
+      - read_volume
+      - list_volume
+      title: UaasSasTokenPermissionType
+    TaskDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        resource:
+          type: string
+          title: Resource
+        resource_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: string
+          - type: 'null'
+          title: Resource Id
+        action:
+          type: string
+          title: Action
+        executor:
+          $ref: '#/components/schemas/TaskExecutor'
+        executor_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Executor Id
+        initiated_by:
+          $ref: '#/components/schemas/TaskInitiator'
+        initiator_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Initiator Id
+        activity_log_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Activity Log Id
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        state:
+          $ref: '#/components/schemas/TaskState'
+        last_updated_at:
+          type: string
+          format: date-time
+          title: Last Updated At
+        user_acknowledged_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: User Acknowledged At
+        deletion_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Deletion Time
+        steps:
+          items:
+            $ref: '#/components/schemas/TaskStepDto'
+          type: array
+          title: Steps
+          default: []
+        auth_context:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Auth Context
+      type: object
+      required:
+      - id
+      - created_at
+      - resource
+      - action
+      - executor
+      - initiated_by
+      - state
+      - last_updated_at
+      title: TaskDto
+      description: 'Full/internal task view: the customer summary plus internal steps and
+
+        captured auth context.
+
+
+        Produced by the repo/converters and consumed across the backend. It must
+
+        not cross the customer boundary as-is — the jobs routes serialize the
+
+        `TaskSummaryDto` subset instead. `auth_context` is the serialized
+
+        `AuthContext` (key / user / roles / source_ip) captured at task creation;
+
+        event processors re-seed it so audit logs are attributed to the originating
+
+        caller rather than the eventhub Lambda identity. Internal-only by design —
+
+        never include it on a customer-facing DTO.'
+    AnalyticsConnectorDto:
+      properties:
+        key:
+          type: string
+          format: uuid
+          title: Key
+        nac_link:
+          type: string
+          title: Nac Link
+        launchable:
+          type: boolean
+          title: Launchable
+        unlicensed:
+          type: boolean
+          title: Unlicensed
+        nac_run_history:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/NacRunHistoryDto'
+            type: array
+          - type: 'null'
+          title: Nac Run History
+        can_generate:
+          type: boolean
+          title: Can Generate
+        can_view:
+          type: boolean
+          title: Can View
+        unifx_aws_ids:
+          type: string
+          title: Unifx Aws Ids
+      type: object
+      required:
+      - key
+      - nac_link
+      - launchable
+      - unlicensed
+      - nac_run_history
+      - can_generate
+      - can_view
+      - unifx_aws_ids
+      title: AnalyticsConnectorDto
+    AnalyticsConnectorAwsIdsDto:
+      properties:
+        aws_ids:
+          items:
+            type: string
+          type: array
+          title: Aws Ids
+      type: object
+      required:
+      - aws_ids
+      title: AnalyticsConnectorAwsIdsDto
+    UaasVolumeNdsDto:
+      properties:
+        nds:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Nds
+        nds_excluded_paths:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Nds Excluded Paths
+        nds_included_paths:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Nds Included Paths
+      type: object
+      title: UaasVolumeNdsDto
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    NdsVolumesResponseDto:
+      properties:
+        volumes:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Volumes
+      type: object
+      title: NdsVolumesResponseDto
+    UaasBlobAccessKeyRevealedDto:
+      properties:
+        access_key:
+          type: string
+          format: password
+          title: Access Key
+          writeOnly: true
+        generated:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Generated
+        id:
+          type: string
+          format: uuid
+          title: Id
+        connection_string:
+          type: string
+          title: Connection String
+      type: object
+      required:
+      - access_key
+      - id
+      - connection_string
+      title: UaasBlobAccessKeyRevealedDto
+    UaasS3ConfigDto:
+      properties:
+        aws_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Aws Enabled
+        aws_volumes:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Aws Volumes
+      type: object
+      title: UaasS3ConfigDto
+    UaasRunMetricDto:
+      properties:
+        volume_id:
+          type: string
+          title: Volume Id
+        volume_name:
+          type: string
+          title: Volume Name
+        start_time:
+          type: string
+          format: date-time
+          title: Start Time
+        end_time:
+          type: string
+          format: date-time
+          title: End Time
+        error_count:
+          type: integer
+          title: Error Count
+        objects_deleted:
+          type: integer
+          title: Objects Deleted
+        bytes_deleted:
+          type: integer
+          title: Bytes Deleted
+      type: object
+      required:
+      - volume_id
+      - volume_name
+      - start_time
+      - end_time
+      - error_count
+      - objects_deleted
+      - bytes_deleted
+      title: UaasRunMetricDto
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    TaskState:
+      type: string
+      enum:
+      - in_progress
+      - completed
+      - failed
+      title: TaskState
+    UaasUpdateNdsConfigDto:
+      properties:
+        enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabled
+        azure_keys:
+          anyOf:
+          - items:
+              anyOf:
+              - type: string
+                format: password
+                writeOnly: true
+              - type: 'null'
+            type: array
+          - type: 'null'
+          title: Azure Keys
+      type: object
+      title: UaasUpdateNdsConfigDto
+    UaasBlobAccessKeyDto:
+      properties:
+        access_key:
+          type: string
+          format: password
+          title: Access Key
+          writeOnly: true
+        generated:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Generated
+        id:
+          type: string
+          format: uuid
+          title: Id
+        connection_string:
+          type: string
+          title: Connection String
+      type: object
+      required:
+      - access_key
+      - id
+      - connection_string
+      title: UaasBlobAccessKeyDto
+      description: DTO for Azure Blob Access Keys used in UaaS stacks
+    UaasSasTokenRequestDto:
+      properties:
+        selected_key:
+          type: string
+          format: uuid
+          title: Selected Key
+        permissions:
+          additionalProperties:
+            type: boolean
+          propertyNames:
+            $ref: '#/components/schemas/UaasSasTokenPermissionType'
+          type: object
+          title: Permissions
+          default:
+            read_volume: true
+            list_volume: true
+        start_date:
+          type: string
+          format: date-time
+          title: Start Date
+        end_date:
+          type: string
+          format: date-time
+          title: End Date
+      type: object
+      required:
+      - selected_key
+      - start_date
+      - end_date
+      title: UaasSasTokenRequestDto
+    NacRunHistoryDto:
+      properties:
+        error_count:
+          type: integer
+          title: Error Count
+          default: 0
+        run_id:
+          type: string
+          title: Run Id
+        unifx_version:
+          type: string
+          title: Unifx Version
+        start_timestamp:
+          type: string
+          format: date-time
+          title: Start Timestamp
+        destination_type:
+          type: string
+          title: Destination Type
+        failed_file_count:
+          type: integer
+          title: Failed File Count
+          default: 0
+        elapsed_time:
+          type: integer
+          title: Elapsed Time
+        source_type:
+          type: string
+          title: Source Type
+        exported_files:
+          type: integer
+          title: Exported Files
+        average_throughput:
+          type: integer
+          title: Average Throughput
+        end_time:
+          type: integer
+          title: End Time
+        volume_name:
+          type: string
+          title: Volume Name
+        percent_complete:
+          type: integer
+          title: Percent Complete
+        exported_dirs:
+          type: integer
+          title: Exported Dirs
+        volume_guid:
+          type: string
+          title: Volume Guid
+        exported_bytes:
+          type: integer
+          title: Exported Bytes
+      type: object
+      required:
+      - run_id
+      - unifx_version
+      - start_timestamp
+      - destination_type
+      - elapsed_time
+      - source_type
+      - exported_files
+      - average_throughput
+      - end_time
+      - volume_name
+      - percent_complete
+      - exported_dirs
+      - volume_guid
+      - exported_bytes
+      title: NacRunHistoryDto
+    TaskStepDto:
+      properties:
+        name:
+          type: string
+          title: Name
+        state:
+          $ref: '#/components/schemas/TaskStepState'
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+      type: object
+      required:
+      - name
+      - state
+      - created_at
+      - updated_at
+      title: TaskStepDto
+    UpdateUaasVolumeNdsDto:
+      properties:
+        nds:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Nds
+        nds_excluded_paths:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Nds Excluded Paths
+        nds_included_paths:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Nds Included Paths
+      type: object
+      title: UpdateUaasVolumeNdsDto
+    HTTPValidationError:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    AnalyticsConnectorKeyDto:
+      properties:
+        key:
+          type: string
+          format: uuid
+          title: Key
+      type: object
+      required:
+      - key
+      title: AnalyticsConnectorKeyDto
+    UaasStackNdsDto:
+      properties:
+        azure_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Azure Enabled
+        s3:
+          anyOf:
+          - $ref: '#/components/schemas/UaasS3ConfigDto'
+          - $ref: '#/components/schemas/UaasS3ConfigRevealedDto'
+          - type: 'null'
+          title: S3
+        azure_keys:
+          anyOf:
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/UaasBlobAccessKeyDto'
+              - $ref: '#/components/schemas/UaasBlobAccessKeyRevealedDto'
+            type: array
+          - type: 'null'
+          title: Azure Keys
+        excluded_paths:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Excluded Paths
+        included_paths:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Included Paths
+        azure_volumes:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Azure Volumes
+      type: object
+      title: UaasStackNdsDto
+    UaasStacksDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/UaasStackBaseDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: UaasStacksDto
+    TaskInitiator:
+      type: string
+      enum:
+      - portal
+      - edge
+      title: TaskInitiator
+    UaasBlobAccessKeysDto:
+      properties:
+        items:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/UaasBlobAccessKeyRevealedDto'
+            - $ref: '#/components/schemas/UaasBlobAccessKeyDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: UaasBlobAccessKeysDto
+    NocStackCloudProvider:
+      type: string
+      enum:
+      - aws
+      - azure
+      title: NocStackCloudProvider
+    TaskExecutor:
+      type: string
+      enum:
+      - edge
+      title: TaskExecutor
+    NocUaasLogLevel:
+      type: string
+      enum:
+      - DEBUG
+      - INFO
+      - WARNING
+      - ERROR
+      - CRITICAL
+      title: NocUaasLogLevel
+  securitySchemes:
+    ServiceKeyHeader:
+      type: apiKey
+      in: header
+      name: x-service-key
+      description: Service key for programmatic API access. Must be used together with x-service-secret.
+    ServiceSecretHeader:
+      type: apiKey
+      in: header
+      name: x-service-secret
+      description: Service secret for programmatic API access. Must be used together with x-service-key.
+    UserKeyHeader:
+      type: apiKey
+      in: header
+      name: x-user-key
+      description: User key for user-specific API access.
+    HTTPBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token obtained from /auth/token endpoint.
+    OAuth2ClientCredentials:
+      type: oauth2
+      description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes: {}

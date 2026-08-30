@@ -1,0 +1,330 @@
+openapi: 3.2.0
+info:
+  title: Portal File IQ Appliances (File IQ) API
+  version: 0.1.0
+servers:
+- url: https://am1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the US region.
+- url: https://eu1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the EU region.
+- url: https://ap1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the Asia-Pacific region.
+security:
+- HTTPBearer: []
+tags:
+- name: File IQ Appliances (File IQ)
+paths:
+  /fiq_appliances/{file_iq_serial}:
+    get:
+      tags:
+      - File IQ Appliances (File IQ)
+      summary: Get File IQ Appliance
+      operationId: get_fiq_appliances_fiq_fiq_appliances__file_iq_serial__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: file_iq_serial
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: File Iq Serial
+      responses:
+        '200':
+          description: File IQ appliance retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FiqApplianceDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions or license
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      tags:
+      - File IQ Appliances (File IQ)
+      summary: Update File IQ Appliance
+      operationId: update_fiq_appliances_fiq_fiq_appliances__file_iq_serial__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: file_iq_serial
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: File Iq Serial
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FiqApplianceUpdateDto'
+      responses:
+        '200':
+          description: File IQ appliance updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FiqApplianceDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions or license
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /fiq_appliances:
+    get:
+      tags:
+      - File IQ Appliances (File IQ)
+      summary: Get File IQ Appliances
+      operationId: get_fiq_appliances_fiq_appliances_get
+      responses:
+        '200':
+          description: File IQ appliances retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FiqsDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions or license
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+components:
+  schemas:
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    FiqsDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/FiqApplianceDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: FiqsDto
+    FiqApplianceUpdateDto:
+      properties:
+        enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabled
+      type: object
+      title: FiqApplianceUpdateDto
+    FiqConnections:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/FiqEdgeDto'
+          type: array
+          title: Edges
+      type: object
+      required:
+      - edges
+      title: FiqConnections
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    FiqEdgeDto:
+      properties:
+        serial_number:
+          type: string
+          format: uuid
+          title: Serial Number
+        id:
+          type: string
+          format: uuid
+          title: Id
+        build:
+          type: string
+          title: Build
+        description:
+          type: string
+          title: Description
+        fiq_service_enabled:
+          type: boolean
+          title: Fiq Service Enabled
+      type: object
+      required:
+      - serial_number
+      - id
+      - build
+      - description
+      - fiq_service_enabled
+      title: FiqEdgeDto
+    FiqApplianceDto:
+      properties:
+        serial_number:
+          type: string
+          format: uuid
+          title: Serial Number
+        id:
+          type: string
+          format: uuid
+          title: Id
+        description:
+          type: string
+          title: Description
+        build:
+          type: string
+          title: Build
+        enabled:
+          type: boolean
+          title: Enabled
+        connections:
+          $ref: '#/components/schemas/FiqConnections'
+      type: object
+      required:
+      - serial_number
+      - id
+      - description
+      - build
+      - enabled
+      - connections
+      title: FiqApplianceDto
+  securitySchemes:
+    ServiceKeyHeader:
+      type: apiKey
+      in: header
+      name: x-service-key
+      description: Service key for programmatic API access. Must be used together with x-service-secret.
+    ServiceSecretHeader:
+      type: apiKey
+      in: header
+      name: x-service-secret
+      description: Service secret for programmatic API access. Must be used together with x-service-key.
+    UserKeyHeader:
+      type: apiKey
+      in: header
+      name: x-user-key
+      description: User key for user-specific API access.
+    HTTPBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token obtained from /auth/token endpoint.
+    OAuth2ClientCredentials:
+      type: oauth2
+      description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes: {}

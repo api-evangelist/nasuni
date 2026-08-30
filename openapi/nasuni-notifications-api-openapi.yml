@@ -1,0 +1,999 @@
+openapi: 3.2.0
+info:
+  title: Nasuni Notifications API
+  version: '1.0'
+  description: 'Operations tagged Notifications across 4 of this provider''s published API definitions: nasuni-nmc-v1-0-openapi.yml, nasuni-nmc-v1-1-openapi.yml, nasuni-nmc-v1-2-openapi.yml, nasuni-portal-v0-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://hostname/api/v1
+- url: https://hostname/api/v1.1
+- url: https://hostname/api/v1.2
+- url: https://am1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the US region.
+- url: https://eu1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the EU region.
+- url: https://ap1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the Asia-Pacific region.
+tags:
+- name: Notifications
+paths:
+  /notifications/:
+    get:
+      tags:
+      - Notifications
+      summary: List all notifications
+      parameters:
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Notification'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - AuthToken: []
+    servers:
+    - url: https://hostname/api/v1
+  /notifications/{notification_id}/:
+    get:
+      tags:
+      - Notifications
+      summary: Get a notification
+      parameters:
+      - name: notification_id
+        in: path
+        description: Notification object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - AuthToken: []
+    servers:
+    - url: https://hostname/api/v1
+  /notifications:
+    get:
+      tags:
+      - Notifications
+      summary: Get All Notifications
+      description: "Get paginated notifications with optional filters.\n\nReturns notifications from the last 15 minutes by default if no date range is specified.\nSupports cursor-based pagination.\n\nArgs:\n    filter_query: Filter parameters including dates, severity, category, appliance_name, volume_name and search\n\nReturns:\n    NotificationsDto: Paginated list of notifications"
+      operationId: get_notifications_notifications_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Start date filter. If not provided, defaults to 15 minutes ago.
+          examples:
+          - '2026-02-09T00:00:00Z'
+          - '2026-02-01T00:00:00Z'
+          title: Start Date
+        description: Start date filter. If not provided, defaults to 15 minutes ago.
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: End date filter. If not provided, defaults to the current date and time.
+          examples:
+          - '2026-02-16T23:59:59Z'
+          - '2026-02-28T23:59:59Z'
+          title: End Date
+        description: End date filter. If not provided, defaults to the current date and time.
+      - name: severity
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              $ref: '#/components/schemas/NotificationSeverity'
+          - type: 'null'
+          description: Defaults to all severities if not provided
+          examples:
+          - WARNING
+          - ALERT
+          - INFO
+          title: Severity
+        description: Defaults to all severities if not provided
+      - name: category
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/NotificationCategory'
+          - type: 'null'
+          description: Defaults to all categories if not provided
+          examples:
+          - Snapshots & Sync
+          - Restore & Recovery
+          - Cyber Resilience
+          title: Category
+        description: Defaults to all categories if not provided
+      - name: sub_category
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/NotificationSubCategory'
+          - type: 'null'
+          description: Defaults to all sub-categories if not provided
+          examples:
+          - Snapshot
+          - Sync
+          - Ransomware
+          title: Sub Category
+        description: Defaults to all sub-categories if not provided
+      - name: appliance_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Defaults to all appliances if not provided
+          examples:
+          - edge-001
+          - edge-prod-01
+          title: Appliance Name
+        description: Defaults to all appliances if not provided
+      - name: volume_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Defaults to all volumes if not provided
+          examples:
+          - volume-a
+          - production-vol
+          title: Volume Name
+        description: Defaults to all volumes if not provided
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search term for notifications
+          examples:
+          - backup failed
+          - connection timeout
+          - storage
+          title: Search
+        description: Search term for notifications
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+          title: Limit
+      - name: iterator_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Iterator Id
+      - name: page
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Page
+      - name: sort_by
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/NotificationColumns'
+          default: generated_at
+      - name: sort_direction
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/NotificationSortDirection'
+          default: desc
+      - name: include_count
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: true
+          title: Include Count
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationsDto'
+        '400':
+          description: Invalid request parameters (e.g., invalid cursor, limit <= 0, date range > 30 days, cursor parameters mismatch)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBaseDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBaseDto'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBaseDto'
+        '408':
+          description: Database operation timed out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBaseDto'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+        '500':
+          description: Database connection failed or internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBaseDto'
+    servers:
+    - url: https://am1.portal.api.nasuni.com
+      description: Base URL for accounts assigned the US region.
+    - url: https://eu1.portal.api.nasuni.com
+      description: Base URL for accounts assigned the EU region.
+    - url: https://ap1.portal.api.nasuni.com
+      description: Base URL for accounts assigned the Asia-Pacific region.
+components:
+  schemas:
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Notification identifier.
+        date:
+          type: string
+          description: The date the notification was triggered.
+        priority:
+          type: string
+          description: The priority level of the notification.
+          enum:
+          - noop
+          - alert
+          - admin
+          - error
+          - warning
+          - info
+        name:
+          type: string
+          description: 'A name describing the type of notification. Notifications registered to pre-7.11
+
+            filers will be coded as "UNKNOWN".
+
+            '
+        message:
+          type: string
+          description: The notification message body.
+        group:
+          type: string
+          description: The group (category) the notification belongs to.
+        acknowledged:
+          type: boolean
+          description: A flag indicating whether the notification has been acknowledged.
+        sticky:
+          type: boolean
+          description: A flag indicating whether the notification is transient in the application UI.
+        urgent:
+          type: boolean
+          description: A flag indicating whether the notification is urgent.
+        remoteid:
+          type: string
+          description: The remote notification ID (if filer is not null).
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: Representation of a Notification object.
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+    Paging:
+      type: object
+      properties:
+        href:
+          type: string
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type: string
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type: string
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+        method:
+          type: string
+          description: HTTP method to use on the link.
+    Error_2:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "unmanaged_error" - Resource is not managed.
+
+            * "conflict_error" - Conflict error
+
+            * "unsupported_error" - Current filer version does not support this type of request.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          readOnly: true
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - unmanaged_error
+          - conflict_error
+          - unsupported_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+          readOnly: true
+    Notification_2:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Notification identifier.
+        date:
+          type: string
+          description: The date the notification was triggered.
+        priority:
+          type: string
+          description: The priority level of the notification.
+          enum:
+          - noop
+          - alert
+          - admin
+          - error
+          - warning
+          - info
+        name:
+          type: string
+          description: 'A name describing the type of notification. Notifications registered to pre-7.11
+
+            filers will be coded as "UNKNOWN".
+
+            '
+        message:
+          type: string
+          description: The notification message body.
+        group:
+          type: string
+          description: The group (category) the notification belongs to.
+        acknowledged:
+          type: boolean
+          description: A flag indicating whether the notification has been acknowledged.
+        sticky:
+          type: boolean
+          description: A flag indicating whether the notification is transient in the application UI.
+        urgent:
+          type: boolean
+          description: A flag indicating whether the notification is urgent.
+        origin:
+          type: string
+          description: Origin of the notification (NMC or filer description).
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_2'
+            filer:
+              $ref: '#/components/schemas/Link_2'
+          description: Links to related resources, collections, and actions.
+      description: Representation of a Notification object.
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error_2'
+    Link_2:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+          readOnly: true
+        method:
+          type: string
+          description: HTTP method to use on the link.
+          readOnly: true
+    Paging_2:
+      type: object
+      properties:
+        href:
+          type: string
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type:
+          - string
+          - 'null'
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type:
+          - string
+          - 'null'
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
+    Error_3:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "unmanaged_error" - Resource is not managed.
+
+            * "conflict_error" - Conflict error
+
+            * "unsupported_error" - Current filer version does not support this type of request.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          readOnly: true
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - unmanaged_error
+          - conflict_error
+          - unsupported_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+          readOnly: true
+    Notification_3:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Notification identifier.
+        date:
+          type: string
+          description: The date the notification was triggered.
+        priority:
+          type: string
+          description: The priority level of the notification.
+          enum:
+          - noop
+          - alert
+          - admin
+          - error
+          - warning
+          - info
+        name:
+          type: string
+          description: 'A name describing the type of notification. Notifications registered to pre-7.11
+
+            filers will be coded as "UNKNOWN".
+
+            '
+        message:
+          type: string
+          description: The notification message body.
+        group:
+          type: string
+          description: The group (category) the notification belongs to.
+        acknowledged:
+          type: boolean
+          description: A flag indicating whether the notification has been acknowledged.
+        sticky:
+          type: boolean
+          description: A flag indicating whether the notification is transient in the application UI.
+        urgent:
+          type: boolean
+          description: A flag indicating whether the notification is urgent.
+        origin:
+          type: string
+          description: Origin of the notification (NMC or filer description).
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_3'
+            filer:
+              $ref: '#/components/schemas/Link_3'
+          description: Links to related resources, collections, and actions.
+      description: Representation of a Notification object.
+    ErrorResponse_2:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error_3'
+    Link_3:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+          readOnly: true
+        method:
+          type: string
+          description: HTTP method to use on the link.
+          readOnly: true
+    NotificationSubCategory:
+      type: string
+      enum:
+      - Snapshot
+      - Sync
+      - Snapshot Retention
+      - Success
+      - Errors
+      - User Actions
+      - Disaster Recovery
+      - Ransomware
+      - Antivirus
+      - Escrow
+      - Generation
+      - Account
+      - Remote Access
+      - Backup
+      - Delete
+      - Safe Delete
+      - UniFSCK
+      - Multiprotocol
+      - Sharing
+      - GFL
+      - Lock Arbiter
+      - GFA
+      - RAID
+      - Encryption
+      - Exception
+      - Firmware
+      - UPS
+      - Unreachable
+      - Configuration
+      - Health Monitor
+      - NOC
+      - Limits
+      - Resources
+      - Cache Disk
+      - Metrics
+      - Config Backup
+      - Unsupported
+      - OS Disk
+      - Time
+      - Resize
+      - Eviction
+      - Autocache
+      - Pinning
+      - Sideload
+      - Power
+      - New
+      - Offline
+      - NMC
+      - SSO
+      - SSL Certificates
+      - EULA
+      - Remote Support
+      - File IQ
+      - AMQP
+      - Syslog
+      title: NotificationSubCategory
+    NotificationCategory:
+      type: string
+      enum:
+      - Snapshots & Sync
+      - Restore & Recovery
+      - Cyber Resilience
+      - Encryption Keys
+      - Volume Management
+      - Cloud & Credentials
+      - Remote Access & GFL
+      - Hardware
+      - Network
+      - System Health & Performance
+      - Cache Management
+      - Software & Firmware Updates
+      - Licensing
+      - Directory Services
+      - Appliance Lifecycle
+      - Security & Access
+      - File IQ & Auditing
+      title: NotificationCategory
+    NotificationSortDirection:
+      type: string
+      enum:
+      - asc
+      - desc
+      title: NotificationSortDirection
+    NotificationColumns:
+      type: string
+      enum:
+      - generated_at
+      - severity
+      - category
+      - appliance_name
+      - volume_name
+      title: NotificationColumns
+    NotificationPaginationMetadataDto:
+      properties:
+        iterator_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Iterator Id
+          description: Iterator ID for loading more results (null if no more)
+        page_size:
+          type: integer
+          title: Page Size
+          description: Number of items returned
+          default: 50
+        total_pages:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Pages
+        total_items:
+          type: integer
+          title: Total Items
+        page:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Page
+      type: object
+      required:
+      - total_items
+      title: NotificationPaginationMetadataDto
+    NotificationSeverity:
+      type: string
+      enum:
+      - ALERT
+      - ERROR
+      - WARNING
+      - INFO
+      - ADMIN
+      title: NotificationSeverity
+    NotificationsDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/NotificationDto'
+          type: array
+          title: Items
+        metadata:
+          $ref: '#/components/schemas/NotificationPaginationMetadataDto'
+      type: object
+      required:
+      - metadata
+      title: NotificationsDto
+      description: 'Forward-only cursor-based pagination for infinite scroll UX
+
+
+        Designed for "Load more" pattern - no backward navigation, no page numbers.
+
+        UI shows: "Showing latest X notifications" with "Load more" button.'
+    NotificationOriginType:
+      type: string
+      enum:
+      - SYSTEM_GENERATED
+      - CUSTOMER_DEFINED
+      title: NotificationOriginType
+    ErrorResponseBaseDto:
+      properties:
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - message
+      title: ErrorResponseBaseDto
+    HTTPValidationError:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    NotificationDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        account_id:
+          type: string
+          format: uuid
+          title: Account Id
+        severity:
+          $ref: '#/components/schemas/NotificationSeverity'
+        category:
+          anyOf:
+          - $ref: '#/components/schemas/NotificationCategory'
+          - type: 'null'
+        code_name:
+          type: string
+          title: Code Name
+        message:
+          type: string
+          title: Message
+        source:
+          anyOf:
+          - $ref: '#/components/schemas/NotificationOriginType'
+          - type: 'null'
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        generated_at:
+          type: string
+          format: date-time
+          title: Generated At
+        sub_category:
+          anyOf:
+          - $ref: '#/components/schemas/NotificationSubCategory'
+          - type: 'null'
+        appliance_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Appliance Name
+        volume_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Name
+        arguments:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Arguments
+        linked_doc:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Linked Doc
+      type: object
+      required:
+      - id
+      - account_id
+      - severity
+      - code_name
+      - message
+      - created_at
+      - generated_at
+      title: NotificationDto
+      description: Single Notification DTO
+  securitySchemes:
+    AuthToken:
+      type: apiKey
+      description: 'This header is required to make authenticated requests. The value format is:
+
+
+        Token [your_auth_token]
+
+        '
+      name: Authorization
+      in: header
+    ServiceKeyHeader:
+      type: apiKey
+      in: header
+      name: x-service-key
+      description: Service key for programmatic API access. Must be used together with x-service-secret.
+    ServiceSecretHeader:
+      type: apiKey
+      in: header
+      name: x-service-secret
+      description: Service secret for programmatic API access. Must be used together with x-service-key.
+    UserKeyHeader:
+      type: apiKey
+      in: header
+      name: x-user-key
+      description: User key for user-specific API access.
+    HTTPBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token obtained from /auth/token endpoint.
+    OAuth2ClientCredentials:
+      type: oauth2
+      description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes: {}
+x-refined-from:
+- nasuni-nmc-v1-0-openapi.yml
+- nasuni-nmc-v1-1-openapi.yml
+- nasuni-nmc-v1-2-openapi.yml
+- nasuni-portal-v0-openapi.yml

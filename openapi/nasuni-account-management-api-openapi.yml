@@ -1,0 +1,537 @@
+openapi: 3.2.0
+info:
+  title: Portal Account Management API
+  version: 0.1.0
+servers:
+- url: https://am1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the US region.
+- url: https://eu1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the EU region.
+- url: https://ap1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the Asia-Pacific region.
+security:
+- HTTPBearer: []
+tags:
+- name: Account Management
+paths:
+  /account:
+    get:
+      tags:
+      - Account Management
+      summary: Get Account Information
+      operationId: get_account_information_account_get
+      responses:
+        '200':
+          description: Account information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountInformationDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+    patch:
+      tags:
+      - Account Management
+      summary: Update Account Information
+      operationId: update_account_information_account_patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAccountInformationDto'
+        required: true
+      responses:
+        '200':
+          description: Account information updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountInformationDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /account/license:
+    get:
+      tags:
+      - Account Management
+      summary: Get Account License Information
+      operationId: get_account_license_account_license_get
+      responses:
+        '200':
+          description: Account license information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountLicenseDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /account/ai_activate:
+    get:
+      tags:
+      - Account Management
+      summary: Get AI Activate Account Info
+      description: Get AI Activate subscription limits and consumption for the account.
+      operationId: get_account_ai_activate_info_account_ai_activate_get
+      responses:
+        '200':
+          description: AI Activate account info retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiActivateAccountInfoDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+components:
+  schemas:
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    CloudProviderEntryDto:
+      properties:
+        protocol:
+          $ref: '#/components/schemas/NocCloudStorageProtocol'
+        vendor:
+          $ref: '#/components/schemas/NocCloudVendor'
+        shortname:
+          $ref: '#/components/schemas/NocCloudProvider'
+        display_name:
+          type: string
+          title: Display Name
+          description: Human-readable name for the cloud provider
+      type: object
+      required:
+      - protocol
+      - vendor
+      - shortname
+      - display_name
+      title: CloudProviderEntryDto
+      description: A cloud provider available to the account.
+    NocCloudStorageProtocol:
+      type: string
+      enum:
+      - amazons3
+      - amazons3gov
+      - azure
+      - ibmcos
+      - hcp
+      - vipr
+      - cleversafe
+      - googles3
+      - s3_compatible
+      title: NocCloudStorageProtocol
+      description: The underlying storage API/protocol (maps to 'type' in NOC response).
+    AccountLicenseDto:
+      properties:
+        subscription_status:
+          type: string
+          title: Subscription Status
+        subscription_expiration:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Subscription Expiration
+        analytics_connector_enabled:
+          type: boolean
+          title: Analytics Connector Enabled
+        uaas_enabled:
+          type: boolean
+          title: Uaas Enabled
+        nds_enabled:
+          type: boolean
+          title: Nds Enabled
+        prune_enabled:
+          type: boolean
+          title: Prune Enabled
+        gfa_enabled:
+          type: boolean
+          title: Gfa Enabled
+        file_iq_enabled:
+          type: boolean
+          title: File Iq Enabled
+        file_iq_premium:
+          type: boolean
+          title: File Iq Premium
+          default: false
+        s3_enabled:
+          type: boolean
+          title: S3 Enabled
+        naa_enabled:
+          type: boolean
+          title: Naa Enabled
+        awada_enabled:
+          type: boolean
+          title: Awada Enabled
+        ops_iq_premium:
+          type: boolean
+          title: Ops Iq Premium
+        ransomware_protection_enabled:
+          type: boolean
+          title: Ransomware Protection Enabled
+          default: false
+        multi_site_collaboration_enabled:
+          type: boolean
+          title: Multi Site Collaboration Enabled
+          default: false
+        ai_activate:
+          type: boolean
+          title: Ai Activate
+          default: false
+        anonymize_third_party_analytics:
+          type: boolean
+          title: Anonymize Third Party Analytics
+          default: false
+        max_now_storage:
+          type: integer
+          title: Max Now Storage
+          default: 0
+        max_cloud_storage:
+          type: integer
+          title: Max Cloud Storage
+          default: 0
+        enterprise_search:
+          type: boolean
+          title: Enterprise Search
+          default: false
+        byoc_clouds:
+          items:
+            $ref: '#/components/schemas/CloudProviderEntryDto'
+          type: array
+          title: Byoc Clouds
+      type: object
+      required:
+      - subscription_status
+      - analytics_connector_enabled
+      - uaas_enabled
+      - nds_enabled
+      - prune_enabled
+      - gfa_enabled
+      - file_iq_enabled
+      - s3_enabled
+      - naa_enabled
+      - awada_enabled
+      - ops_iq_premium
+      title: AccountLicenseDto
+    AccountInformationDto:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+        first_name:
+          type: string
+          title: First Name
+        last_name:
+          type: string
+          title: Last Name
+        company:
+          type: string
+          title: Company
+        phone:
+          type: string
+          title: Phone
+        created:
+          type: string
+          format: date-time
+          title: Created
+        id:
+          type: string
+          format: uuid
+          title: Id
+      type: object
+      required:
+      - email
+      - first_name
+      - last_name
+      - company
+      - phone
+      - created
+      - id
+      title: AccountInformationDto
+      description: Response model for account infromation for webbff/account
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    UpdateAccountInformationDto:
+      properties:
+        first_name:
+          type: string
+          title: First Name
+        last_name:
+          type: string
+          title: Last Name
+        company:
+          type: string
+          title: Company
+        phone:
+          type: string
+          title: Phone
+      type: object
+      required:
+      - first_name
+      - last_name
+      - company
+      - phone
+      title: UpdateAccountInformationDto
+      description: Request model for account information change for WebApi route /account
+    NocCloudVendor:
+      type: string
+      enum:
+      - customer
+      - private
+      - nasuni
+      title: NocCloudVendor
+      description: Who provisions the cloud infrastructure.
+    NocCloudProvider:
+      type: string
+      enum:
+      - amazons3
+      - amazons3gov
+      - azure
+      - google
+      - googles3
+      - atmos
+      - ironmountain
+      - rackspace
+      - nirvanix
+      - synaptic
+      - castor
+      - delldx
+      - cloudone
+      - hp
+      - cleversafe
+      - vipr
+      - ibmcos
+      - hcp
+      - s3_compatible
+      title: NocCloudProvider
+      description: Cloud provider identity as used by NOC (shortname).
+    AiActivateAccountInfoDto:
+      properties:
+        mcp:
+          $ref: '#/components/schemas/AiActivateAccountSubscriptionDto'
+      type: object
+      required:
+      - mcp
+      title: AiActivateAccountInfoDto
+      description: 'Account-level AI Activate subscription summary.
+
+
+        MCP is currently the only AI Activate workload. A Search subscription will be
+
+        reintroduced here once that workload lands.'
+    AiActivateAccountSubscriptionDto:
+      properties:
+        subscribed_limit:
+          type: integer
+          minimum: 0
+          title: Subscribed Limit
+          description: Total files allowed for the subscription
+        consumed:
+          type: integer
+          minimum: 0
+          title: Consumed
+          description: Files currently consumed against the subscription
+        remaining:
+          type: integer
+          title: Remaining
+          description: Files remaining before reaching the limit; may be negative when over.
+      type: object
+      required:
+      - subscribed_limit
+      - consumed
+      - remaining
+      title: AiActivateAccountSubscriptionDto
+  securitySchemes:
+    ServiceKeyHeader:
+      type: apiKey
+      in: header
+      name: x-service-key
+      description: Service key for programmatic API access. Must be used together with x-service-secret.
+    ServiceSecretHeader:
+      type: apiKey
+      in: header
+      name: x-service-secret
+      description: Service secret for programmatic API access. Must be used together with x-service-key.
+    UserKeyHeader:
+      type: apiKey
+      in: header
+      name: x-user-key
+      description: User key for user-specific API access.
+    HTTPBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token obtained from /auth/token endpoint.
+    OAuth2ClientCredentials:
+      type: oauth2
+      description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes: {}

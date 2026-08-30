@@ -1,0 +1,857 @@
+openapi: 3.2.0
+info:
+  title: Portal Configuration API
+  version: 0.1.0
+servers:
+- url: https://am1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the US region.
+- url: https://eu1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the EU region.
+- url: https://ap1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the Asia-Pacific region.
+security:
+- HTTPBearer: []
+tags:
+- name: Configuration
+paths:
+  /configuration/sso:
+    get:
+      tags:
+      - Configuration
+      summary: Get SSO Configuration
+      operationId: get_sso_config_configuration_sso_get
+      responses:
+        '200':
+          description: SSO configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSOConfigDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+    put:
+      tags:
+      - Configuration
+      summary: Set SSO Configuration
+      operationId: set_sso_config_configuration_sso_put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SSOConfigDto'
+        required: true
+      responses:
+        '200':
+          description: SSO configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSOConfigUpdateResponseDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /configuration/web_access_sso:
+    get:
+      tags:
+      - Configuration
+      summary: Get Web Access SSO Configuration
+      operationId: get_web_access_sso_config_configuration_web_access_sso_get
+      responses:
+        '200':
+          description: Web Access SSO configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebAccessSSOConfigDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+    put:
+      tags:
+      - Configuration
+      summary: Set Web Access SSO Configuration
+      operationId: set_web_access_sso_config_configuration_web_access_sso_put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebAccessSSOConfigDto'
+        required: true
+      responses:
+        '200':
+          description: Web Access SSO configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebAccessSSOConfigUpdateResponseDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+    delete:
+      tags:
+      - Configuration
+      summary: Delete Web Access SSO Configuration
+      operationId: delete_web_access_sso_config_configuration_web_access_sso_delete
+      responses:
+        '200':
+          description: Operation completed successfully
+          content:
+            application/json:
+              schema: {}
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /configuration/s3_edge:
+    get:
+      tags:
+      - Configuration
+      summary: Get S3 Edge Configuration
+      operationId: get_s3_edge_config_configuration_s3_edge_get
+      responses:
+        '200':
+          description: S3 Edge configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/S3EdgeConfigDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions or license
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+    post:
+      tags:
+      - Configuration
+      summary: Set S3 Edge Configuration
+      operationId: set_s3_edge_config_configuration_s3_edge_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/S3EdgeConfigDto'
+        required: true
+      responses:
+        '200':
+          description: S3 Edge configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/S3EdgeConfigDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions or license
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+    delete:
+      tags:
+      - Configuration
+      summary: Delete S3 Edge Configuration
+      operationId: delete_s3_edge_config_configuration_s3_edge_delete
+      responses:
+        '200':
+          description: Operation completed successfully
+          content:
+            application/json:
+              schema: {}
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions or license
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /configuration/software:
+    get:
+      tags:
+      - Configuration
+      summary: Get Software Downloads Configuration
+      operationId: get_software_downloads_configuration_configuration_software_get
+      responses:
+        '200':
+          description: Software downloads configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SoftwareDownloadsConfigurationDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+    put:
+      tags:
+      - Configuration
+      summary: Update Software Downloads Configuration
+      operationId: update_software_downloads_configuration_configuration_software_put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SoftwareDownloadsConfigurationDto'
+        required: true
+      responses:
+        '200':
+          description: Software downloads configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SoftwareDownloadsConfigurationDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /configuration/ai_activate:
+    get:
+      tags:
+      - Configuration
+      summary: Get AI Activate Configuration
+      description: 'Get AI Activate remote support configuration.
+
+
+        TODO(PORTAL-2213): replace with real NOC call once available.'
+      operationId: get_ai_activate_remote_support_configuration_ai_activate_get
+      responses:
+        '200':
+          description: AI Activate remote support configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiActivateRemoteSupportDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+    patch:
+      tags:
+      - Configuration
+      summary: Update AI Activate Configuration
+      description: 'Update AI Activate remote support configuration.
+
+
+        TODO(PORTAL-2213): replace with real NOC call once available.'
+      operationId: update_ai_activate_remote_support_configuration_ai_activate_patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AiActivateRemoteSupportDto'
+        required: true
+      responses:
+        '200':
+          description: AI Activate remote support configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiActivateRemoteSupportDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+components:
+  schemas:
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    BucketSDDL:
+      properties:
+        name:
+          type: string
+          title: Name
+        path:
+          type: string
+          title: Path
+        volume:
+          type: string
+          title: Volume
+        roles:
+          anyOf:
+          - additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+          - type: 'null'
+          title: Roles
+        file_sddl:
+          type: string
+          title: File Sddl
+        dir_sddl:
+          type: string
+          title: Dir Sddl
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - path
+      - volume
+      - file_sddl
+      - dir_sddl
+      title: BucketSDDL
+    S3EdgeConfigDto:
+      properties:
+        buckets:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/Bucket'
+            - $ref: '#/components/schemas/BucketSDDL'
+          type: array
+          title: Buckets
+        keys:
+          items:
+            $ref: '#/components/schemas/Key'
+          type: array
+          title: Keys
+      type: object
+      required:
+      - buckets
+      - keys
+      title: S3EdgeConfigDto
+    WebAccessSSOConfigUpdateResponseDto:
+      properties:
+        provider:
+          type: string
+          title: Provider
+        client_id:
+          type: string
+          maxLength: 191
+          title: Client Id
+        secret:
+          type: string
+          format: password
+          title: Secret
+          writeOnly: true
+        key:
+          type: string
+          maxLength: 191
+          title: Key
+        login_button_label:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Login Button Label
+      type: object
+      required:
+      - provider
+      - client_id
+      - secret
+      - key
+      title: WebAccessSSOConfigUpdateResponseDto
+    Key:
+      properties:
+        name:
+          type: string
+          title: Name
+        access:
+          type: string
+          title: Access
+        secret:
+          type: string
+          title: Secret
+      type: object
+      required:
+      - name
+      - access
+      - secret
+      title: Key
+    Bucket:
+      properties:
+        name:
+          type: string
+          title: Name
+        path:
+          type: string
+          title: Path
+        volume:
+          type: string
+          title: Volume
+        roles:
+          anyOf:
+          - additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+          - type: 'null'
+          title: Roles
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - path
+      - volume
+      title: Bucket
+    SSOConfigUpdateResponseDto:
+      properties:
+        provider:
+          type: string
+          title: Provider
+        name:
+          type: string
+          maxLength: 40
+          title: Name
+        client_id:
+          type: string
+          maxLength: 191
+          title: Client Id
+        secret:
+          type: string
+          format: password
+          title: Secret
+          writeOnly: true
+        key:
+          type: string
+          maxLength: 191
+          title: Key
+        verification_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Verification Url
+      type: object
+      required:
+      - provider
+      - name
+      - client_id
+      - secret
+      - key
+      - verification_url
+      title: SSOConfigUpdateResponseDto
+    SoftwareDownloadsConfigurationDto:
+      properties:
+        linked_amazon_account_ids:
+          items:
+            type: string
+          type: array
+          title: Linked Amazon Account Ids
+      type: object
+      title: SoftwareDownloadsConfigurationDto
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    SSOConfigDto:
+      properties:
+        provider:
+          type: string
+          title: Provider
+        name:
+          type: string
+          maxLength: 40
+          title: Name
+        client_id:
+          type: string
+          maxLength: 191
+          title: Client Id
+        secret:
+          type: string
+          format: password
+          title: Secret
+          writeOnly: true
+        key:
+          type: string
+          maxLength: 191
+          title: Key
+      type: object
+      required:
+      - provider
+      - name
+      - client_id
+      - secret
+      - key
+      title: SSOConfigDto
+    WebAccessSSOConfigDto:
+      properties:
+        provider:
+          type: string
+          title: Provider
+        client_id:
+          type: string
+          maxLength: 191
+          title: Client Id
+        secret:
+          type: string
+          format: password
+          title: Secret
+          writeOnly: true
+        key:
+          type: string
+          maxLength: 191
+          title: Key
+        login_button_label:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Login Button Label
+      type: object
+      required:
+      - provider
+      - client_id
+      - secret
+      - key
+      title: WebAccessSSOConfigDto
+    AiActivateRemoteSupportDto:
+      properties:
+        remote_support:
+          type: boolean
+          title: Remote Support
+      type: object
+      required:
+      - remote_support
+      title: AiActivateRemoteSupportDto
+  securitySchemes:
+    ServiceKeyHeader:
+      type: apiKey
+      in: header
+      name: x-service-key
+      description: Service key for programmatic API access. Must be used together with x-service-secret.
+    ServiceSecretHeader:
+      type: apiKey
+      in: header
+      name: x-service-secret
+      description: Service secret for programmatic API access. Must be used together with x-service-key.
+    UserKeyHeader:
+      type: apiKey
+      in: header
+      name: x-user-key
+      description: User key for user-specific API access.
+    HTTPBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token obtained from /auth/token endpoint.
+    OAuth2ClientCredentials:
+      type: oauth2
+      description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes: {}

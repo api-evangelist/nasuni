@@ -1,0 +1,514 @@
+openapi: 3.2.0
+info:
+  title: Nasuni Account API
+  version: '1.0'
+  description: 'Operations tagged Account across 2 of this provider''s published API definitions: nasuni-nmc-v1-1-openapi.yml, nasuni-nmc-v1-2-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://hostname/api/v1.1
+- url: https://hostname/api/v1.2
+security:
+- AuthToken: []
+tags:
+- name: Account
+paths:
+  /account/cloud-credentials/:
+    get:
+      tags:
+      - Account
+      summary: List cloud credentials
+      parameters:
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/CloudCredential'
+                - $ref: '#/components/schemas/Paging'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    servers:
+    - url: https://hostname/api/v1.1
+  /account/cloud-credentials/{cred_id}/:
+    get:
+      tags:
+      - Account
+      summary: Get a cloud credentials
+      parameters:
+      - name: cred_id
+        in: path
+        description: Cloud Credential object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CloudCredential'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    servers:
+    - url: https://hostname/api/v1.1
+  /account/cloud-credentials/{cred_uuid}/:
+    get:
+      tags:
+      - Account
+      summary: Get a list of cloud credentials by UUID
+      parameters:
+      - name: cred_uuid
+        in: path
+        description: Cloud Credential object identifier
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: The maximum number of objects to return
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 50
+      - name: offset
+        in: query
+        description: The index of the first object to return
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Paging:
+                    $ref: '#/components/schemas/Paging_2'
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CloudCredential_2'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    servers:
+    - url: https://hostname/api/v1.2
+  /account/cloud-credentials/{cred_uuid}/filers/{filer_serial}/:
+    get:
+      tags:
+      - Account
+      summary: Get one cloud credential on a filer
+      parameters:
+      - name: cred_uuid
+        in: path
+        description: Cloud Credential object identifier
+        required: true
+        schema:
+          type: string
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CloudCredential_2'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      tags:
+      - Account
+      summary: Update a cloud credential on a filer
+      description: Only available on NMC version 22.2 and higher.
+      parameters:
+      - name: cred_uuid
+        in: path
+        description: Cloud Credential object identifier
+        required: true
+        schema:
+          type: string
+      - name: filer_serial
+        in: path
+        description: Filer object identifier
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CloudCredential_2'
+        required: true
+      responses:
+        '202':
+          description: Success - Cloud credential has been updated
+          headers:
+            Location:
+              description: URL to the associated message
+              schema:
+                type: string
+          content: {}
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Request throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: body
+    servers:
+    - url: https://hostname/api/v1.2
+components:
+  schemas:
+    Paging:
+      type: object
+      properties:
+        href:
+          type: string
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type: string
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type: string
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "unmanaged_error" - Resource is not managed.
+
+            * "conflict_error" - Conflict error
+
+            * "unsupported_error" - Current filer version does not support this type of request.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          readOnly: true
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - unmanaged_error
+          - conflict_error
+          - unsupported_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+          readOnly: true
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error'
+    CloudCredential:
+      type: object
+      properties:
+        cred_id:
+          type: string
+          description: Cloud credential identifier
+          readOnly: true
+        name:
+          type: string
+          description: The name of the cloud credential
+          readOnly: true
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+          readOnly: true
+        cloud_provider:
+          type: string
+          description: The name of the cloud provider for this credential
+          readOnly: true
+        account:
+          type: string
+          description: The account access key or username for the associated cloud account
+          readOnly: true
+        hostname:
+          type: string
+          description: The cloud hostname
+          readOnly: true
+        status:
+          type: string
+          description: Current status of the resource
+          readOnly: true
+        note:
+          type: string
+          description: Any notes regarding the credential.
+          readOnly: true
+        in_use:
+          type: boolean
+          description: If true, the cloud credential is in use by at least one volume.
+          readOnly: true
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+          readOnly: true
+      description: A cloud credential obeject
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+          readOnly: true
+        method:
+          type: string
+          description: HTTP method to use on the link.
+          readOnly: true
+    Paging_2:
+      type: object
+      properties:
+        href:
+          type: string
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type:
+          - string
+          - 'null'
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type:
+          - string
+          - 'null'
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
+    CloudCredential_2:
+      required:
+      - account
+      - name
+      - secret
+      type: object
+      properties:
+        cred_uuid:
+          type: string
+          description: Cloud credential identifier
+          readOnly: true
+        name:
+          type: string
+          description: The name of the cloud credential
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+          readOnly: true
+        cloud_provider:
+          type: string
+          description: The name of the cloud provider for this credential
+          readOnly: true
+        account:
+          type: string
+          description: The account access key or username for the associated cloud account
+        hostname:
+          type: string
+          description: The cloud hostname. AWS PrivateLink requires 9.15+ Filers.
+        status:
+          type: string
+          description: Current status of the resource
+          readOnly: true
+        secret:
+          type: string
+          description: Secret access key for cloud credential authentication. Displayed as masked value of '*****'
+        note:
+          type: string
+          description: Any notes regarding the credential. Otherwise will be blank.
+        in_use:
+          type: boolean
+          description: If true, the cloud credential is in use by at least one volume.
+          readOnly: true
+        skip_validation:
+          type: boolean
+          default: false
+          description: If true, then updates for this credential will not be validated against the cloud provider. Only valid for filer version 9.12+ and cannot be true for credentials in use by a volume
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+          readOnly: true
+      description: A cloud credential object
+  securitySchemes:
+    AuthToken:
+      type: apiKey
+      description: Authorization header required to make authenticated requests.
+      name: Authorization
+      in: header
+x-refined-from:
+- nasuni-nmc-v1-1-openapi.yml
+- nasuni-nmc-v1-2-openapi.yml

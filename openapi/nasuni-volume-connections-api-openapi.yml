@@ -1,0 +1,522 @@
+openapi: 3.2.0
+info:
+  title: Portal Volume Connections API
+  version: 0.1.0
+servers:
+- url: https://am1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the US region.
+- url: https://eu1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the EU region.
+- url: https://ap1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the Asia-Pacific region.
+security:
+- HTTPBearer: []
+tags:
+- name: Volume Connections
+paths:
+  /volume_connections:
+    get:
+      tags:
+      - Volume Connections
+      summary: Get Volume Connections
+      description: 'Flat volume-appliance connection list from Portal DB.
+
+
+        One ``(volume, appliance)`` row per mount. Supports ``search``,
+
+        multi-value filters, and ``sort_by`` + ``sort_order``. Unpaginated —
+
+        caller does client-side search/sort/paging.'
+      operationId: get_volume_connections_volume_connections_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: cloud_providers
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              $ref: '#/components/schemas/NocCloudProvider'
+          - type: 'null'
+          title: Cloud Providers
+      - name: protocols
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              $ref: '#/components/schemas/Protocol'
+          - type: 'null'
+          title: Protocols
+      - name: roles
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              $ref: '#/components/schemas/portal__api__dto__volumes__Role'
+          - type: 'null'
+          title: Roles
+      - name: security_modes
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              $ref: '#/components/schemas/SecurityMode'
+          - type: 'null'
+          title: Security Modes
+      - name: permission_policies
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              $ref: '#/components/schemas/PermissionPolicy'
+          - type: 'null'
+          title: Permission Policies
+      - name: connection_permissions
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              $ref: '#/components/schemas/ConnectionPermission'
+          - type: 'null'
+          title: Connection Permissions
+      - name: cloud_regions
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Cloud Regions
+      - name: appliance_names
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Appliance Names
+      - name: volume_names
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Volume Names
+      - name: sort_by
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/VolumeSortBy'
+          - type: 'null'
+          title: Sort By
+      - name: sort_order
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortOrder'
+          default: asc
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: volume_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Id
+      responses:
+        '200':
+          description: Flat volume-appliance connection list from Portal DB with search, filters, and sort.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolumeConnectionsResponseDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    VolumeConnectionItemDto:
+      properties:
+        cloud_provider:
+          anyOf:
+          - $ref: '#/components/schemas/NocCloudProvider'
+          - type: 'null'
+        cloud_region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cloud Region
+        protocol:
+          items:
+            $ref: '#/components/schemas/Protocol'
+          type: array
+          title: Protocol
+        accessible_data:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Accessible Data
+        unprotected_data:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Unprotected Data
+        volume_id:
+          type: string
+          title: Volume Id
+        volume_name:
+          type: string
+          title: Volume Name
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+        permission_policy:
+          anyOf:
+          - $ref: '#/components/schemas/PermissionPolicy'
+          - type: 'null'
+        security_mode:
+          anyOf:
+          - $ref: '#/components/schemas/SecurityMode'
+          - type: 'null'
+        appliance_id:
+          type: string
+          title: Appliance Id
+        appliance_name:
+          type: string
+          title: Appliance Name
+        last_snapshot_utc:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Snapshot Utc
+        current_snapshot_status:
+          $ref: '#/components/schemas/SnapshotStatus'
+          default: idle
+        connection_permission:
+          anyOf:
+          - $ref: '#/components/schemas/ConnectionPermission'
+          - type: 'null'
+        role:
+          $ref: '#/components/schemas/portal__api__dto__volumes__Role'
+        appliance_hostname:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Appliance Hostname
+        is_readonly:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Readonly
+        share_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Share Count
+        export_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Export Count
+        ftp_dir_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Ftp Dir Count
+        snapshot_start:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Snapshot Start
+        snapshot_stop:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Snapshot Stop
+        snapshot_days:
+          items:
+            type: string
+          type: array
+          title: Snapshot Days
+        snapshot_frequency:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Snapshot Frequency
+        sync_schedule:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Sync Schedule
+        pinned_folders_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Pinned Folders Count
+        autofault_folders_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Autofault Folders Count
+      type: object
+      required:
+      - volume_id
+      - volume_name
+      - appliance_id
+      - appliance_name
+      - role
+      title: VolumeConnectionItemDto
+      description: "One ``(volume, appliance)`` connection row from\n``GET /volume_connections``.\n\nThe response is denormalised one-row-per-mount (N appliances → N\nrows). Nullability mirrors :class:`VolumeApplianceRow` end-to-end —\n``None`` means \"no data available yet\" and is intentionally\ndistinct from ``0`` / :attr:`SnapshotStatus.idle`.\n\n* ``protocol`` — full deduplicated list in canonical\n  SMB → NFS → FTP order; empty if no share configured.\n* ``connection_permission`` — derived from\n  ``volumes_v2.remoteaccess_autoaccept`` (master) or\n  ``volume_edge_states.remoteaccess_permission`` (non-master).\n* ``accessible_data`` / ``unprotected_data`` — parsed byte counts;\n  ``None`` when the appliance hasn't reported a number.\n* ``last_snapshot_utc`` — tz-aware UTC, serialised as ISO 8601.\n\nThe trailing per-edge state block (``appliance_hostname`` through\n``autofault_folders_count``) carries every column the Volume\nDetails \"Data Protection\", \"Protocols\", \"Data Growth\", and\n\"Additional Details\" cards need. Kept on this row (rather than a\nseparate detail endpoint) so ``/volume_connections`` remains the\nsingle low-level resource for per-mount data — Portal's BFF and\nexternal API consumers compose it with ``/volumes/{id}`` to build\nhigher-level views."
+    ConnectionPermission:
+      type: string
+      enum:
+      - READONLY
+      - READWRITE
+      - Custom
+      title: ConnectionPermission
+    SortOrder:
+      type: string
+      enum:
+      - asc
+      - desc
+      title: SortOrder
+      description: Short-form sort direction used by list APIs (asc/desc).
+    VolumeSortBy:
+      type: string
+      enum:
+      - volume_name
+      - cloud_provider
+      - cloud_region
+      - accessible_data
+      - unprotected_data
+      - last_snapshot_utc
+      - appliance_name
+      title: VolumeSortBy
+      description: 'Allowlist for volume-centric sort keys. Invalid values → 422.
+
+
+        All sorts produce a volume-cohesive ordering (mounts of the same
+
+        volume stay grouped). Per-mount keys are rolled up so they make
+
+        sense as a single value per volume: ``last_snapshot_utc`` → MAX
+
+        across mounts; ``appliance_name`` → master mount edge name.'
+    portal__api__dto__volumes__Role:
+      type: string
+      enum:
+      - owner
+      - connected
+      title: Role
+    NocCloudProvider:
+      type: string
+      enum:
+      - amazons3
+      - amazons3gov
+      - azure
+      - google
+      - googles3
+      - atmos
+      - ironmountain
+      - rackspace
+      - nirvanix
+      - synaptic
+      - castor
+      - delldx
+      - cloudone
+      - hp
+      - cleversafe
+      - vipr
+      - ibmcos
+      - hcp
+      - s3_compatible
+      title: NocCloudProvider
+      description: Cloud provider identity as used by NOC (shortname).
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    SnapshotStatus:
+      type: string
+      enum:
+      - idle
+      - pending
+      - in_progress
+      - succeeded
+      - failed
+      - cancelling
+      - cancelled
+      - cancel_rejected
+      - up_to_date
+      title: SnapshotStatus
+      description: 'Public snapshot lifecycle vocabulary surfaced by the snapshot APIs.
+
+
+        The persisted column (``VolumeEdgeState.current_snapshot_status``)
+
+        has a single writer: the EventHub ``VolumeSnapshotStatusProcessor``,
+
+        which translates filer ``volume_snapshot_status`` events. No other
+
+        code path — API request handlers, heartbeat upserts, background
+
+        services — writes to that column. ``cancelling`` never reaches the
+
+        DB: it exists as a FE-optimistic wire value only (clients render it
+
+        between the cancel dispatch and the filer''s ``cancelled`` /
+
+        ``cancel_rejected`` ack). ``pending`` is a real filer-reported
+
+        state.'
+    PermissionPolicy:
+      type: string
+      enum:
+      - POSIX Mixed Mode
+      - UNIX/NFS Permissions Only Mode
+      - Unauthenticated Access Mode
+      - NTFS Compatible Mode
+      - NTFS Exclusive Mode
+      - NTFS Multiprotocol Mode
+      title: PermissionPolicy
+    SecurityMode:
+      type: string
+      enum:
+      - Publicly Available
+      - Active Directory
+      - LDAP Directory
+      title: SecurityMode
+    Protocol:
+      type: string
+      enum:
+      - NFS
+      - SMB
+      - FTP
+      title: Protocol
+    VolumeConnectionsResponseDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/VolumeConnectionItemDto'
+          type: array
+          title: Items
+      type: object
+      title: VolumeConnectionsResponseDto
+      description: GET /volume_connections response — all matching mounts (no pagination).
+  securitySchemes:
+    ServiceKeyHeader:
+      type: apiKey
+      in: header
+      name: x-service-key
+      description: Service key for programmatic API access. Must be used together with x-service-secret.
+    ServiceSecretHeader:
+      type: apiKey
+      in: header
+      name: x-service-secret
+      description: Service secret for programmatic API access. Must be used together with x-service-key.
+    UserKeyHeader:
+      type: apiKey
+      in: header
+      name: x-user-key
+      description: User key for user-specific API access.
+    HTTPBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token obtained from /auth/token endpoint.
+    OAuth2ClientCredentials:
+      type: oauth2
+      description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes: {}

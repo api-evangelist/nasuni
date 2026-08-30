@@ -1,0 +1,1231 @@
+openapi: 3.2.0
+info:
+  title: Portal AI Activate API
+  version: 0.1.0
+servers:
+- url: https://am1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the US region.
+- url: https://eu1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the EU region.
+- url: https://ap1.portal.api.nasuni.com
+  description: Base URL for accounts assigned the Asia-Pacific region.
+security:
+- HTTPBearer: []
+tags:
+- name: AI Activate
+paths:
+  /ai_activate/inventories/{volume_id}:
+    get:
+      tags:
+      - AI Activate
+      summary: Get Ai Activate Inventory
+      description: Get AI Activate inventory for a specific volume.
+      operationId: get_ai_activate_inventory_ai_activate_inventories__volume_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: volume_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Volume Id
+      responses:
+        '200':
+          description: AI Activate inventory retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiActivateInventoryDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /ai_activate/inventories:
+    get:
+      tags:
+      - AI Activate
+      summary: Get Ai Activate Inventories
+      description: Get AI Activate volume inventories for the account.
+      operationId: get_ai_activate_inventories_ai_activate_inventories_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: volume_name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Case-insensitive Search string to filter inventories by volume name.
+          examples:
+          - finance
+          - prod-volume
+          title: Volume Name
+        description: Case-insensitive Search string to filter inventories by volume name.
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              $ref: '#/components/schemas/NocAiActivateInventoryStatus'
+          - type: 'null'
+          description: Filter inventories by their status. 'Not Indexed' is not a valid filter value because non-indexed volumes are excluded from inventory results.
+          examples:
+          - - Full Content Index Complete
+            - NDS Ready
+          title: Status
+        description: Filter inventories by their status. 'Not Indexed' is not a valid filter value because non-indexed volumes are excluded from inventory results.
+      - name: provider
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter inventories by their provider.
+          examples:
+          - - Amazon S3
+            - Azure
+          title: Provider
+        description: Filter inventories by their provider.
+      - name: volume_region
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter inventories by their volume region.
+          examples:
+          - - us-east-1
+            - centralus
+          title: Volume Region
+        description: Filter inventories by their volume region.
+      - name: region
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          description: Filter inventories by their index execution region.
+          examples:
+          - - us-east-1
+            - centralus
+          title: Region
+        description: Filter inventories by their index execution region.
+      responses:
+        '200':
+          description: AI Activate inventories retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiActivateInventoriesResponseDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - AI Activate
+      summary: Create Ai Activate Inventory
+      description: Create AI Activate inventory indexing for a volume.
+      operationId: create_ai_activate_inventory_ai_activate_inventories_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AiActivateCreateInventoryRequestBodyDto'
+      responses:
+        '201':
+          description: AI Activate inventory created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiActivateCreateInventoryResponseDto'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /ai_activate/indexes:
+    get:
+      tags:
+      - AI Activate
+      summary: Get Ai Activate Indexes
+      description: Get AI Activate content indexes for the account.
+      operationId: get_ai_activate_indexes_ai_activate_indexes_get
+      responses:
+        '200':
+          description: AI Activate indexes retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiActivateIndexesResponseDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+    post:
+      tags:
+      - AI Activate
+      summary: Create Ai Activate Index
+      description: Create AI Activate content index for a volume.
+      operationId: create_ai_activate_index_ai_activate_indexes_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AiActivateCreateIndexRequestBodyDto'
+        required: true
+      responses:
+        '202':
+          description: AI Activate content indexing started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiActivateIndexConfigResponseDto'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - HTTPBearer: []
+  /ai_activate/indexes/{volume_id}:
+    get:
+      tags:
+      - AI Activate
+      summary: Get Ai Activate Index Config
+      description: Get the AI Activate index details (volume metadata + search configuration) for a volume.
+      operationId: get_ai_activate_index_config_ai_activate_indexes__volume_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: volume_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Volume Id
+      responses:
+        '200':
+          description: AI Activate index details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiActivateIndexDetailsDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - AI Activate
+      summary: Create Ai Activate Index Config
+      description: Create the AI Activate search configuration for a volume. Returns 409 if one already exists.
+      operationId: create_ai_activate_index_config_ai_activate_indexes__volume_id__post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: volume_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Volume Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AiActivateIndexConfigDto'
+      responses:
+        '201':
+          description: AI Activate index configuration created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiActivateIndexDetailsDto'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Resource state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      tags:
+      - AI Activate
+      summary: Update Ai Activate Index Config
+      description: Partially update the AI Activate search configuration for a volume. Returns 404 if none exists.
+      operationId: update_ai_activate_index_config_ai_activate_indexes__volume_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: volume_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Volume Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AiActivateIndexConfigDto'
+      responses:
+        '200':
+          description: AI Activate index configuration updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiActivateIndexDetailsDto'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /ai_activate/indexes/{volume_id}/mcp:
+    get:
+      tags:
+      - AI Activate
+      summary: Get Mcp Volume Config
+      description: Get MCP query-scope configuration for a single indexed volume.
+      operationId: get_mcp_volume_config_ai_activate_indexes__volume_id__mcp_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: volume_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Volume Id
+      responses:
+        '200':
+          description: MCP configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiActivateMcpVolumeConfigDto'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      tags:
+      - AI Activate
+      summary: Update Mcp Volume Config
+      description: Partially update the MCP query-scope configuration for a single indexed volume.
+      operationId: update_mcp_volume_config_ai_activate_indexes__volume_id__mcp_patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: volume_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Volume Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AiActivateMcpVolumeConfigUpdateDto'
+      responses:
+        '200':
+          description: MCP configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiActivateMcpVolumeConfigDto'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    AiActivateIndexStatus:
+      type: string
+      enum:
+      - in_progress
+      - complete
+      - failed
+      - queued_for_deletion
+      title: AiActivateIndexStatus
+    AiActivateMcpVolumeConfigUpdateDto:
+      properties:
+        mcp_enabled:
+          type: boolean
+          title: Mcp Enabled
+        allowed_file_extensions:
+          items:
+            type: string
+          type: array
+          title: Allowed File Extensions
+        period:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Period
+        ignore_principals:
+          items:
+            type: string
+          type: array
+          title: Ignore Principals
+        ignore_everyone:
+          type: boolean
+          title: Ignore Everyone
+        ignore_domain_users:
+          type: boolean
+          title: Ignore Domain Users
+      type: object
+      title: AiActivateMcpVolumeConfigUpdateDto
+      description: 'Partial update body for PATCH /ai_activate/indexes/{volume_id}/mcp.
+
+
+        Omitted fields are left unchanged. Set period to null explicitly to select ''All time''.'
+    AiActivateCreateIndexRequestBodyDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        mcp_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Mcp Enabled
+        include_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Include Paths
+        exclude_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Exclude Paths
+      type: object
+      required:
+      - volume_guid
+      title: AiActivateCreateIndexRequestBodyDto
+    AiActivateInventoryDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        volume_name:
+          type: string
+          title: Volume Name
+        provider:
+          type: string
+          title: Provider
+          description: Provider used to execute inventory indexing. This should match the volume cloud provider, for example AWS or Azure.
+        volume_region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Region
+          description: API-provided volume region (default NDS region unless changed by the user).
+        region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Region
+          description: Region used to execute inventory indexing. For AWS volumes, this must match the volume storage region. For Azure volumes, this must be a supported Azure location code; if different from the volume storage region, it may incur egress costs. May be null for volumes that have not been configured for indexing.
+        status:
+          $ref: '#/components/schemas/NocAiActivateInventoryStatus'
+        file_count:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          title: File Count
+          description: Number of files included in the volume inventory. May be unavailable until inventory data is ready.
+        volume_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Size
+          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until the volume is fully indexed.
+      type: object
+      required:
+      - volume_guid
+      - volume_name
+      - provider
+      - status
+      title: AiActivateInventoryDto
+    AiActivateIndexConfigDto:
+      properties:
+        include_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Include Paths
+        exclude_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Exclude Paths
+      additionalProperties: false
+      type: object
+      title: AiActivateIndexConfigDto
+      description: 'AI Activate search configuration (include/exclude paths) for a volume.
+
+
+        Unified model shared by GET/POST/PATCH request bodies for
+
+        ``/ai_activate/indexes/{volume_id}``. Fields are optional so PATCH callers
+
+        can send only what they want to update; POST callers may omit them to
+
+        accept the defaults (empty include/exclude).
+
+
+        ``extra="forbid"`` — MCP toggles moved to ``/indexes/{volume_id}/mcp``.
+
+        Reject legacy PATCH bodies that include ``mcp_enabled`` here so callers
+
+        fail loudly (422) instead of silently having the field ignored.'
+    AiActivateCreateInventoryRequestBodyDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Region
+          description: Required for Azure volumes only. Use an Azure location code such as 'centralus', not a display name. For AWS volumes, this is optional, but when provided it must match the volume storage region.
+      type: object
+      required:
+      - volume_guid
+      title: AiActivateCreateInventoryRequestBodyDto
+    NocAiActivateInventoryStatus:
+      type: string
+      enum:
+      - Not Indexed
+      - Waiting for NDS creation
+      - Waiting for NDS configuration
+      - NDS Ready
+      - Metadata Index in progress
+      - Metadata Index Complete
+      - Full Content Index in progress
+      - Full Content Index Pending
+      - Full Content Index Complete
+      - Incremental Content Index in progress
+      - Incremental Content Index failed
+      - Volume Inventory Expired
+      - Soft Deleted
+      - Indexing Failed
+      title: NocAiActivateInventoryStatus
+    AiActivateCreateInventoryResponseDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        volume_name:
+          type: string
+          title: Volume Name
+        provider:
+          type: string
+          title: Provider
+          description: Provider used to execute inventory indexing, as confirmed by NOC after inventory creation.
+        volume_region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Region
+          description: API-provided volume region (default NDS region unless changed by the user).
+        region:
+          type: string
+          title: Region
+          description: Region used to execute inventory indexing, as confirmed by NOC after inventory creation.
+        status:
+          $ref: '#/components/schemas/NocAiActivateInventoryStatus'
+        file_count:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          title: File Count
+          description: Number of files included in the volume inventory. May be unavailable until inventory data is ready.
+        volume_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Size
+          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until the volume is fully indexed.
+      type: object
+      required:
+      - volume_guid
+      - volume_name
+      - provider
+      - region
+      - status
+      title: AiActivateCreateInventoryResponseDto
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    AiActivateIndexDetailsDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        volume_name:
+          type: string
+          title: Volume Name
+        provider:
+          type: string
+          title: Provider
+        volume_region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Region
+          description: Storage region of the volume. May be null when NOC has no volume metadata.
+        status:
+          $ref: '#/components/schemas/AiActivateIndexStatus'
+        file_count:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          title: File Count
+          description: Number of files indexed for the volume. May be null until NOC reports a count.
+        volume_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Size
+          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until indexing progresses.
+        include_paths:
+          items:
+            type: string
+          type: array
+          title: Include Paths
+        exclude_paths:
+          items:
+            type: string
+          type: array
+          title: Exclude Paths
+        mcp_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Mcp Enabled
+          deprecated: true
+      type: object
+      required:
+      - volume_guid
+      - volume_name
+      - provider
+      - status
+      title: AiActivateIndexDetailsDto
+      description: 'Full AI Activate index detail for a volume — list-item fields plus search configuration.
+
+
+        Returned by the webapi GET/POST/PATCH ``/ai_activate/indexes/{volume_id}``
+
+        endpoints so external API consumers see the same volume/index metadata as
+
+        the list endpoint alongside the search configuration in a single response.'
+    AiActivateInventoriesResponseDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AiActivateInventoryDto'
+          type: array
+          title: Items
+      type: object
+      title: AiActivateInventoriesResponseDto
+    AiActivateMcpVolumeConfigDto:
+      properties:
+        mcp_enabled:
+          type: boolean
+          title: Mcp Enabled
+          description: Whether the MCP server is enabled for this volume.
+        allowed_file_extensions:
+          items:
+            type: string
+          type: array
+          title: Allowed File Extensions
+          description: File extensions the MCP server filters results to. Empty list returns all file types.
+          examples:
+          - - pdf
+            - docx
+        period:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Period
+          description: Time-window filter applied to query results. Accepts an ISO 8601 duration (e.g. 'P30D') or explicit interval null means 'all time' — ISO 8601 has no valid 'all time' representation.
+          examples:
+          - P7D
+          - P30D
+          - P90D
+          - P1Y
+          - null
+        ignore_principals:
+          items:
+            type: string
+          type: array
+          title: Ignore Principals
+          description: Principal names (users or groups) whose ALLOW permissions the MCP server ignores.
+          examples:
+          - - DOMAIN\\contractors
+            - service-account@example.com
+        ignore_everyone:
+          type: boolean
+          title: Ignore Everyone
+          description: When true, the MCP server ignores the Everyone principal.
+          default: false
+        ignore_domain_users:
+          type: boolean
+          title: Ignore Domain Users
+          description: When true, the MCP server ignores the Domain Users principal.
+          default: false
+      type: object
+      required:
+      - mcp_enabled
+      title: AiActivateMcpVolumeConfigDto
+      description: 'MCP query-scope configuration for a single indexed volume.
+
+
+        Returned by GET /ai_activate/indexes/{volume_id}/mcp and by
+
+        PATCH /ai_activate/indexes/{volume_id}/mcp after a successful update.'
+    AiActivateIndexConfigResponseDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        volume_name:
+          type: string
+          title: Volume Name
+        provider:
+          type: string
+          title: Provider
+        volume_region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Region
+          description: Storage region of the volume. May be null when NOC has no volume metadata.
+        status:
+          $ref: '#/components/schemas/AiActivateIndexStatus'
+        file_count:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          title: File Count
+          description: Number of files indexed for the volume. May be null until NOC reports a count.
+        volume_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Size
+          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until indexing progresses.
+        mcp_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Mcp Enabled
+        include_paths:
+          items:
+            type: string
+          type: array
+          title: Include Paths
+        exclude_paths:
+          items:
+            type: string
+          type: array
+          title: Exclude Paths
+      type: object
+      required:
+      - volume_guid
+      - volume_name
+      - provider
+      - status
+      title: AiActivateIndexConfigResponseDto
+      description: AI Activate index configuration returned by NOC. Reused across GET PATCH and POST
+    AiActivateIndexesResponseDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AiActivateIndexListItemDto'
+          type: array
+          title: Items
+      type: object
+      title: AiActivateIndexesResponseDto
+    AiActivateIndexListItemDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        volume_name:
+          type: string
+          title: Volume Name
+        provider:
+          type: string
+          title: Provider
+        volume_region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Region
+          description: Storage region of the volume. May be null when NOC has no volume metadata.
+        status:
+          $ref: '#/components/schemas/AiActivateIndexStatus'
+        file_count:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          title: File Count
+          description: Number of files indexed for the volume. May be null until NOC reports a count.
+        volume_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Size
+          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until indexing progresses.
+      type: object
+      required:
+      - volume_guid
+      - volume_name
+      - provider
+      - status
+      title: AiActivateIndexListItemDto
+      description: A single content-index entry for a volume in the AI Activate indexes list.
+  securitySchemes:
+    ServiceKeyHeader:
+      type: apiKey
+      in: header
+      name: x-service-key
+      description: Service key for programmatic API access. Must be used together with x-service-secret.
+    ServiceSecretHeader:
+      type: apiKey
+      in: header
+      name: x-service-secret
+      description: Service secret for programmatic API access. Must be used together with x-service-key.
+    UserKeyHeader:
+      type: apiKey
+      in: header
+      name: x-user-key
+      description: User key for user-specific API access.
+    HTTPBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token obtained from /auth/token endpoint.
+    OAuth2ClientCredentials:
+      type: oauth2
+      description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/token
+          scopes: {}
