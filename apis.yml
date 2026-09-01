@@ -30,16 +30,16 @@ specificationVersion: '0.20'
 created: '2026-08-26'
 modified: '2026-08-26'
 tags:
-- company
-- file-storage
-- hybrid-cloud
-- object-storage
-- enterprise-storage
-- data-management
-- backup-and-recovery
-- ransomware-protection
+- Company
+- File Storage
+- Hybrid Cloud
+- Object Storage
+- Enterprise Storage
+- Data Management
+- Backup and Recovery
+- Ransomware Protection
 - Infrastructure
-- observability
+- Observability
 - MCP
 - agent-native
 tags_raw:
