@@ -22,6 +22,21 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+accessModel:
+  pricing: paid
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Paid · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  - rate-limits
+  - security
+  generated: '2026-09-02'
+  method: derived
 image: https://www.nasuni.com/wp-content/uploads/2026/04/nasuni-featured-image-logo-540x283.png
 url: https://raw.githubusercontent.com/api-evangelist/nasuni/refs/heads/main/apis.yml
 x-type: company
@@ -900,6 +915,9 @@ apis:
   - type: Documentation
     url: https://docs.nasuni.com/docs/nds-aws-api-overview
 common:
+- type: CapabilityMap
+  url: capabilities/nasuni-capability-edges.yml
+  name: Nasuni Business Capability Map
 - type: DomainSecurity
   url: security/nasuni-domain-security.yml
 - type: OAuthScopes
