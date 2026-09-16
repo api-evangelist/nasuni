@@ -1,15 +1,17 @@
 aid: nasuni
 name: Nasuni
-description: 'Nasuni is an enterprise hybrid-cloud file data platform that consolidates distributed NAS and file servers
-  into UniFS, a cloud-native global file system backed by customer-owned object storage (Azure Blob, Amazon S3, Google Cloud
-  Storage and S3-compatible on-prem targets). Edge appliances cache hot data at each site while every version is written
-  immutably to the cloud, delivering multi-site collaboration with Global File Lock and Global File Acceleration, continuous
-  versioning, rapid ransomware recovery, and file data services for analytics and AI. Nasuni exposes a substantial programmable
-  surface: the REST Nasuni Management Console (NMC) API for fleet, volume, share, snapshot and appliance management; the
-  multi-region Nasuni Portal API for account, IAM, Ops IQ telemetry, UaaS and job orchestration; the Global File Acceleration
-  Telemetry API; Nasuni Data Service (NDS) endpoints that present Nasuni volumes through Azure Blob- and Amazon S3-compatible
-  interfaces; the Nasuni Data API for appliance filesystem access; and a hosted, OAuth 2.0 Portal MCP Server plus open-source
-  local MCP servers that make the platform callable by AI agents.'
+description: 'Nasuni is an enterprise hybrid-cloud file data platform that consolidates distributed NAS
+  and file servers into UniFS, a cloud-native global file system backed by customer-owned object storage
+  (Azure Blob, Amazon S3, Google Cloud Storage and S3-compatible on-prem targets). Edge appliances cache
+  hot data at each site while every version is written immutably to the cloud, delivering multi-site collaboration
+  with Global File Lock and Global File Acceleration, continuous versioning, rapid ransomware recovery,
+  and file data services for analytics and AI. Nasuni exposes a substantial programmable surface: the
+  REST Nasuni Management Console (NMC) API for fleet, volume, share, snapshot and appliance management;
+  the multi-region Nasuni Portal API for account, IAM, Ops IQ telemetry, UaaS and job orchestration; the
+  Global File Acceleration Telemetry API; Nasuni Data Service (NDS) endpoints that present Nasuni volumes
+  through Azure Blob- and Amazon S3-compatible interfaces; the Nasuni Data API for appliance filesystem
+  access; and a hosted, OAuth 2.0 Portal MCP Server plus open-source local MCP servers that make the platform
+  callable by AI agents.'
 deliveryModel:
   model: saas
   open_source: false
@@ -43,7 +45,7 @@ x-type: company
 x-source: harvest:secondary-market
 specificationVersion: '0.20'
 created: '2026-08-26'
-modified: '2026-08-26'
+modified: '2026-09-16'
 tags:
 - Company
 - File Storage
@@ -77,10 +79,9 @@ maintainers:
   email: info@apis.io
 apis:
 - name: Nasuni Data API
-  description: >-
-    HTTP API providing programmatic access to the filesystem of a Nasuni Edge Appliance — create, read,
-    update and delete files and folders, list shares, and read previous versions. Requires Mobile Access
-    to be enabled on the share. Authentication issues an x-secret-key token from /mobileapi/1/auth/login
+  description: HTTP API providing programmatic access to the filesystem of a Nasuni Edge Appliance — create,
+    read, update and delete files and folders, list shares, and read previous versions. Requires Mobile
+    Access to be enabled on the share. Authentication issues an x-secret-key token from /mobileapi/1/auth/login
     which is then presented as HTTP Basic credentials alongside the device_id. Documented in prose only;
     Nasuni publishes no OpenAPI for this surface.
   humanURL: https://docs.nasuni.com/docs/nasuni-data-api
@@ -92,13 +93,12 @@ apis:
   - type: Documentation
     url: https://docs.nasuni.com/docs/nasuni-data-api
 - name: Nasuni Portal MCP Server
-  description: >-
-    Hosted, OAuth 2.0-authenticated Model Context Protocol server that exposes the Nasuni Portal to AI
-    clients (Claude, ChatGPT, Microsoft Copilot Studio) as roughly 40 tools spanning appliance and volume
-    inventory, Nasuni Data Services and SRaaS configuration, activity logs, roles and permissions, and
-    the Ops IQ telemetry, data-protection, health, TCO/rightsizing and diagnostic families. Regional endpoints;
-    the per-account URL is retrieved from Portal → Account Settings → Integrations. Currently in private
-    preview. RBAC is inherited from the caller's Portal account.
+  description: Hosted, OAuth 2.0-authenticated Model Context Protocol server that exposes the Nasuni Portal
+    to AI clients (Claude, ChatGPT, Microsoft Copilot Studio) as roughly 40 tools spanning appliance and
+    volume inventory, Nasuni Data Services and SRaaS configuration, activity logs, roles and permissions,
+    and the Ops IQ telemetry, data-protection, health, TCO/rightsizing and diagnostic families. Regional
+    endpoints; the per-account URL is retrieved from Portal → Account Settings → Integrations. Currently
+    in private preview. RBAC is inherited from the caller's Portal account.
   humanURL: https://docs.nasuni.com/docs/portal-mcp-server
   baseURL: https://am1.portal.api.nasuni.com
   tags:
@@ -368,8 +368,8 @@ apis:
     url: https://docs.nasuni.com/docs/nds-aws-api-overview
 - aid: nasuni:nasuni-file-iq-appliances-file-iq-api
   name: Nasuni File IQ Appliances (File IQ) API
-  description: >-
-    The File IQ Appliances (File IQ) API from Nasuni — 2 operation(s) for file iq appliances (file iq).
+  description: The File IQ Appliances (File IQ) API from Nasuni — 2 operation(s) for file iq appliances
+    (file iq).
   humanURL: https://docs.api.nasuni.com/api/nmc/v120/introduction/
   baseURL: https://hostname/api/v1.2
   tags:
@@ -425,8 +425,8 @@ apis:
     url: https://docs.nasuni.com/docs/nds-aws-api-overview
 - aid: nasuni:nasuni-global-file-accelerator-gfa-api
   name: Nasuni Global File Accelerator (GFA) API
-  description: >-
-    The Global File Accelerator (GFA) API from Nasuni — 2 operation(s) for global file accelerator (gfa).
+  description: The Global File Accelerator (GFA) API from Nasuni — 2 operation(s) for global file accelerator
+    (gfa).
   humanURL: https://docs.api.nasuni.com/api/nmc/v120/introduction/
   baseURL: https://hostname/api/v1.2
   tags:
@@ -625,9 +625,9 @@ apis:
   - type: Documentation
     url: https://docs.nasuni.com/docs/nds-aws-api-overview
 - aid: nasuni:nasuni-nasuni-data-service-nds-api-api
-  name: Nasuni Nasuni Data Service (NDS) API
-  description: >-
-    The Nasuni Data Service (NDS) API API from Nasuni — 3 operation(s) for nasuni data service (nds) api.
+  name: Nasuni Data Service (NDS) API
+  description: The Nasuni Data Service (NDS) API API from Nasuni — 3 operation(s) for nasuni data service
+    (nds) api.
   humanURL: https://docs.api.nasuni.com/api/nmc/v120/introduction/
   baseURL: https://hostname/api/v1.2
   tags:
@@ -654,10 +654,9 @@ apis:
   - type: Documentation
     url: https://docs.nasuni.com/docs/nds-aws-api-overview
 - aid: nasuni:nasuni-nasuni-data-service-nds-aws-api-api
-  name: Nasuni Nasuni Data Service (NDS) AWS API
-  description: >-
-    The Nasuni Data Service (NDS) AWS API API from Nasuni — 2 operation(s) for nasuni data service (nds)
-    aws api.
+  name: Nasuni Data Service (NDS) AWS API
+  description: The Nasuni Data Service (NDS) AWS API API from Nasuni — 2 operation(s) for nasuni data
+    service (nds) aws api.
   humanURL: https://docs.api.nasuni.com/api/nmc/v120/introduction/
   baseURL: https://hostname/api/v1.2
   tags:
@@ -715,11 +714,10 @@ apis:
     url: https://docs.nasuni.com/docs/nds-aws-api-overview
 - aid: nasuni:nasuni-ops-iq-api
   name: Nasuni Ops IQ API
-  description: >-
-    **Requires Premium Ops IQ license** (`ops-iq-premium`). The Ops IQ Telemetry API is available only
-    to accounts with the Premium Ops IQ license bit enabled. Reach out to your Nasuni account team or
-    Support to enable Premium Ops IQ access before using these endpoints. For more information, see the
-    [Ops IQ Documentation](https://docs.nasuni.com/docs/ops-iq-1).
+  description: '**Requires Premium Ops IQ license** (`ops-iq-premium`). The Ops IQ Telemetry API is available
+    only to accounts with the Premium Ops IQ license bit enabled. Reach out to your Nasuni account team
+    or Support to enable Premium Ops IQ access before using these endpoints. For more information, see
+    the [Ops IQ Documentation](https://docs.nasuni.com/docs/ops-iq-1).'
   humanURL: https://docs.api.nasuni.com/api/nmc/v120/introduction/
   baseURL: https://hostname/api/v1.2
   tags:
@@ -831,8 +829,8 @@ apis:
     url: https://docs.nasuni.com/docs/nds-aws-api-overview
 - aid: nasuni:nasuni-unifs-as-a-service-uaas-api
   name: Nasuni UniFS As A Service (UaaS) API
-  description: >-
-    The UniFS As A Service (UaaS) API from Nasuni — 10 operation(s) for unifs as a service (uaas).
+  description: The UniFS As A Service (UaaS) API from Nasuni — 10 operation(s) for unifs as a service
+    (uaas).
   humanURL: https://docs.api.nasuni.com/api/nmc/v120/introduction/
   baseURL: https://hostname/api/v1.2
   tags:
