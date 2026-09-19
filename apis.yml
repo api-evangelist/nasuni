@@ -486,6 +486,8 @@ apis:
   humanURL: https://docs.api.nasuni.com/api/nmc/v120/introduction/
   baseURL: https://hostname/api/v1.2
   tags:
+  - Identity and Access Management
+  tags_raw:
   - IAM
   properties:
   - type: OpenAPI
