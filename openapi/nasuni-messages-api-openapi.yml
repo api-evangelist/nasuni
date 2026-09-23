@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Nasuni Messages API
   version: '1.0'
-  description: 'Operations tagged Messages across 3 of this provider''s published API definitions: nasuni-nmc-v1-0-openapi.yml, nasuni-nmc-v1-1-openapi.yml, nasuni-nmc-v1-2-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Messages across 3 of this provider''s published API definitions: nasuni-nmc-v1-0-openapi.json, nasuni-nmc-v1-1-openapi.json, nasuni-nmc-v1-2-openapi.json. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://hostname/api/v1
 - url: https://hostname/api/v1.1
@@ -58,6 +58,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getMessages
+      x-operation-id-source: derived
     servers:
     - url: https://hostname/api/v1
   /messages/{message_id}/:
@@ -99,6 +101,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getMessagesByMessageId
+      x-operation-id-source: derived
     delete:
       tags:
       - Messages
@@ -132,10 +136,63 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      summary: Delete messages by message id
+      x-summary-source: derived
+      operationId: deleteMessagesByMessageId
+      x-operation-id-source: derived
     servers:
     - url: https://hostname/api/v1
 components:
   schemas:
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the message.
+        filer_serial_number:
+          type: string
+          description: Identifier to the Filer the message is associated with.
+        description:
+          type: string
+          description: Description of the intent of message.
+        code:
+          type: string
+          description: A code identifying the intent of the message.
+        status:
+          type: string
+          description: 'Current status of the message.
+
+            * ''synced'' - Message has been received by the Filer, and the Filer returned a success response. * ''pending'' - Message is currently in transit. * ''failure'' - Messages has been received by the Filer, but returned an error response.'
+          enum:
+          - synced
+          - pending
+          - failure
+        send_time:
+          type: string
+          description: Time the message was sent.
+        expiration_time:
+          type: string
+          description: Time a synced message will expire and be removed from the messages list.
+        response_time:
+          type: string
+          description: Time a message response was received.
+        initiated_by:
+          type: string
+          description: The username of the user who triggered the message, or '[console]' if triggered by the NMC itself.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+            acknowledge:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+        error:
+          $ref: '#/components/schemas/Error'
+      description: The message object is used to track an action that we want the Filer to perform.
     Paging:
       type: object
       properties:
@@ -201,55 +258,22 @@ components:
         description:
           type: string
           description: Description of the error reported.
-    Message:
+    ErrorResponse:
       type: object
       properties:
-        id:
-          type: string
-          description: ID of the message.
-        filer_serial_number:
-          type: string
-          description: Identifier to the Filer the message is associated with.
-        description:
-          type: string
-          description: Description of the intent of message.
-        code:
-          type: string
-          description: A code identifying the intent of the message.
-        status:
-          type: string
-          description: 'Current status of the message.
-
-            * ''synced'' - Message has been received by the Filer, and the Filer returned a success response. * ''pending'' - Message is currently in transit. * ''failure'' - Messages has been received by the Filer, but returned an error response.'
-          enum:
-          - synced
-          - pending
-          - failure
-        send_time:
-          type: string
-          description: Time the message was sent.
-        expiration_time:
-          type: string
-          description: Time a synced message will expire and be removed from the messages list.
-        response_time:
-          type: string
-          description: Time a message response was received.
-        initiated_by:
-          type: string
-          description: The username of the user who triggered the message, or '[console]' if triggered by the NMC itself.
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link'
-            filer:
-              $ref: '#/components/schemas/Link'
-            acknowledge:
-              $ref: '#/components/schemas/Link'
-          description: Links to related resources, collections, and actions.
         error:
-          $ref: '#/components/schemas/Error'
-      description: The message object is used to track an action that we want the Filer to perform.
+          $ref: '#/components/schemas/Error_2'
+    Link_2:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+          readOnly: true
+        method:
+          type: string
+          description: HTTP method to use on the link.
+          readOnly: true
     Error_2:
       type: object
       properties:
@@ -295,11 +319,6 @@ components:
           type: string
           description: Description of the error reported.
           readOnly: true
-    ErrorResponse:
-      type: object
-      properties:
-        error:
-          $ref: '#/components/schemas/Error_2'
     Message_2:
       type: object
       properties:
@@ -359,7 +378,12 @@ components:
         error:
           $ref: '#/components/schemas/Error_2'
       description: The message object is used to track an action that we want the Filer to perform.
-    Link_2:
+    ErrorResponse_2:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error_3'
+    Link_3:
       type: object
       properties:
         href:
@@ -370,32 +394,6 @@ components:
           type: string
           description: HTTP method to use on the link.
           readOnly: true
-    Paging_2:
-      type: object
-      properties:
-        href:
-          type: string
-          description: A link to the requested endpoint.
-        limit:
-          type: integer
-          description: The maximum number of items in a page.
-        next:
-          type:
-          - string
-          - 'null'
-          description: A link to the next page of objects. The value will be null if there isn't one.
-        offset:
-          type: integer
-          description: The item number the page starts on.
-        previous:
-          type:
-          - string
-          - 'null'
-          description: A link to the previous page of objects. The value will be null if there isn't one.
-        total:
-          type: integer
-          description: Total number of items available at the requested endpoint.
-      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
     Error_3:
       type: object
       properties:
@@ -441,11 +439,6 @@ components:
           type: string
           description: Description of the error reported.
           readOnly: true
-    ErrorResponse_2:
-      type: object
-      properties:
-        error:
-          $ref: '#/components/schemas/Error_3'
     Message_3:
       type: object
       properties:
@@ -509,17 +502,32 @@ components:
         error:
           $ref: '#/components/schemas/Error_3'
       description: The message object is used to track an action that we want the Filer to perform.
-    Link_3:
+    Paging_2:
       type: object
       properties:
         href:
           type: string
-          description: Hyperlink to the resource.
-          readOnly: true
-        method:
-          type: string
-          description: HTTP method to use on the link.
-          readOnly: true
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type:
+          - string
+          - 'null'
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type:
+          - string
+          - 'null'
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
   securitySchemes:
     AuthToken:
       type: apiKey
@@ -532,6 +540,6 @@ components:
       name: Authorization
       in: header
 x-refined-from:
-- nasuni-nmc-v1-0-openapi.yml
-- nasuni-nmc-v1-1-openapi.yml
-- nasuni-nmc-v1-2-openapi.yml
+- nasuni-nmc-v1-0-openapi.json
+- nasuni-nmc-v1-1-openapi.json
+- nasuni-nmc-v1-2-openapi.json

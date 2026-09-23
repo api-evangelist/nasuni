@@ -1,0 +1,79 @@
+slug: nasuni
+provider: Nasuni
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 6
+edges:
+- tag: Filers
+  spec_file: nasuni-filers-api-openapi.yml
+  capability_id: BC-600.50
+  capability_id_l1: BC-600
+  capability_name: IT Infrastructure Management
+  confidence: 0.85
+  evidence: '''List all Filers'', ''Update a Filer'', ''Retrieve a Filer with a list of CIFS file locks
+    that clients have on its shares'', schema FilerConfigurationCIFS'
+  reason: Filers are Nasuni edge storage appliances; the operations inventory, configure and inspect client
+    connections/locks on them — squarely compute/storage infrastructure administration.
+- tag: IAM
+  spec_file: nasuni-iam-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.85
+  evidence: '''Get Users'', ''Create Role'', ''Get Role Permissions'', ''Get My Roles and Permissions'';
+    schemas RoleDto, PermissionDto, ServiceKeyDto'
+  reason: Full user/role/permission and service-key administration for the management portal — identity
+    and access management as a capability, not merely an auth handshake.
+- tag: Ops IQ
+  spec_file: nasuni-ops-iq-api-openapi.yml
+  capability_id: BC-600.40
+  capability_id_l1: BC-600
+  capability_name: IT Operations Management
+  confidence: 0.8
+  evidence: '''Get Appliance Load Average'', ''Get Appliance Cache Disk IO Latency'', ''Get Appliance
+    Cache Hits/Misses''; schemas ApplianceHealthScoreStatisticsDto, ApplianceTelemetryCpuUsageDto'
+  reason: Telemetry API exposing CPU, disk IOPS/latency, cache and memory metrics plus health scores for
+    the appliance fleet — day-to-day IT operations monitoring of infrastructure, not product usage analytics.
+- tag: Volumes
+  spec_file: nasuni-volumes-api-openapi.yml
+  capability_id: BC-600.50
+  capability_id_l1: BC-600
+  capability_name: IT Infrastructure Management
+  confidence: 0.75
+  evidence: POST /volumes/ Create volume; PATCH /volumes/{volume_guid}/filers/{filer_serial}/ Update the
+    settings for a volume on a specific Filer; POST /volumes/{volume_guid}/filers/{filer_serial}/shares/
+    Create share
+  reason: Creation and configuration of file-system volumes, per-filer settings, SMB shares and NFS exports
+    on the Nasuni global file system. This is provisioning and administration of storage infrastructure,
+    mapping to IT Infrastructure Management rather than any industry-specific capability.
+- tag: Edge Appliances (Edge)
+  spec_file: nasuni-edge-appliances-edge-api-openapi.yml
+  capability_id: BC-600.50
+  capability_id_l1: BC-600
+  capability_name: IT Infrastructure Management
+  confidence: 0.7
+  evidence: GET /edges  Get Edges; PATCH /edges/{edge_id}/services/s3_edge  Enable/Disable S3 Edge Status;
+    schemas EdgeDto, EdgeMachine, EdgeBuild
+  reason: Inventory and service-level control of Nasuni edge caching appliances (machine, build, volumes,
+    enable/disable services) — management of distributed storage infrastructure estate, i.e. IT Infrastructure
+    Management.
+- tag: File IQ Appliances (File IQ)
+  spec_file: nasuni-file-iq-appliances-file-iq-api-openapi.yml
+  capability_id: BC-600.50
+  capability_id_l1: BC-600
+  capability_name: IT Infrastructure Management
+  confidence: 0.7
+  evidence: GET /fiq_appliances/{file_iq_serial} 'Get File IQ Appliance'; PATCH 'Update File IQ Appliance';
+    schemas FiqApplianceDto, FiqEdgeDto
+  reason: Operations retrieve and update storage appliances (by serial) in the customer's Nasuni fleet
+    — management of storage/edge infrastructure assets, i.e. IT Infrastructure Management. Not a business-domain
+    capability despite 'IQ' branding.

@@ -214,31 +214,43 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    ValidationErrorResponse:
+    AiActivateAccountSubscriptionDto:
+      properties:
+        subscribed_limit:
+          type: integer
+          minimum: 0
+          title: Subscribed Limit
+          description: Total files allowed for the subscription
+        consumed:
+          type: integer
+          minimum: 0
+          title: Consumed
+          description: Files currently consumed against the subscription
+        remaining:
+          type: integer
+          title: Remaining
+          description: Files remaining before reaching the limit; may be negative when over.
+      type: object
+      required:
+      - subscribed_limit
+      - consumed
+      - remaining
+      title: AiActivateAccountSubscriptionDto
+    ErrorResponse:
       properties:
         message:
           type: string
           title: Message
         detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
+          anyOf:
+          - {}
+          - type: 'null'
           title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
       type: object
       required:
       - message
       - detail
-      title: ValidationErrorResponse
+      title: ErrorResponse
     CloudProviderEntryDto:
       properties:
         protocol:
@@ -259,20 +271,6 @@ components:
       - display_name
       title: CloudProviderEntryDto
       description: A cloud provider available to the account.
-    NocCloudStorageProtocol:
-      type: string
-      enum:
-      - amazons3
-      - amazons3gov
-      - azure
-      - ibmcos
-      - hcp
-      - vipr
-      - cleversafe
-      - googles3
-      - s3_compatible
-      title: NocCloudStorageProtocol
-      description: The underlying storage API/protocol (maps to 'type' in NOC response).
     AccountLicenseDto:
       properties:
         subscription_status:
@@ -365,6 +363,80 @@ components:
       - awada_enabled
       - ops_iq_premium
       title: AccountLicenseDto
+    NocCloudProvider:
+      type: string
+      enum:
+      - amazons3
+      - amazons3gov
+      - azure
+      - google
+      - googles3
+      - atmos
+      - ironmountain
+      - rackspace
+      - nirvanix
+      - synaptic
+      - castor
+      - delldx
+      - cloudone
+      - hp
+      - cleversafe
+      - vipr
+      - ibmcos
+      - hcp
+      - s3_compatible
+      title: NocCloudProvider
+      description: Cloud provider identity as used by NOC (shortname).
+    NocCloudStorageProtocol:
+      type: string
+      enum:
+      - amazons3
+      - amazons3gov
+      - azure
+      - ibmcos
+      - hcp
+      - vipr
+      - cleversafe
+      - googles3
+      - s3_compatible
+      title: NocCloudStorageProtocol
+      description: The underlying storage API/protocol (maps to 'type' in NOC response).
+    AiActivateAccountInfoDto:
+      properties:
+        mcp:
+          $ref: '#/components/schemas/AiActivateAccountSubscriptionDto'
+      type: object
+      required:
+      - mcp
+      title: AiActivateAccountInfoDto
+      description: 'Account-level AI Activate subscription summary.
+
+
+        MCP is currently the only AI Activate workload. A Search subscription will be
+
+        reintroduced here once that workload lands.'
+    UpdateAccountInformationDto:
+      properties:
+        first_name:
+          type: string
+          title: First Name
+        last_name:
+          type: string
+          title: Last Name
+        company:
+          type: string
+          title: Company
+        phone:
+          type: string
+          title: Phone
+      type: object
+      required:
+      - first_name
+      - last_name
+      - company
+      - phone
+      title: UpdateAccountInformationDto
+      description: Request model for account information change for WebApi route /account
     AccountInformationDto:
       properties:
         email:
@@ -402,43 +474,6 @@ components:
       - id
       title: AccountInformationDto
       description: Response model for account infromation for webbff/account
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    UpdateAccountInformationDto:
-      properties:
-        first_name:
-          type: string
-          title: First Name
-        last_name:
-          type: string
-          title: Last Name
-        company:
-          type: string
-          title: Company
-        phone:
-          type: string
-          title: Phone
-      type: object
-      required:
-      - first_name
-      - last_name
-      - company
-      - phone
-      title: UpdateAccountInformationDto
-      description: Request model for account information change for WebApi route /account
     NocCloudVendor:
       type: string
       enum:
@@ -447,66 +482,31 @@ components:
       - nasuni
       title: NocCloudVendor
       description: Who provisions the cloud infrastructure.
-    NocCloudProvider:
-      type: string
-      enum:
-      - amazons3
-      - amazons3gov
-      - azure
-      - google
-      - googles3
-      - atmos
-      - ironmountain
-      - rackspace
-      - nirvanix
-      - synaptic
-      - castor
-      - delldx
-      - cloudone
-      - hp
-      - cleversafe
-      - vipr
-      - ibmcos
-      - hcp
-      - s3_compatible
-      title: NocCloudProvider
-      description: Cloud provider identity as used by NOC (shortname).
-    AiActivateAccountInfoDto:
+    ValidationErrorResponse:
       properties:
-        mcp:
-          $ref: '#/components/schemas/AiActivateAccountSubscriptionDto'
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
       type: object
       required:
-      - mcp
-      title: AiActivateAccountInfoDto
-      description: 'Account-level AI Activate subscription summary.
-
-
-        MCP is currently the only AI Activate workload. A Search subscription will be
-
-        reintroduced here once that workload lands.'
-    AiActivateAccountSubscriptionDto:
-      properties:
-        subscribed_limit:
-          type: integer
-          minimum: 0
-          title: Subscribed Limit
-          description: Total files allowed for the subscription
-        consumed:
-          type: integer
-          minimum: 0
-          title: Consumed
-          description: Files currently consumed against the subscription
-        remaining:
-          type: integer
-          title: Remaining
-          description: Files remaining before reaching the limit; may be negative when over.
-      type: object
-      required:
-      - subscribed_limit
-      - consumed
-      - remaining
-      title: AiActivateAccountSubscriptionDto
+      - message
+      - detail
+      title: ValidationErrorResponse
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

@@ -134,65 +134,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    ValidationErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
-      type: object
-      required:
-      - message
-      - detail
-      title: ValidationErrorResponse
-    DownloadUrlResponseDto:
-      properties:
-        download_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Download Url
-      type: object
-      required:
-      - download_url
-      title: DownloadUrlResponseDto
-      description: Response DTO containing the download URL for a specific download.
-    DownloadsDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/DownloadInfoDto'
-          type: array
-          title: Items
-      type: object
-      title: DownloadsDto
-    ApplianceType:
-      type: string
-      enum:
-      - nmc
-      - naa
-      - edge
-      - uaas
-      - file_iq
-      - naada
-      - awada
-      - desktop
-      - ha_edge
-      title: ApplianceType
     ErrorResponse:
       properties:
         message:
@@ -243,6 +184,65 @@ components:
       - platform
       - display_name
       title: DownloadInfoDto
+    DownloadUrlResponseDto:
+      properties:
+        download_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Download Url
+      type: object
+      required:
+      - download_url
+      title: DownloadUrlResponseDto
+      description: Response DTO containing the download URL for a specific download.
+    ApplianceType:
+      type: string
+      enum:
+      - nmc
+      - naa
+      - edge
+      - uaas
+      - file_iq
+      - naada
+      - awada
+      - desktop
+      - ha_edge
+      title: ApplianceType
+    DownloadsDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/DownloadInfoDto'
+          type: array
+          title: Items
+      type: object
+      title: DownloadsDto
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

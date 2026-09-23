@@ -19,7 +19,30 @@ paths:
       tags:
       - Jobs
       summary: Get Jobs
-      description: "Get all jobs for the account filtered by resource type and action.\n\nReturns the customer `TaskSummaryDto` view — the rolled-up task `state`\nonly. Internal steps and their engineering-facing `reason`s, plus the\ncaptured `auth_context`, deliberately do not cross this boundary;\nbackend services that need the full view consume `TaskDto` directly off\n`task_repo.get_task` / `task_repo.get_tasks`.\n\nArgs:\n    resource: The type of resource (e.g., volume)\n    action: The action performed on the resource (edge-api Command enum value, e.g., rename_volume)\n\nReturns:\n    TasksSummaryDto: List of jobs (tasks)."
+      description: 'Get all jobs for the account filtered by resource type and action.
+
+
+        Returns the customer `TaskSummaryDto` view — the rolled-up task `state`
+
+        only. Internal steps and their engineering-facing `reason`s, plus the
+
+        captured `auth_context`, deliberately do not cross this boundary;
+
+        backend services that need the full view consume `TaskDto` directly off
+
+        `task_repo.get_task` / `task_repo.get_tasks`.
+
+
+        Args:
+
+        resource: The type of resource (e.g., volume)
+
+        action: The action performed on the resource (edge-api Command enum value, e.g., rename_volume)
+
+
+        Returns:
+
+        TasksSummaryDto: List of jobs (tasks).'
       operationId: get_jobs_jobs_get
       security:
       - HTTPBearer: []
@@ -58,7 +81,22 @@ paths:
       tags:
       - Jobs
       summary: Get Job
-      description: "Get a single job.\n\nReturns the customer `TaskSummaryDto` view (rolled-up `state` only); see\n`get_jobs` for why steps / reasons / auth_context are omitted.\n\nArgs:\n    job_id: The ID of the job (task) to retrieve\n\nReturns:\n    TaskSummaryDto: The job."
+      description: 'Get a single job.
+
+
+        Returns the customer `TaskSummaryDto` view (rolled-up `state` only); see
+
+        `get_jobs` for why steps / reasons / auth_context are omitted.
+
+
+        Args:
+
+        job_id: The ID of the job (task) to retrieve
+
+
+        Returns:
+
+        TaskSummaryDto: The job.'
       operationId: get_job_jobs__job_id__get
       security:
       - HTTPBearer: []
@@ -128,6 +166,28 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    TaskResource:
+      type: string
+      enum:
+      - edge
+      - volume
+      - cloud_credential
+      title: TaskResource
     TaskSummaryDto:
       properties:
         id:
@@ -225,20 +285,6 @@ components:
         otherwise. The deliberate partial-failure aggregation policy that decides
 
         *what* to put there remains deferred (see the PORTAL-2195 ledger, FU-3).'
-    TaskState:
-      type: string
-      enum:
-      - in_progress
-      - completed
-      - failed
-      title: TaskState
-    TaskResource:
-      type: string
-      enum:
-      - edge
-      - volume
-      - cloud_credential
-      title: TaskResource
     HTTPValidationError:
       properties:
         message:
@@ -264,32 +310,6 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
-    TaskInitiator:
-      type: string
-      enum:
-      - portal
-      - edge
-      title: TaskInitiator
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    TaskExecutor:
-      type: string
-      enum:
-      - edge
-      title: TaskExecutor
     TasksSummaryDto:
       properties:
         items:
@@ -301,6 +321,24 @@ components:
       required:
       - items
       title: TasksSummaryDto
+    TaskState:
+      type: string
+      enum:
+      - in_progress
+      - completed
+      - failed
+      title: TaskState
+    TaskExecutor:
+      type: string
+      enum:
+      - edge
+      title: TaskExecutor
+    TaskInitiator:
+      type: string
+      enum:
+      - portal
+      - edge
+      title: TaskInitiator
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

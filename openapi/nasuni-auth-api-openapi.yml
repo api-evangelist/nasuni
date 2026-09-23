@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Nasuni Auth API
   version: '1.0'
-  description: 'Operations tagged Auth across 4 of this provider''s published API definitions: nasuni-nmc-v1-0-openapi.yml, nasuni-nmc-v1-1-openapi.yml, nasuni-nmc-v1-2-openapi.yml, nasuni-portal-v0-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Auth across 4 of this provider''s published API definitions: nasuni-nmc-v1-0-openapi.json, nasuni-nmc-v1-1-openapi.json, nasuni-nmc-v1-2-openapi.json, nasuni-portal-v0-openapi.json. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://hostname/api/v1
 - url: https://hostname/api/v1.1
@@ -66,6 +66,8 @@ paths:
                 $ref: '#/components/schemas/Error'
       security: []
       x-codegen-request-body-name: body
+      operationId: postAuthLogin
+      x-operation-id-source: derived
     servers:
     - url: https://hostname/api/v1
   /auth/logout/:
@@ -99,6 +101,8 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - AuthToken: []
+      operationId: postAuthLogout
+      x-operation-id-source: derived
     servers:
     - url: https://hostname/api/v1
   /auth/token:
@@ -112,7 +116,7 @@ paths:
 
         - **User Keys (header)**: Provide `x-user-key` header
 
-        - **OAuth2 Client Credentials (form body)**: POST `application/x-www-form-urlencoded` with `grant_type=client_credentials`, `client_id=<service_key>`, `client_secret=<service_secret>` (RFC 6749 §4.4). Compatible with standard OAuth2 client libraries such as Grafana Infinity, Datadog, Splunk, and ServiceNow.
+        - **OAuth2 Client Credentials (form body)**: POST `application/x-www-form-urlencoded` with `grant_type=client_credentials`, `client_id=`, `client_secret=` (RFC 6749 §4.4). Compatible with standard OAuth2 client libraries such as Grafana Infinity, Datadog, Splunk, and ServiceNow.
 
 
         Returns access and refresh tokens for subsequent API calls.'
@@ -194,7 +198,7 @@ paths:
         requiring the user to re-authenticate. Use this for logout functionality.
 
 
-        Requires: Valid access token in Authorization header (Bearer <token>)'
+        Requires: Valid access token in Authorization header (Bearer )'
       operationId: revoke_auth_token_delete
       responses:
         '200':
@@ -222,7 +226,22 @@ paths:
       tags:
       - Auth
       summary: Refresh Access Token
-      description: "Refresh an expired access token using a valid refresh token.\n\nWhen your access token expires, use this endpoint to obtain a new access token\nand refresh token pair without re-authenticating.\n\nArgs:\n    body: Request containing the refresh token\n\nReturns:\n    TokensDto: New access token and refresh token pair"
+      description: 'Refresh an expired access token using a valid refresh token.
+
+
+        When your access token expires, use this endpoint to obtain a new access token
+
+        and refresh token pair without re-authenticating.
+
+
+        Args:
+
+        body: Request containing the refresh token
+
+
+        Returns:
+
+        TokensDto: New access token and refresh token pair'
       operationId: refresh_auth_token_refresh_post
       requestBody:
         content:
@@ -355,6 +374,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/FieldError'
+    FieldError:
+      type: object
+      properties:
+        field:
+          type: string
+          description: The field to which the validation error applies, or "__all__" if it is a non-field error.
+        errors:
+          type: array
+          items:
+            type: string
+    AuthToken:
+      type: object
+      properties:
+        token:
+          type: string
+        expires:
+          type: string
     Error:
       type: object
       properties:
@@ -389,23 +425,6 @@ components:
         description:
           type: string
           description: Description of the error reported.
-    FieldError:
-      type: object
-      properties:
-        field:
-          type: string
-          description: The field to which the validation error applies, or "__all__" if it is a non-field error.
-        errors:
-          type: array
-          items:
-            type: string
-    AuthToken:
-      type: object
-      properties:
-        token:
-          type: string
-        expires:
-          type: string
     ErrorResponse:
       type: object
       properties:
@@ -506,6 +525,21 @@ components:
           type: string
           description: Description of the error reported.
           readOnly: true
+    ErrorResponse_3:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
     ValidationErrorResponse:
       properties:
         message:
@@ -531,6 +565,24 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
+    McpAuthorizeRequest:
+      properties:
+        request_id:
+          type: string
+          title: Request Id
+      type: object
+      required:
+      - request_id
+      title: McpAuthorizeRequest
+    TokenRequestDto:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: TokenRequestDto
     TokensDto:
       properties:
         access_token:
@@ -553,39 +605,6 @@ components:
       - access_token
       - refresh_token
       title: TokensDto
-    TokenRequestDto:
-      properties:
-        token:
-          type: string
-          title: Token
-      type: object
-      required:
-      - token
-      title: TokenRequestDto
-    ErrorResponse_3:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    McpAuthorizeRequest:
-      properties:
-        request_id:
-          type: string
-          title: Request Id
-      type: object
-      required:
-      - request_id
-      title: McpAuthorizeRequest
   securitySchemes:
     AuthToken:
       type: apiKey
@@ -625,7 +644,7 @@ components:
           tokenUrl: /auth/token
           scopes: {}
 x-refined-from:
-- nasuni-nmc-v1-0-openapi.yml
-- nasuni-nmc-v1-1-openapi.yml
-- nasuni-nmc-v1-2-openapi.yml
-- nasuni-portal-v0-openapi.yml
+- nasuni-nmc-v1-0-openapi.json
+- nasuni-nmc-v1-1-openapi.json
+- nasuni-nmc-v1-2-openapi.json
+- nasuni-portal-v0-openapi.json

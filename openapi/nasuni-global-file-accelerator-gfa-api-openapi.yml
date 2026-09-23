@@ -145,6 +145,21 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
     ValidationErrorResponse:
       properties:
         message:
@@ -170,32 +185,6 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    GfaApiKeysResponseDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/GfaApiKeyDto'
-          type: array
-          title: Items
-      type: object
-      required:
-      - items
-      title: GfaApiKeysResponseDto
     GfaApiKeyDto:
       properties:
         key:
@@ -218,6 +207,17 @@ components:
       - created
       - last_used
       title: GfaApiKeyDto
+    GfaApiKeysResponseDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/GfaApiKeyDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: GfaApiKeysResponseDto
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

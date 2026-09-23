@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Nasuni Notifications API
   version: '1.0'
-  description: 'Operations tagged Notifications across 4 of this provider''s published API definitions: nasuni-nmc-v1-0-openapi.yml, nasuni-nmc-v1-1-openapi.yml, nasuni-nmc-v1-2-openapi.yml, nasuni-portal-v0-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Notifications across 4 of this provider''s published API definitions: nasuni-nmc-v1-0-openapi.json, nasuni-nmc-v1-1-openapi.json, nasuni-nmc-v1-2-openapi.json, nasuni-portal-v0-openapi.json. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://hostname/api/v1
 - url: https://hostname/api/v1.1
@@ -64,6 +64,8 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - AuthToken: []
+      operationId: getNotifications
+      x-operation-id-source: derived
     servers:
     - url: https://hostname/api/v1
   /notifications/{notification_id}/:
@@ -99,6 +101,8 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
       - AuthToken: []
+      operationId: getNotificationsByNotificationId
+      x-operation-id-source: derived
     servers:
     - url: https://hostname/api/v1
   /notifications:
@@ -106,7 +110,22 @@ paths:
       tags:
       - Notifications
       summary: Get All Notifications
-      description: "Get paginated notifications with optional filters.\n\nReturns notifications from the last 15 minutes by default if no date range is specified.\nSupports cursor-based pagination.\n\nArgs:\n    filter_query: Filter parameters including dates, severity, category, appliance_name, volume_name and search\n\nReturns:\n    NotificationsDto: Paginated list of notifications"
+      description: 'Get paginated notifications with optional filters.
+
+
+        Returns notifications from the last 15 minutes by default if no date range is specified.
+
+        Supports cursor-based pagination.
+
+
+        Args:
+
+        filter_query: Filter parameters including dates, severity, category, appliance_name, volume_name and search
+
+
+        Returns:
+
+        NotificationsDto: Paginated list of notifications'
       operationId: get_notifications_notifications_get
       security:
       - HTTPBearer: []
@@ -318,6 +337,37 @@ paths:
       description: Base URL for accounts assigned the Asia-Pacific region.
 components:
   schemas:
+    Paging:
+      type: object
+      properties:
+        href:
+          type: string
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type: string
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type: string
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+        method:
+          type: string
+          description: HTTP method to use on the link.
     Notification:
       type: object
       properties:
@@ -405,81 +455,21 @@ components:
         description:
           type: string
           description: Description of the error reported.
-    Paging:
+    ErrorResponse:
       type: object
       properties:
-        href:
-          type: string
-          description: A link to the requested endpoint.
-        limit:
-          type: integer
-          description: The maximum number of items in a page.
-        next:
-          type: string
-          description: A link to the next page of objects. The value will be null if there isn't one.
-        offset:
-          type: integer
-          description: The item number the page starts on.
-        previous:
-          type: string
-          description: A link to the previous page of objects. The value will be null if there isn't one.
-        total:
-          type: integer
-          description: Total number of items available at the requested endpoint.
-      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
-    Link:
+        error:
+          $ref: '#/components/schemas/Error_2'
+    Link_2:
       type: object
       properties:
         href:
           type: string
           description: Hyperlink to the resource.
+          readOnly: true
         method:
           type: string
           description: HTTP method to use on the link.
-    Error_2:
-      type: object
-      properties:
-        code:
-          type: string
-          description: 'Specifies the type of error reported. Possible values:
-
-
-            * "error" - General error
-
-            * "validation_error" - Validation error
-
-            * "not_found_error" - Resource not found
-
-            * "auth_error" - Authentication error
-
-            * "perm_error" - Permission error
-
-            * "sync_error" - Error occurred syncing settings with a Filer.
-
-            * "unmanaged_error" - Resource is not managed.
-
-            * "conflict_error" - Conflict error
-
-            * "unsupported_error" - Current filer version does not support this type of request.
-
-            * "throttled_error" - The request was throttled; too many sent within a duration.
-
-            '
-          readOnly: true
-          enum:
-          - error
-          - validation_error
-          - not_found_error
-          - auth_error
-          - perm_error
-          - sync_error
-          - unmanaged_error
-          - conflict_error
-          - unsupported_error
-          - throttled_error
-        description:
-          type: string
-          description: Description of the error reported.
           readOnly: true
     Notification_2:
       type: object
@@ -534,49 +524,7 @@ components:
               $ref: '#/components/schemas/Link_2'
           description: Links to related resources, collections, and actions.
       description: Representation of a Notification object.
-    ErrorResponse:
-      type: object
-      properties:
-        error:
-          $ref: '#/components/schemas/Error_2'
-    Link_2:
-      type: object
-      properties:
-        href:
-          type: string
-          description: Hyperlink to the resource.
-          readOnly: true
-        method:
-          type: string
-          description: HTTP method to use on the link.
-          readOnly: true
-    Paging_2:
-      type: object
-      properties:
-        href:
-          type: string
-          description: A link to the requested endpoint.
-        limit:
-          type: integer
-          description: The maximum number of items in a page.
-        next:
-          type:
-          - string
-          - 'null'
-          description: A link to the next page of objects. The value will be null if there isn't one.
-        offset:
-          type: integer
-          description: The item number the page starts on.
-        previous:
-          type:
-          - string
-          - 'null'
-          description: A link to the previous page of objects. The value will be null if there isn't one.
-        total:
-          type: integer
-          description: Total number of items available at the requested endpoint.
-      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
-    Error_3:
+    Error_2:
       type: object
       properties:
         code:
@@ -620,6 +568,22 @@ components:
         description:
           type: string
           description: Description of the error reported.
+          readOnly: true
+    ErrorResponse_2:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error_3'
+    Link_3:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+          readOnly: true
+        method:
+          type: string
+          description: HTTP method to use on the link.
           readOnly: true
     Notification_3:
       type: object
@@ -674,22 +638,77 @@ components:
               $ref: '#/components/schemas/Link_3'
           description: Links to related resources, collections, and actions.
       description: Representation of a Notification object.
-    ErrorResponse_2:
+    Error_3:
       type: object
       properties:
-        error:
-          $ref: '#/components/schemas/Error_3'
-    Link_3:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "unmanaged_error" - Resource is not managed.
+
+            * "conflict_error" - Conflict error
+
+            * "unsupported_error" - Current filer version does not support this type of request.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          readOnly: true
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - unmanaged_error
+          - conflict_error
+          - unsupported_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+          readOnly: true
+    Paging_2:
       type: object
       properties:
         href:
           type: string
-          description: Hyperlink to the resource.
-          readOnly: true
-        method:
-          type: string
-          description: HTTP method to use on the link.
-          readOnly: true
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type:
+          - string
+          - 'null'
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type:
+          - string
+          - 'null'
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
     NotificationSubCategory:
       type: string
       enum:
@@ -749,42 +768,31 @@ components:
       - AMQP
       - Syslog
       title: NotificationSubCategory
-    NotificationCategory:
+    NotificationsDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/NotificationDto'
+          type: array
+          title: Items
+        metadata:
+          $ref: '#/components/schemas/NotificationPaginationMetadataDto'
+      type: object
+      required:
+      - metadata
+      title: NotificationsDto
+      description: 'Forward-only cursor-based pagination for infinite scroll UX
+
+
+        Designed for "Load more" pattern - no backward navigation, no page numbers.
+
+        UI shows: "Showing latest X notifications" with "Load more" button.'
+    NotificationOriginType:
       type: string
       enum:
-      - Snapshots & Sync
-      - Restore & Recovery
-      - Cyber Resilience
-      - Encryption Keys
-      - Volume Management
-      - Cloud & Credentials
-      - Remote Access & GFL
-      - Hardware
-      - Network
-      - System Health & Performance
-      - Cache Management
-      - Software & Firmware Updates
-      - Licensing
-      - Directory Services
-      - Appliance Lifecycle
-      - Security & Access
-      - File IQ & Auditing
-      title: NotificationCategory
-    NotificationSortDirection:
-      type: string
-      enum:
-      - asc
-      - desc
-      title: NotificationSortDirection
-    NotificationColumns:
-      type: string
-      enum:
-      - generated_at
-      - severity
-      - category
-      - appliance_name
-      - volume_name
-      title: NotificationColumns
+      - SYSTEM_GENERATED
+      - CUSTOMER_DEFINED
+      title: NotificationOriginType
     NotificationPaginationMetadataDto:
       properties:
         iterator_id:
@@ -816,49 +824,12 @@ components:
       required:
       - total_items
       title: NotificationPaginationMetadataDto
-    NotificationSeverity:
+    NotificationSortDirection:
       type: string
       enum:
-      - ALERT
-      - ERROR
-      - WARNING
-      - INFO
-      - ADMIN
-      title: NotificationSeverity
-    NotificationsDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/NotificationDto'
-          type: array
-          title: Items
-        metadata:
-          $ref: '#/components/schemas/NotificationPaginationMetadataDto'
-      type: object
-      required:
-      - metadata
-      title: NotificationsDto
-      description: 'Forward-only cursor-based pagination for infinite scroll UX
-
-
-        Designed for "Load more" pattern - no backward navigation, no page numbers.
-
-        UI shows: "Showing latest X notifications" with "Load more" button.'
-    NotificationOriginType:
-      type: string
-      enum:
-      - SYSTEM_GENERATED
-      - CUSTOMER_DEFINED
-      title: NotificationOriginType
-    ErrorResponseBaseDto:
-      properties:
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - message
-      title: ErrorResponseBaseDto
+      - asc
+      - desc
+      title: NotificationSortDirection
     HTTPValidationError:
       properties:
         message:
@@ -884,6 +855,54 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
+    NotificationColumns:
+      type: string
+      enum:
+      - generated_at
+      - severity
+      - category
+      - appliance_name
+      - volume_name
+      title: NotificationColumns
+    NotificationCategory:
+      type: string
+      enum:
+      - Snapshots & Sync
+      - Restore & Recovery
+      - Cyber Resilience
+      - Encryption Keys
+      - Volume Management
+      - Cloud & Credentials
+      - Remote Access & GFL
+      - Hardware
+      - Network
+      - System Health & Performance
+      - Cache Management
+      - Software & Firmware Updates
+      - Licensing
+      - Directory Services
+      - Appliance Lifecycle
+      - Security & Access
+      - File IQ & Auditing
+      title: NotificationCategory
+    NotificationSeverity:
+      type: string
+      enum:
+      - ALERT
+      - ERROR
+      - WARNING
+      - INFO
+      - ADMIN
+      title: NotificationSeverity
+    ErrorResponseBaseDto:
+      properties:
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - message
+      title: ErrorResponseBaseDto
     NotificationDto:
       properties:
         id:
@@ -993,7 +1012,7 @@ components:
           tokenUrl: /auth/token
           scopes: {}
 x-refined-from:
-- nasuni-nmc-v1-0-openapi.yml
-- nasuni-nmc-v1-1-openapi.yml
-- nasuni-nmc-v1-2-openapi.yml
-- nasuni-portal-v0-openapi.yml
+- nasuni-nmc-v1-0-openapi.json
+- nasuni-nmc-v1-1-openapi.json
+- nasuni-nmc-v1-2-openapi.json
+- nasuni-portal-v0-openapi.json

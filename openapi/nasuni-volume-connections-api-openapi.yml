@@ -184,31 +184,113 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    ValidationErrorResponse:
+    ErrorResponse:
       properties:
         message:
           type: string
           title: Message
         detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
+          anyOf:
+          - {}
+          - type: 'null'
           title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
       type: object
       required:
       - message
       - detail
-      title: ValidationErrorResponse
+      title: ErrorResponse
+    VolumeConnectionsResponseDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/VolumeConnectionItemDto'
+          type: array
+          title: Items
+      type: object
+      title: VolumeConnectionsResponseDto
+      description: GET /volume_connections response — all matching mounts (no pagination).
+    VolumeSortBy:
+      type: string
+      enum:
+      - volume_name
+      - cloud_provider
+      - cloud_region
+      - accessible_data
+      - unprotected_data
+      - last_snapshot_utc
+      - appliance_name
+      title: VolumeSortBy
+      description: 'Allowlist for volume-centric sort keys. Invalid values → 422.
+
+
+        All sorts produce a volume-cohesive ordering (mounts of the same
+
+        volume stay grouped). Per-mount keys are rolled up so they make
+
+        sense as a single value per volume: ``last_snapshot_utc`` → MAX
+
+        across mounts; ``appliance_name`` → master mount edge name.'
+    Protocol:
+      type: string
+      enum:
+      - NFS
+      - SMB
+      - FTP
+      title: Protocol
+    NocCloudProvider:
+      type: string
+      enum:
+      - amazons3
+      - amazons3gov
+      - azure
+      - google
+      - googles3
+      - atmos
+      - ironmountain
+      - rackspace
+      - nirvanix
+      - synaptic
+      - castor
+      - delldx
+      - cloudone
+      - hp
+      - cleversafe
+      - vipr
+      - ibmcos
+      - hcp
+      - s3_compatible
+      title: NocCloudProvider
+      description: Cloud provider identity as used by NOC (shortname).
+    SortOrder:
+      type: string
+      enum:
+      - asc
+      - desc
+      title: SortOrder
+      description: Short-form sort direction used by list APIs (asc/desc).
+    PermissionPolicy:
+      type: string
+      enum:
+      - POSIX Mixed Mode
+      - UNIX/NFS Permissions Only Mode
+      - Unauthenticated Access Mode
+      - NTFS Compatible Mode
+      - NTFS Exclusive Mode
+      - NTFS Multiprotocol Mode
+      title: PermissionPolicy
+    SecurityMode:
+      type: string
+      enum:
+      - Publicly Available
+      - Active Directory
+      - LDAP Directory
+      title: SecurityMode
+    portal__api__dto__volumes__Role:
+      type: string
+      enum:
+      - owner
+      - connected
+      title: Role
     VolumeConnectionItemDto:
       properties:
         cloud_provider:
@@ -345,6 +427,31 @@ components:
       - role
       title: VolumeConnectionItemDto
       description: "One ``(volume, appliance)`` connection row from\n``GET /volume_connections``.\n\nThe response is denormalised one-row-per-mount (N appliances → N\nrows). Nullability mirrors :class:`VolumeApplianceRow` end-to-end —\n``None`` means \"no data available yet\" and is intentionally\ndistinct from ``0`` / :attr:`SnapshotStatus.idle`.\n\n* ``protocol`` — full deduplicated list in canonical\n  SMB → NFS → FTP order; empty if no share configured.\n* ``connection_permission`` — derived from\n  ``volumes_v2.remoteaccess_autoaccept`` (master) or\n  ``volume_edge_states.remoteaccess_permission`` (non-master).\n* ``accessible_data`` / ``unprotected_data`` — parsed byte counts;\n  ``None`` when the appliance hasn't reported a number.\n* ``last_snapshot_utc`` — tz-aware UTC, serialised as ISO 8601.\n\nThe trailing per-edge state block (``appliance_hostname`` through\n``autofault_folders_count``) carries every column the Volume\nDetails \"Data Protection\", \"Protocols\", \"Data Growth\", and\n\"Additional Details\" cards need. Kept on this row (rather than a\nseparate detail endpoint) so ``/volume_connections`` remains the\nsingle low-level resource for per-mount data — Portal's BFF and\nexternal API consumers compose it with ``/volumes/{id}`` to build\nhigher-level views."
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
     ConnectionPermission:
       type: string
       enum:
@@ -352,79 +459,6 @@ components:
       - READWRITE
       - Custom
       title: ConnectionPermission
-    SortOrder:
-      type: string
-      enum:
-      - asc
-      - desc
-      title: SortOrder
-      description: Short-form sort direction used by list APIs (asc/desc).
-    VolumeSortBy:
-      type: string
-      enum:
-      - volume_name
-      - cloud_provider
-      - cloud_region
-      - accessible_data
-      - unprotected_data
-      - last_snapshot_utc
-      - appliance_name
-      title: VolumeSortBy
-      description: 'Allowlist for volume-centric sort keys. Invalid values → 422.
-
-
-        All sorts produce a volume-cohesive ordering (mounts of the same
-
-        volume stay grouped). Per-mount keys are rolled up so they make
-
-        sense as a single value per volume: ``last_snapshot_utc`` → MAX
-
-        across mounts; ``appliance_name`` → master mount edge name.'
-    portal__api__dto__volumes__Role:
-      type: string
-      enum:
-      - owner
-      - connected
-      title: Role
-    NocCloudProvider:
-      type: string
-      enum:
-      - amazons3
-      - amazons3gov
-      - azure
-      - google
-      - googles3
-      - atmos
-      - ironmountain
-      - rackspace
-      - nirvanix
-      - synaptic
-      - castor
-      - delldx
-      - cloudone
-      - hp
-      - cleversafe
-      - vipr
-      - ibmcos
-      - hcp
-      - s3_compatible
-      title: NocCloudProvider
-      description: Cloud provider identity as used by NOC (shortname).
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
     SnapshotStatus:
       type: string
       enum:
@@ -458,40 +492,6 @@ components:
         ``cancel_rejected`` ack). ``pending`` is a real filer-reported
 
         state.'
-    PermissionPolicy:
-      type: string
-      enum:
-      - POSIX Mixed Mode
-      - UNIX/NFS Permissions Only Mode
-      - Unauthenticated Access Mode
-      - NTFS Compatible Mode
-      - NTFS Exclusive Mode
-      - NTFS Multiprotocol Mode
-      title: PermissionPolicy
-    SecurityMode:
-      type: string
-      enum:
-      - Publicly Available
-      - Active Directory
-      - LDAP Directory
-      title: SecurityMode
-    Protocol:
-      type: string
-      enum:
-      - NFS
-      - SMB
-      - FTP
-      title: Protocol
-    VolumeConnectionsResponseDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/VolumeConnectionItemDto'
-          type: array
-          title: Items
-      type: object
-      title: VolumeConnectionsResponseDto
-      description: GET /volume_connections response — all matching mounts (no pagination).
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

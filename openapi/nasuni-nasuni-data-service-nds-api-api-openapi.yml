@@ -1,7 +1,10 @@
 openapi: 3.2.0
 info:
   title: Nasuni Data Service (NDS) API
-  description: "\n# Overview\n\nWelcome to Nasuni Data Service (NDS) API Documentation.\n\nThis documentation provides comprehensive information about the Nasuni Data\nService (NDS) API. This API provides Azure Blob Storage compatible endpoints for\naccessing data stored in Nasuni Volume.\n\n## Authentication\n\nThis API supports the following authentication methods:\n* **SAS Token Authentication**: Use a Shared Access Signature (SAS) token to\n authenticate your requests. You can copy one of the SAS tokens generated during\n NDS deployment. This requires the following query parameters:\n    - `sv`: The storage service version.\n    - `ss`: The services accessible with the SAS token.\n    - `srt`: The resource types accessible with the SAS token.\n    - `sp`: The permissions granted by the SAS token.\n    - `se`: The expiration time of the SAS token.\n    - `st`: The start time of the SAS token.\n    - `sig`: The signature for the SAS token.\n* **Shared Key Authentication**: Use a shared key to sign your requests. This\n type of authorization is represented in the `Authorization` header. You should\n use one of the two Shared Keys generated during NDS Deployment.\n\n## Available Operations\n* **List Containers**: Retrieve a list of all containers (Nasuni Volumes)\n registered with NDS.\n* **List Blobs**: Retrieve a list of blobs (files) within a specified container\n (Nasuni Volume).\n* **Get Blob**: Download a specific blob (file) from a container\n (Nasuni Volume).\n* **Get Blob Properties**: Retrieve metadata and properties of a specific blob\n (file) from a container (Nasuni Volume) without downloading the actual content.\n"
+  description: '# Overview
+
+
+    Welcome to Nasuni Data Service (NDS) API Documentation.'
   termsOfService: https://www.nasuni.com/legal
   contact:
     name: Nasuni Support

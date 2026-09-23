@@ -96,139 +96,6 @@ paths:
       - Data
 components:
   schemas:
-    filer_metric:
-      type: object
-      required:
-      - filer_guid
-      - filer_title
-      - last_checkin
-      - metric_type
-      - timestamp
-      - version
-      properties:
-        filer_guid:
-          type: string
-          format: uuid
-        filer_title:
-          type: string
-        last_checkin:
-          type: integer
-        metric_type:
-          type: string
-        oldest_unprotected_data:
-          type: integer
-        timestamp:
-          type: string
-          format: date-time
-        version:
-          type: integer
-        volume_guid:
-          type: string
-          format: uuid
-        volume_title:
-          type: string
-    volume_guid:
-      type: string
-      format: uuid
-    propagation_metric:
-      type: object
-      required:
-      - filer_guid
-      - filer_title
-      - kind
-      - metric_type
-      - prop_seconds
-      - timestamp
-      - version
-      - volume_guid
-      - volume_title
-      properties:
-        filer_guid:
-          type: string
-          format: uuid
-        filer_title:
-          type: string
-        kind:
-          type: string
-        metric_type:
-          type: string
-        prop_seconds:
-          type: integer
-        timestamp:
-          type: string
-          format: date-time
-        version:
-          type: integer
-        volume_guid:
-          type: string
-          format: uuid
-        volume_title:
-          type: string
-    lock_metric:
-      type: object
-      required:
-      - filer_guid
-      - filer_title
-      - lock_phase
-      - lock_state
-      - metric_type
-      - timestamp
-      - version
-      - volume_guid
-      - volume_title
-      properties:
-        filer_guid:
-          type: string
-          format: uuid
-        filer_title:
-          type: string
-        lock_duration:
-          type: integer
-        lock_state:
-          type: string
-        lock_phase:
-          type: string
-        metric_type:
-          type: string
-        timestamp:
-          type: string
-          format: date-time
-        version:
-          type: integer
-        volume_guid:
-          type: string
-          format: uuid
-        volume_title:
-          type: string
-    info:
-      type: object
-      required:
-      - account
-      - last_info
-      - last_lock_event
-      - last_propagation
-      - request_time
-      - volumes
-      properties:
-        account:
-          type: string
-          format: uuid
-        last_info:
-          type: string
-          format: date-time
-        last_lock_event:
-          type: string
-          format: date-time
-        last_propagation:
-          type: string
-          format: date-time
-        request_time:
-          type: string
-          format: date-time
-        volumes:
-          type: array
-          items:
-            $ref: '#/components/schemas/volume_guid'
     metrics:
       type: object
       required:
@@ -283,6 +150,142 @@ components:
           format: uuid
         volume_title:
           type: string
+    info:
+      type: object
+      required:
+      - account
+      - last_info
+      - last_lock_event
+      - last_propagation
+      - request_time
+      - volumes
+      properties:
+        account:
+          type: string
+          format: uuid
+        last_info:
+          type: string
+          format: date-time
+        last_lock_event:
+          type: string
+          format: date-time
+        last_propagation:
+          type: string
+          format: date-time
+        request_time:
+          type: string
+          format: date-time
+        volumes:
+          type: array
+          items:
+            $ref: '#/components/schemas/volume_guid'
+    volume_guid:
+      type: string
+      format: uuid
+    filer_metric:
+      type: object
+      required:
+      - filer_guid
+      - filer_title
+      - last_checkin
+      - metric_type
+      - timestamp
+      - version
+      properties:
+        filer_guid:
+          type: string
+          format: uuid
+        filer_title:
+          type: string
+        last_checkin:
+          type: integer
+        metric_type:
+          type: string
+        oldest_unprotected_data:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: integer
+        volume_guid:
+          type: string
+          format: uuid
+        volume_title:
+          type: string
+    lock_metric:
+      type: object
+      required:
+      - filer_guid
+      - filer_title
+      - lock_phase
+      - lock_state
+      - metric_type
+      - timestamp
+      - version
+      - volume_guid
+      - volume_title
+      properties:
+        filer_guid:
+          type: string
+          format: uuid
+        filer_title:
+          type: string
+        lock_duration:
+          type: integer
+        lock_state:
+          type: string
+        lock_phase:
+          type: string
+        metric_type:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: integer
+        volume_guid:
+          type: string
+          format: uuid
+        volume_title:
+          type: string
+    propagation_metric:
+      type: object
+      required:
+      - filer_guid
+      - filer_title
+      - kind
+      - metric_type
+      - prop_seconds
+      - timestamp
+      - version
+      - volume_guid
+      - volume_title
+      properties:
+        filer_guid:
+          type: string
+          format: uuid
+        filer_title:
+          type: string
+        kind:
+          type: string
+        metric_type:
+          type: string
+        prop_seconds:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: integer
+        volume_guid:
+          type: string
+          format: uuid
+        volume_title:
+          type: string
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
   parameters:
     ClientKeyHeader:
       name: X-Nasuni-client-key
@@ -292,9 +295,6 @@ components:
       schema:
         type: string
         default: swagger client
-  responses:
-    UnauthorizedError:
-      description: Access token is missing or invalid
   securitySchemes:
     ApiTokenHeader:
       type: apiKey

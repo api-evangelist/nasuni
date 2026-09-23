@@ -19,7 +19,22 @@ paths:
       tags:
       - Edge Appliances (Edge)
       summary: Get Edges
-      description: "Get all Edge appliances for the account.\n\nReturns a list of Edge appliances with optional filtering by service status.\n\nArgs:\n    s3_edge_enabled: Filter by S3 Edge service status (enabled/disabled)\n    file_iq_enabled: Filter by File IQ service status (enabled/disabled)\n\nReturns:\n    EdgesDto: List of Edge appliances matching the filter criteria"
+      description: 'Get all Edge appliances for the account.
+
+
+        Returns a list of Edge appliances with optional filtering by service status.
+
+
+        Args:
+
+        s3_edge_enabled: Filter by S3 Edge service status (enabled/disabled)
+
+        file_iq_enabled: Filter by File IQ service status (enabled/disabled)
+
+
+        Returns:
+
+        EdgesDto: List of Edge appliances matching the filter criteria'
       operationId: get_edges_edges_get
       security:
       - HTTPBearer: []
@@ -82,7 +97,17 @@ paths:
       tags:
       - Edge Appliances (Edge)
       summary: Get Edge
-      description: "Get detailed information about a specific Edge appliance.\n\nArgs:\n    edge_id: The unique identifier of the Edge appliance\n\nReturns:\n    EdgeDto: Detailed information about the Edge appliance"
+      description: 'Get detailed information about a specific Edge appliance.
+
+
+        Args:
+
+        edge_id: The unique identifier of the Edge appliance
+
+
+        Returns:
+
+        EdgeDto: Detailed information about the Edge appliance'
       operationId: get_edges_edge_edges__edge_id__get
       security:
       - HTTPBearer: []
@@ -142,7 +167,22 @@ paths:
       tags:
       - Edge Appliances (Edge)
       summary: Get Edge FIQ Service
-      description: "Get the FIQ service configuration for an Edge appliance.\n\nThe FIQ service enables forwarding of events from Edge appliances\nto connected File IQ appliances for monitoring and analytics.\n\nArgs:\n    edge_id: The unique identifier of the Edge appliance\n\nReturns:\n    EdgeFiqServiceDto: FIQ service configuration"
+      description: 'Get the FIQ service configuration for an Edge appliance.
+
+
+        The FIQ service enables forwarding of events from Edge appliances
+
+        to connected File IQ appliances for monitoring and analytics.
+
+
+        Args:
+
+        edge_id: The unique identifier of the Edge appliance
+
+
+        Returns:
+
+        EdgeFiqServiceDto: FIQ service configuration'
       operationId: get_edges_edge_fiq_edges__edge_id__services_fiq_get
       security:
       - HTTPBearer: []
@@ -201,7 +241,24 @@ paths:
       tags:
       - Edge Appliances (Edge)
       summary: Update Edge FIQ Service
-      description: "Update the FIQ service configuration for an Edge appliance.\n\nEnable or disable event forwarding and configure the target File IQ appliance.\nRequires the can_configure_edge_fiq_service permission.\n\nArgs:\n    edge_id: The unique identifier of the Edge appliance\n    body: FIQ service configuration update (enabled status and/or connected File IQ serial)\n\nReturns:\n    EdgeFiqServiceDto: Updated FIQ service configuration"
+      description: 'Update the FIQ service configuration for an Edge appliance.
+
+
+        Enable or disable event forwarding and configure the target File IQ appliance.
+
+        Requires the can_configure_edge_fiq_service permission.
+
+
+        Args:
+
+        edge_id: The unique identifier of the Edge appliance
+
+        body: FIQ service configuration update (enabled status and/or connected File IQ serial)
+
+
+        Returns:
+
+        EdgeFiqServiceDto: Updated FIQ service configuration'
       operationId: update_edges_edge_fiq_edges__edge_id__services_fiq_patch
       security:
       - HTTPBearer: []
@@ -267,7 +324,22 @@ paths:
       tags:
       - Edge Appliances (Edge)
       summary: Get S3 Edge Status
-      description: "Get the S3 Edge service configuration for an Edge appliance.\n\nS3 Edge provides S3-compatible object storage access to Nasuni volumes.\nRequires the can_view_edge_s3_edge_service permission.\n\nArgs:\n    edge_id: The unique identifier of the Edge appliance\n\nReturns:\n    EdgeS3EdgeConfigDto: S3 Edge service configuration including enabled status"
+      description: 'Get the S3 Edge service configuration for an Edge appliance.
+
+
+        S3 Edge provides S3-compatible object storage access to Nasuni volumes.
+
+        Requires the can_view_edge_s3_edge_service permission.
+
+
+        Args:
+
+        edge_id: The unique identifier of the Edge appliance
+
+
+        Returns:
+
+        EdgeS3EdgeConfigDto: S3 Edge service configuration including enabled status'
       operationId: get_edge_s3_edge_status_edges__edge_id__services_s3_edge_get
       security:
       - HTTPBearer: []
@@ -326,7 +398,24 @@ paths:
       tags:
       - Edge Appliances (Edge)
       summary: Enable/Disable S3 Edge Status
-      description: "Enable or disable the S3 Edge service for an Edge appliance.\n\nS3 Edge provides S3-compatible object storage access to Nasuni volumes.\nRequires the can_configure_edge_s3_edge_service permission.\n\nArgs:\n    edge_id: The unique identifier of the Edge appliance\n    body: S3 Edge configuration with enabled status\n\nReturns:\n    EdgeS3EdgeConfigDto: Updated S3 Edge service configuration"
+      description: 'Enable or disable the S3 Edge service for an Edge appliance.
+
+
+        S3 Edge provides S3-compatible object storage access to Nasuni volumes.
+
+        Requires the can_configure_edge_s3_edge_service permission.
+
+
+        Args:
+
+        edge_id: The unique identifier of the Edge appliance
+
+        body: S3 Edge configuration with enabled status
+
+
+        Returns:
+
+        EdgeS3EdgeConfigDto: Updated S3 Edge service configuration'
       operationId: update_edge_s3_edge_status_edges__edge_id__services_s3_edge_patch
       security:
       - HTTPBearer: []
@@ -389,31 +478,36 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    ValidationErrorResponse:
+    EdgeFiqServiceDto:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+        connected_file_iq_serial:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Connected File Iq Serial
+      type: object
+      required:
+      - enabled
+      title: EdgeFiqServiceDto
+    ErrorResponse:
       properties:
         message:
           type: string
           title: Message
         detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
+          anyOf:
+          - {}
+          - type: 'null'
           title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
       type: object
       required:
       - message
       - detail
-      title: ValidationErrorResponse
+      title: ErrorResponse
     EdgeDto:
       properties:
         id:
@@ -481,119 +575,25 @@ components:
       - build
       - machine
       title: EdgeDto
-    UpdateEdgeFiqServiceDto:
+    EdgeBuild:
       properties:
-        enabled:
-          type: boolean
-          title: Enabled
-          default: false
-        connected_file_iq_serial:
+        current:
+          type: string
+          title: Current
+        available:
           anyOf:
           - type: string
-            format: uuid
           - type: 'null'
-          title: Connected File Iq Serial
-      type: object
-      title: UpdateEdgeFiqServiceDto
-    EdgesDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/SimpleEdgeDto'
-          type: array
-          title: Items
-      type: object
-      title: EdgesDto
-    EdgeServicesDto:
-      properties:
-        s3_edge:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: S3 Edge
-        file_iq:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: File Iq
-      type: object
-      title: EdgeServicesDto
-    EdgeS3EdgeConfigDto:
-      properties:
-        enabled:
-          type: boolean
-          title: Enabled
-      type: object
-      required:
-      - enabled
-      title: EdgeS3EdgeConfigDto
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    SimpleEdgeDto:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        description:
-          type: string
-          title: Description
-        services:
-          $ref: '#/components/schemas/EdgeServicesDto'
-        serial:
-          type: string
-          format: uuid
-          title: Serial
-        synced:
-          type: boolean
-          title: Synced
-          default: false
-        is_reachable:
-          type: boolean
-          title: Is Reachable
-          default: false
-        last_seen_at:
+          title: Available
+        platform:
           anyOf:
           - type: string
-            format: date-time
           - type: 'null'
-          title: Last Seen At
-        build:
-          type: string
-          title: Build
+          title: Platform
       type: object
       required:
-      - id
-      - description
-      - serial
-      - build
-      title: SimpleEdgeDto
-    EdgeVolumes:
-      properties:
-        owned:
-          type: integer
-          title: Owned
-        remotely_connected:
-          type: integer
-          title: Remotely Connected
-      type: object
-      required:
-      - owned
-      - remotely_connected
-      title: EdgeVolumes
+      - current
+      title: EdgeBuild
     EdgeMachine:
       properties:
         cpu:
@@ -638,30 +638,69 @@ components:
       - fiq_disk
       - cow_disk
       title: EdgeMachine
-    EdgeBuild:
-      properties:
-        current:
-          type: string
-          title: Current
-        available:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Available
-        platform:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Platform
-      type: object
-      required:
-      - current
-      title: EdgeBuild
-    EdgeFiqServiceDto:
+    EdgeS3EdgeConfigDto:
       properties:
         enabled:
           type: boolean
           title: Enabled
+      type: object
+      required:
+      - enabled
+      title: EdgeS3EdgeConfigDto
+    SimpleEdgeDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        description:
+          type: string
+          title: Description
+        services:
+          $ref: '#/components/schemas/EdgeServicesDto'
+        serial:
+          type: string
+          format: uuid
+          title: Serial
+        synced:
+          type: boolean
+          title: Synced
+          default: false
+        is_reachable:
+          type: boolean
+          title: Is Reachable
+          default: false
+        last_seen_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Seen At
+        build:
+          type: string
+          title: Build
+      type: object
+      required:
+      - id
+      - description
+      - serial
+      - build
+      title: SimpleEdgeDto
+    EdgesDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/SimpleEdgeDto'
+          type: array
+          title: Items
+      type: object
+      title: EdgesDto
+    UpdateEdgeFiqServiceDto:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+          default: false
         connected_file_iq_serial:
           anyOf:
           - type: string
@@ -669,9 +708,59 @@ components:
           - type: 'null'
           title: Connected File Iq Serial
       type: object
+      title: UpdateEdgeFiqServiceDto
+    EdgeVolumes:
+      properties:
+        owned:
+          type: integer
+          title: Owned
+        remotely_connected:
+          type: integer
+          title: Remotely Connected
+      type: object
       required:
-      - enabled
-      title: EdgeFiqServiceDto
+      - owned
+      - remotely_connected
+      title: EdgeVolumes
+    EdgeServicesDto:
+      properties:
+        s3_edge:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: S3 Edge
+        file_iq:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: File Iq
+      type: object
+      title: EdgeServicesDto
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

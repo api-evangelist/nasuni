@@ -16,7 +16,7 @@ tags:
 paths:
   /:
     options:
-      summary: ' '
+      summary: Options
       operationId: ___options
       responses:
         '200':
@@ -27,6 +27,7 @@ paths:
                 $ref: '#/components/schemas/OptionsResponseDto'
       tags:
       - Portal API
+      x-summary-source: derived
 components:
   schemas:
     OptionsResponseDto:

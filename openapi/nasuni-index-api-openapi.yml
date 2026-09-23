@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Nasuni Index API
   version: '1.0'
-  description: 'Operations tagged Index across 3 of this provider''s published API definitions: nasuni-nmc-v1-0-openapi.yml, nasuni-nmc-v1-1-openapi.yml, nasuni-nmc-v1-2-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Index across 3 of this provider''s published API definitions: nasuni-nmc-v1-0-openapi.json, nasuni-nmc-v1-1-openapi.json, nasuni-nmc-v1-2-openapi.json. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://hostname/api/v1
 - url: https://hostname/api/v1.1
@@ -52,6 +52,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      operationId: getRoot
+      x-operation-id-source: derived
     servers:
     - url: https://hostname/api/v1
 components:
@@ -202,6 +204,6 @@ components:
       name: Authorization
       in: header
 x-refined-from:
-- nasuni-nmc-v1-0-openapi.yml
-- nasuni-nmc-v1-1-openapi.yml
-- nasuni-nmc-v1-2-openapi.yml
+- nasuni-nmc-v1-0-openapi.json
+- nasuni-nmc-v1-1-openapi.json
+- nasuni-nmc-v1-2-openapi.json

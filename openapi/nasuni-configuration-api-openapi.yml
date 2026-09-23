@@ -543,6 +543,48 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    Bucket:
+      properties:
+        name:
+          type: string
+          title: Name
+        path:
+          type: string
+          title: Path
+        volume:
+          type: string
+          title: Volume
+        roles:
+          anyOf:
+          - additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+          - type: 'null'
+          title: Roles
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - path
+      - volume
+      title: Bucket
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
     ValidationErrorResponse:
       properties:
         message:
@@ -568,6 +610,56 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
+    WebAccessSSOConfigUpdateResponseDto:
+      properties:
+        provider:
+          type: string
+          title: Provider
+        client_id:
+          type: string
+          maxLength: 191
+          title: Client Id
+        secret:
+          type: string
+          format: password
+          title: Secret
+          writeOnly: true
+        key:
+          type: string
+          maxLength: 191
+          title: Key
+        login_button_label:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Login Button Label
+      type: object
+      required:
+      - provider
+      - client_id
+      - secret
+      - key
+      title: WebAccessSSOConfigUpdateResponseDto
+    S3EdgeConfigDto:
+      properties:
+        buckets:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/Bucket'
+            - $ref: '#/components/schemas/BucketSDDL'
+          type: array
+          title: Buckets
+        keys:
+          items:
+            $ref: '#/components/schemas/Key'
+          type: array
+          title: Keys
+      type: object
+      required:
+      - buckets
+      - keys
+      title: S3EdgeConfigDto
     BucketSDDL:
       properties:
         name:
@@ -603,100 +695,6 @@ components:
       - file_sddl
       - dir_sddl
       title: BucketSDDL
-    S3EdgeConfigDto:
-      properties:
-        buckets:
-          items:
-            anyOf:
-            - $ref: '#/components/schemas/Bucket'
-            - $ref: '#/components/schemas/BucketSDDL'
-          type: array
-          title: Buckets
-        keys:
-          items:
-            $ref: '#/components/schemas/Key'
-          type: array
-          title: Keys
-      type: object
-      required:
-      - buckets
-      - keys
-      title: S3EdgeConfigDto
-    WebAccessSSOConfigUpdateResponseDto:
-      properties:
-        provider:
-          type: string
-          title: Provider
-        client_id:
-          type: string
-          maxLength: 191
-          title: Client Id
-        secret:
-          type: string
-          format: password
-          title: Secret
-          writeOnly: true
-        key:
-          type: string
-          maxLength: 191
-          title: Key
-        login_button_label:
-          anyOf:
-          - type: string
-            maxLength: 100
-          - type: 'null'
-          title: Login Button Label
-      type: object
-      required:
-      - provider
-      - client_id
-      - secret
-      - key
-      title: WebAccessSSOConfigUpdateResponseDto
-    Key:
-      properties:
-        name:
-          type: string
-          title: Name
-        access:
-          type: string
-          title: Access
-        secret:
-          type: string
-          title: Secret
-      type: object
-      required:
-      - name
-      - access
-      - secret
-      title: Key
-    Bucket:
-      properties:
-        name:
-          type: string
-          title: Name
-        path:
-          type: string
-          title: Path
-        volume:
-          type: string
-          title: Volume
-        roles:
-          anyOf:
-          - additionalProperties:
-              items:
-                type: string
-              type: array
-            type: object
-          - type: 'null'
-          title: Roles
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - path
-      - volume
-      title: Bucket
     SSOConfigUpdateResponseDto:
       properties:
         provider:
@@ -742,51 +740,6 @@ components:
           title: Linked Amazon Account Ids
       type: object
       title: SoftwareDownloadsConfigurationDto
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    SSOConfigDto:
-      properties:
-        provider:
-          type: string
-          title: Provider
-        name:
-          type: string
-          maxLength: 40
-          title: Name
-        client_id:
-          type: string
-          maxLength: 191
-          title: Client Id
-        secret:
-          type: string
-          format: password
-          title: Secret
-          writeOnly: true
-        key:
-          type: string
-          maxLength: 191
-          title: Key
-      type: object
-      required:
-      - provider
-      - name
-      - client_id
-      - secret
-      - key
-      title: SSOConfigDto
     WebAccessSSOConfigDto:
       properties:
         provider:
@@ -818,6 +771,53 @@ components:
       - secret
       - key
       title: WebAccessSSOConfigDto
+    Key:
+      properties:
+        name:
+          type: string
+          title: Name
+        access:
+          type: string
+          title: Access
+        secret:
+          type: string
+          title: Secret
+      type: object
+      required:
+      - name
+      - access
+      - secret
+      title: Key
+    SSOConfigDto:
+      properties:
+        provider:
+          type: string
+          title: Provider
+        name:
+          type: string
+          maxLength: 40
+          title: Name
+        client_id:
+          type: string
+          maxLength: 191
+          title: Client Id
+        secret:
+          type: string
+          format: password
+          title: Secret
+          writeOnly: true
+        key:
+          type: string
+          maxLength: 191
+          title: Key
+      type: object
+      required:
+      - provider
+      - name
+      - client_id
+      - secret
+      - key
+      title: SSOConfigDto
     AiActivateRemoteSupportDto:
       properties:
         remote_support:

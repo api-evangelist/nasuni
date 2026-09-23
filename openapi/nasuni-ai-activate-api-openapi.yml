@@ -701,39 +701,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    ValidationErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
-      type: object
-      required:
-      - message
-      - detail
-      title: ValidationErrorResponse
-    AiActivateIndexStatus:
-      type: string
-      enum:
-      - in_progress
-      - complete
-      - failed
-      - queued_for_deletion
-      title: AiActivateIndexStatus
     AiActivateMcpVolumeConfigUpdateDto:
       properties:
         mcp_enabled:
@@ -766,6 +733,30 @@ components:
 
 
         Omitted fields are left unchanged. Set period to null explicitly to select ''All time''.'
+    AiActivateIndexesResponseDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AiActivateIndexListItemDto'
+          type: array
+          title: Items
+      type: object
+      title: AiActivateIndexesResponseDto
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
     AiActivateCreateIndexRequestBodyDto:
       properties:
         volume_guid:
@@ -794,6 +785,156 @@ components:
       required:
       - volume_guid
       title: AiActivateCreateIndexRequestBodyDto
+    AiActivateInventoriesResponseDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AiActivateInventoryDto'
+          type: array
+          title: Items
+      type: object
+      title: AiActivateInventoriesResponseDto
+    AiActivateMcpVolumeConfigDto:
+      properties:
+        mcp_enabled:
+          type: boolean
+          title: Mcp Enabled
+          description: Whether the MCP server is enabled for this volume.
+        allowed_file_extensions:
+          items:
+            type: string
+          type: array
+          title: Allowed File Extensions
+          description: File extensions the MCP server filters results to. Empty list returns all file types.
+          examples:
+          - - pdf
+            - docx
+        period:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Period
+          description: Time-window filter applied to query results. Accepts an ISO 8601 duration (e.g. 'P30D') or explicit interval null means 'all time' — ISO 8601 has no valid 'all time' representation.
+          examples:
+          - P7D
+          - P30D
+          - P90D
+          - P1Y
+          - null
+        ignore_principals:
+          items:
+            type: string
+          type: array
+          title: Ignore Principals
+          description: Principal names (users or groups) whose ALLOW permissions the MCP server ignores.
+          examples:
+          - - DOMAIN\\contractors
+            - service-account@example.com
+        ignore_everyone:
+          type: boolean
+          title: Ignore Everyone
+          description: When true, the MCP server ignores the Everyone principal.
+          default: false
+        ignore_domain_users:
+          type: boolean
+          title: Ignore Domain Users
+          description: When true, the MCP server ignores the Domain Users principal.
+          default: false
+      type: object
+      required:
+      - mcp_enabled
+      title: AiActivateMcpVolumeConfigDto
+      description: 'MCP query-scope configuration for a single indexed volume.
+
+
+        Returned by GET /ai_activate/indexes/{volume_id}/mcp and by
+
+        PATCH /ai_activate/indexes/{volume_id}/mcp after a successful update.'
+    AiActivateCreateInventoryResponseDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        volume_name:
+          type: string
+          title: Volume Name
+        provider:
+          type: string
+          title: Provider
+          description: Provider used to execute inventory indexing, as confirmed by NOC after inventory creation.
+        volume_region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Region
+          description: API-provided volume region (default NDS region unless changed by the user).
+        region:
+          type: string
+          title: Region
+          description: Region used to execute inventory indexing, as confirmed by NOC after inventory creation.
+        status:
+          $ref: '#/components/schemas/NocAiActivateInventoryStatus'
+        file_count:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          title: File Count
+          description: Number of files included in the volume inventory. May be unavailable until inventory data is ready.
+        volume_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Size
+          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until the volume is fully indexed.
+      type: object
+      required:
+      - volume_guid
+      - volume_name
+      - provider
+      - region
+      - status
+      title: AiActivateCreateInventoryResponseDto
+    AiActivateIndexListItemDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        volume_name:
+          type: string
+          title: Volume Name
+        provider:
+          type: string
+          title: Provider
+        volume_region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Region
+          description: Storage region of the volume. May be null when NOC has no volume metadata.
+        status:
+          $ref: '#/components/schemas/AiActivateIndexStatus'
+        file_count:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          title: File Count
+          description: Number of files indexed for the volume. May be null until NOC reports a count.
+        volume_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Size
+          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until indexing progresses.
+      type: object
+      required:
+      - volume_guid
+      - volume_name
+      - provider
+      - status
+      title: AiActivateIndexListItemDto
+      description: A single content-index entry for a volume in the AI Activate indexes list.
     AiActivateInventoryDto:
       properties:
         volume_guid:
@@ -891,84 +1032,14 @@ components:
       required:
       - volume_guid
       title: AiActivateCreateInventoryRequestBodyDto
-    NocAiActivateInventoryStatus:
+    AiActivateIndexStatus:
       type: string
       enum:
-      - Not Indexed
-      - Waiting for NDS creation
-      - Waiting for NDS configuration
-      - NDS Ready
-      - Metadata Index in progress
-      - Metadata Index Complete
-      - Full Content Index in progress
-      - Full Content Index Pending
-      - Full Content Index Complete
-      - Incremental Content Index in progress
-      - Incremental Content Index failed
-      - Volume Inventory Expired
-      - Soft Deleted
-      - Indexing Failed
-      title: NocAiActivateInventoryStatus
-    AiActivateCreateInventoryResponseDto:
-      properties:
-        volume_guid:
-          type: string
-          title: Volume Guid
-        volume_name:
-          type: string
-          title: Volume Name
-        provider:
-          type: string
-          title: Provider
-          description: Provider used to execute inventory indexing, as confirmed by NOC after inventory creation.
-        volume_region:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Volume Region
-          description: API-provided volume region (default NDS region unless changed by the user).
-        region:
-          type: string
-          title: Region
-          description: Region used to execute inventory indexing, as confirmed by NOC after inventory creation.
-        status:
-          $ref: '#/components/schemas/NocAiActivateInventoryStatus'
-        file_count:
-          anyOf:
-          - type: integer
-            minimum: 0
-          - type: 'null'
-          title: File Count
-          description: Number of files included in the volume inventory. May be unavailable until inventory data is ready.
-        volume_size:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Volume Size
-          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until the volume is fully indexed.
-      type: object
-      required:
-      - volume_guid
-      - volume_name
-      - provider
-      - region
-      - status
-      title: AiActivateCreateInventoryResponseDto
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
+      - in_progress
+      - complete
+      - failed
+      - queued_for_deletion
+      title: AiActivateIndexStatus
     AiActivateIndexDetailsDto:
       properties:
         volume_guid:
@@ -1032,71 +1103,6 @@ components:
         endpoints so external API consumers see the same volume/index metadata as
 
         the list endpoint alongside the search configuration in a single response.'
-    AiActivateInventoriesResponseDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/AiActivateInventoryDto'
-          type: array
-          title: Items
-      type: object
-      title: AiActivateInventoriesResponseDto
-    AiActivateMcpVolumeConfigDto:
-      properties:
-        mcp_enabled:
-          type: boolean
-          title: Mcp Enabled
-          description: Whether the MCP server is enabled for this volume.
-        allowed_file_extensions:
-          items:
-            type: string
-          type: array
-          title: Allowed File Extensions
-          description: File extensions the MCP server filters results to. Empty list returns all file types.
-          examples:
-          - - pdf
-            - docx
-        period:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Period
-          description: Time-window filter applied to query results. Accepts an ISO 8601 duration (e.g. 'P30D') or explicit interval null means 'all time' — ISO 8601 has no valid 'all time' representation.
-          examples:
-          - P7D
-          - P30D
-          - P90D
-          - P1Y
-          - null
-        ignore_principals:
-          items:
-            type: string
-          type: array
-          title: Ignore Principals
-          description: Principal names (users or groups) whose ALLOW permissions the MCP server ignores.
-          examples:
-          - - DOMAIN\\contractors
-            - service-account@example.com
-        ignore_everyone:
-          type: boolean
-          title: Ignore Everyone
-          description: When true, the MCP server ignores the Everyone principal.
-          default: false
-        ignore_domain_users:
-          type: boolean
-          title: Ignore Domain Users
-          description: When true, the MCP server ignores the Domain Users principal.
-          default: false
-      type: object
-      required:
-      - mcp_enabled
-      title: AiActivateMcpVolumeConfigDto
-      description: 'MCP query-scope configuration for a single indexed volume.
-
-
-        Returned by GET /ai_activate/indexes/{volume_id}/mcp and by
-
-        PATCH /ai_activate/indexes/{volume_id}/mcp after a successful update.'
     AiActivateIndexConfigResponseDto:
       properties:
         volume_guid:
@@ -1152,55 +1158,49 @@ components:
       - status
       title: AiActivateIndexConfigResponseDto
       description: AI Activate index configuration returned by NOC. Reused across GET PATCH and POST
-    AiActivateIndexesResponseDto:
+    NocAiActivateInventoryStatus:
+      type: string
+      enum:
+      - Not Indexed
+      - Waiting for NDS creation
+      - Waiting for NDS configuration
+      - NDS Ready
+      - Metadata Index in progress
+      - Metadata Index Complete
+      - Full Content Index in progress
+      - Full Content Index Pending
+      - Full Content Index Complete
+      - Incremental Content Index in progress
+      - Incremental Content Index failed
+      - Volume Inventory Expired
+      - Soft Deleted
+      - Indexing Failed
+      title: NocAiActivateInventoryStatus
+    ValidationErrorResponse:
       properties:
-        items:
+        message:
+          type: string
+          title: Message
+        detail:
           items:
-            $ref: '#/components/schemas/AiActivateIndexListItemDto'
+            additionalProperties: true
+            type: object
           type: array
-          title: Items
-      type: object
-      title: AiActivateIndexesResponseDto
-    AiActivateIndexListItemDto:
-      properties:
-        volume_guid:
-          type: string
-          title: Volume Guid
-        volume_name:
-          type: string
-          title: Volume Name
-        provider:
-          type: string
-          title: Provider
-        volume_region:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Volume Region
-          description: Storage region of the volume. May be null when NOC has no volume metadata.
-        status:
-          $ref: '#/components/schemas/AiActivateIndexStatus'
-        file_count:
-          anyOf:
-          - type: integer
-            minimum: 0
-          - type: 'null'
-          title: File Count
-          description: Number of files indexed for the volume. May be null until NOC reports a count.
-        volume_size:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Volume Size
-          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until indexing progresses.
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
       type: object
       required:
-      - volume_guid
-      - volume_name
-      - provider
-      - status
-      title: AiActivateIndexListItemDto
-      description: A single content-index entry for a volume in the AI Activate indexes list.
+      - message
+      - detail
+      title: ValidationErrorResponse
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey
