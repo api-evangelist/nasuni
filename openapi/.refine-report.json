@@ -11,7 +11,6 @@
   ],
   "outputs": [
     "nasuni-data-api-openapi.yml",
-    "nasuni-list-type-2-api-openapi.yml",
     "nasuni-nasuni-data-service-nds-aws-api-api-openapi.yml",
     "nasuni-nasuni-data-service-nds-api-api-openapi.yml",
     "nasuni-auth-api-openapi.yml",
@@ -39,7 +38,9 @@
     "nasuni-unifs-as-a-service-uaas-api-openapi.yml",
     "nasuni-volume-connections-api-openapi.yml"
   ],
-  "archived": [],
+  "archived": [
+    "deleted 1 superseded output(s) from the previous generation"
+  ],
   "errors": [],
   "warnings": [],
   "notes": [
@@ -49,11 +50,10 @@
     "nasuni-global-file-acceleration-telemetry-openapi.json: tagged paths GET /data -> Data",
     "nasuni-global-file-acceleration-telemetry-openapi.json: declared missing tag: Data",
     "nasuni-nasuni-data-service-aws-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "nasuni-nasuni-data-service-aws-openapi.json: tagged paths GET /?list-type=2 -> ?list Type=2",
+    "nasuni-nasuni-data-service-aws-openapi.json: tagged paths GET /?list-type=2 -> Nasuni Data Service (NDS) AWS API",
     "nasuni-nasuni-data-service-aws-openapi.json: tagged paths GET / -> Nasuni Data Service (NDS) AWS API",
     "nasuni-nasuni-data-service-aws-openapi.json: tagged paths HEAD /{key} -> Nasuni Data Service (NDS) AWS API",
     "nasuni-nasuni-data-service-aws-openapi.json: tagged paths GET /{key} -> Nasuni Data Service (NDS) AWS API",
-    "nasuni-nasuni-data-service-aws-openapi.json: declared missing tag: ?list Type=2",
     "nasuni-nasuni-data-service-aws-openapi.json: declared missing tag: Nasuni Data Service (NDS) AWS API",
     "nasuni-nasuni-data-service-azure-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
     "nasuni-nasuni-data-service-azure-openapi.json: tagged paths GET / -> Nasuni Data Service (NDS) API",
@@ -94,7 +94,8 @@
     "tag 'Notifications' spans 4 source specs (nasuni-nmc-v1-0-openapi.json, nasuni-nmc-v1-1-openapi.json, nasuni-nmc-v1-2-openapi.json, nasuni-portal-v0-openapi.json): per-path servers applied",
     "tag 'Volumes' spans 4 source specs (nasuni-nmc-v1-0-openapi.json, nasuni-nmc-v1-1-openapi.json, nasuni-nmc-v1-2-openapi.json, nasuni-portal-v0-openapi.json): per-path servers applied",
     "tag 'Account' spans 2 source specs (nasuni-nmc-v1-1-openapi.json, nasuni-nmc-v1-2-openapi.json): per-path servers applied",
-    "apis.yml register: already-registered"
+    "superseded outputs removed: nasuni-list-type-2-api-openapi.yml",
+    "apis.yml register: written (+0 apis, 29 total)"
   ],
   "skipped": [
     "_original/nasuni-portal-v0-openapi.yml: archived document superseded by a larger archived document",

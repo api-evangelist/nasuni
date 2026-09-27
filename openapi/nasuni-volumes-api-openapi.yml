@@ -4609,197 +4609,18 @@ paths:
       description: Base URL for accounts assigned the Asia-Pacific region.
 components:
   schemas:
-    ExportReadOnlyField:
-      type: boolean
-      description: If true, files and directories cannot be changed on the exported directory.
-    Share:
+    VolumeConnection:
       type: object
       properties:
-        id:
-          type: integer
-          description: Share identifier.
-        filer_serial_number:
-          type: string
-          description: Unique identifier for the associated filer.
+        connected:
+          type: boolean
+          description: If true, the specified filer is connected to the volume.
         volume_guid:
           type: string
-          description: Unique identifier for the associated volume.
-        name:
+          description: Volume identifier.
+        filer_serial_number:
           type: string
-          description: The name of the CIFS share.
-        path:
-          type: string
-          description: Path of the share.
-        comment:
-          type: string
-          description: Any comments regarding the share.
-        readonly:
-          type: boolean
-          description: If enabled, users can not change the contents of the share.
-        browseable:
-          type: boolean
-          description: If enabled, this share will appear when browsing.
-        hosts_allow:
-          type: string
-          description: Hosts allowed to access the share. IP addresses or IP address/netmask values separated by spaces. Blank allows all hosts
-        hide_unreadable:
-          type: boolean
-          description: Files and folders that the user cannot access do not appear in folder listings.
-        enable_previous_vers:
-          type: boolean
-          description: Allow users to view and restore files using the Previous Versions tab in Windows
-        case_sensitive:
-          type: boolean
-          description: Files and folders are considered different if the case of letters in the name differs. (Enabling case sensitivity aids performance)
-        enable_snapshot_dirs:
-          type: boolean
-          description: Allows clients to access the hidden snapshot directories, showing previous versions of the file system (requires enabling Snapshot Directory Access for the volume).
-        homedir_support:
-          type: integer
-          description: 'When enabled, the target folder path for the share is automatically
-
-            appended with a folder named for the user. Possible values:
-
-
-            * 0 - Disable
-
-            * 2 - Enable
-
-            '
-        mobile:
-          type: boolean
-          description: Enable desktop and/or mobile device support
-        browser_access:
-          type: boolean
-          description: Enable web access
-        browser_access_settings:
-          type: object
-          properties:
-            shared_links_enabled:
-              type: boolean
-              description: Allow creating shared links to Web Access.
-            link_force_password:
-              type: boolean
-              description: Require passwords for all shared links.
-            link_allow_rw:
-              type: boolean
-              description: Allow the user to create writable shared links to directories.
-            external_share_url:
-              type: string
-              description: External hostname for shared links.
-            link_expire_limit:
-              type: integer
-            link_auth:
-              type: object
-              properties:
-                authall:
-                  type: boolean
-                  description: 'When true, all users will be allowed to create shared links.
-
-                    When false, no user will have access to the shared links until a user,
-
-                    or a group the user is a member of, is specified.
-
-                    '
-                allow_groups_ro:
-                  type: array
-                  description: Groups with read-only access to shared links.
-                  items:
-                    $ref: '#/components/schemas/GroupNameField'
-                allow_groups_rw:
-                  type: array
-                  description: Groups with read-write access to shared links.
-                  items:
-                    $ref: '#/components/schemas/GroupNameField'
-                deny_groups:
-                  type: array
-                  description: Groups denied access to shared links.
-                  items:
-                    $ref: '#/components/schemas/GroupNameField'
-                allow_users_ro:
-                  type: array
-                  description: Users with read-only access to shared links.
-                  items:
-                    $ref: '#/components/schemas/UserNameField'
-                allow_users_rw:
-                  type: array
-                  description: Users with read-write access to shared links.
-                  items:
-                    $ref: '#/components/schemas/UserNameField'
-                deny_users:
-                  type: array
-                  description: Users denied access to shared links.
-                  items:
-                    $ref: '#/components/schemas/UserNameField'
-              description: Shared link authentication settings.
-          description: Settings that can be applied to web access.
-        aio_enabled:
-          type: boolean
-          description: Asynchronous I/O. Enable concurrent read/write access per client connection.
-        veto_files:
-          type: string
-          description: 'Block files. Specify file or directory name patterns that the share will make both
-
-            invisible and inaccessible. Enter one pattern per line.
-
-            The wildcard characters ''*'' and ''?'' may be used to specify multiple files
-
-            or directories. The ''/'' character is not valid. Note: This feature can break compatibility with some clients.
-
-            '
-        fruit_enabled:
-          type: boolean
-          description: Enhances share behavior, including SMB2 protocol support, for Mac OS X Clients when possible.
-        smb_encrypt:
-          type: string
-          description: Control if clients are desired or required to use SMB encryption when connecting to the share. Includes SMB3 encryption for Windows clients. Empty string indicates that client usage of encryption is optional.
-          enum:
-          - ''
-          - desired
-          - required
-        auth:
-          type: object
-          properties:
-            authall:
-              type: boolean
-              description: 'When true, all Users can authenticate. When false, only specific
-
-                Groups and Users can authenticate. In this situation, no user will
-
-                have access to the share until a user, or a group the user is a member of, is specified.
-
-                '
-            rw_groups:
-              type: array
-              description: Groups with read-write access to the share.
-              items:
-                $ref: '#/components/schemas/GroupNameField'
-            ro_groups:
-              type: array
-              description: Groups with read-only access to the share.
-              items:
-                $ref: '#/components/schemas/GroupNameField'
-            deny_groups:
-              type: array
-              description: Groups to deny access to the share.
-              items:
-                $ref: '#/components/schemas/GroupNameField'
-            ro_users:
-              type: array
-              description: Users with read-only access to the share.
-              items:
-                $ref: '#/components/schemas/UserNameField'
-            rw_users:
-              type: array
-              description: Users with read-write access to the share.
-              items:
-                $ref: '#/components/schemas/UserNameField'
-            deny_users:
-              type: array
-              description: Users to deny access to the share.
-              items:
-                $ref: '#/components/schemas/UserNameField'
-          description: Share authentication settings.
+          description: Filer identifier.
         links:
           type: object
           properties:
@@ -4807,62 +4628,64 @@ components:
               $ref: '#/components/schemas/Link'
             filer:
               $ref: '#/components/schemas/Link'
-            volume:
-              $ref: '#/components/schemas/Link'
           description: Links to related resources, collections, and actions.
-      description: CIFS Share
-    Link:
+      description: Volume to filer connection.
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+    Paging:
       type: object
       properties:
         href:
           type: string
-          description: Hyperlink to the resource.
-        method:
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
           type: string
-          description: HTTP method to use on the link.
-    ExportHostSpecField:
-      type: string
-      description: Hostname, IP address with optional netmask, or @-prefixed netgroup names allowed to access the export. If blank, all hosts on your network can access the export. Hostnames may contain the * character as a wildcard.
-    ExportSecOptionsField:
-      type: array
-      description: Security options in use by the exported directory. Multiple options may be applied, but they cannot be repeated.
-      items:
-        type: string
-        description: 'Possible values:
-
-
-          * ''sys'' - Traditional
-
-          * ''krb5'' - Authentication
-
-          * ''krb5i'' - Integrity Protection
-
-          * ''krb5p'' - Privacy Protection
-
-          '
-        enum:
-        - sys
-        - krb5
-        - krb5i
-        - krb5p
-    ExportAccessModeField:
-      type: string
-      description: 'Controls what User IDs are allowed when a client writes
-
-        to the exported directory. Possible values:
-
-
-        * ''root_squash'' - Normal Users Permitted
-
-        * ''no_root_squash'' - All Users Permitted
-
-        * ''all_squash'' - Anonymize All Users
-
-        '
-      enum:
-      - root_squash
-      - no_root_squash
-      - all_squash
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type: string
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
     Export:
       type: object
       properties:
@@ -4922,75 +4745,6 @@ components:
               $ref: '#/components/schemas/Link'
           description: Links to related resources, collections, and actions.
       description: Export object
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-          description: 'Specifies the type of error reported. Possible values:
-
-
-            * "error" - General error
-
-            * "validation_error" - Validation error
-
-            * "not_found_error" - Resource not found
-
-            * "auth_error" - Authentication error
-
-            * "perm_error" - Permission error
-
-            * "sync_error" - Error occurred syncing settings with a Filer.
-
-            * "throttled_error" - The request was throttled; too many sent within a duration.
-
-            '
-          enum:
-          - error
-          - validation_error
-          - not_found_error
-          - auth_error
-          - perm_error
-          - sync_error
-          - throttled_error
-        description:
-          type: string
-          description: Description of the error reported.
-    AntivirusViolation:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Antivirus violation identifier
-        fpath:
-          type: string
-          description: The file path of the infected source file.
-        vname:
-          type: string
-          description: The name of the virus.
-        volume_uri:
-          type: string
-          description: The URI of the file, including the associated volume identifier.
-        seqno:
-          type: integer
-          description: Sequence number of the violation.
-        filer_serial_number:
-          type: string
-          description: Unique identifier for the associated filer.
-        volume_guid:
-          type: string
-          description: Unique identifier for the associated volume.
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link'
-            filer:
-              $ref: '#/components/schemas/Link'
-            volume:
-              $ref: '#/components/schemas/Link'
-          description: Links to related resources, collections, and actions.
-      description: Antivirus violation object
     Volume:
       type: object
       properties:
@@ -5217,6 +4971,169 @@ components:
               $ref: '#/components/schemas/Link'
           description: Links to related resources, collections, and actions.
       description: Representation of a Volume object.
+    ExportSecOptionsField:
+      type: array
+      description: Security options in use by the exported directory. Multiple options may be applied, but they cannot be repeated.
+      items:
+        type: string
+        description: 'Possible values:
+
+
+          * ''sys'' - Traditional
+
+          * ''krb5'' - Authentication
+
+          * ''krb5i'' - Integrity Protection
+
+          * ''krb5p'' - Privacy Protection
+
+          '
+        enum:
+        - sys
+        - krb5
+        - krb5i
+        - krb5p
+    ExportHostSpecField:
+      type: string
+      description: Hostname, IP address with optional netmask, or @-prefixed netgroup names allowed to access the export. If blank, all hosts on your network can access the export. Hostnames may contain the * character as a wildcard.
+    ExportAccessModeField:
+      type: string
+      description: 'Controls what User IDs are allowed when a client writes
+
+        to the exported directory. Possible values:
+
+
+        * ''root_squash'' - Normal Users Permitted
+
+        * ''no_root_squash'' - All Users Permitted
+
+        * ''all_squash'' - Anonymize All Users
+
+        '
+      enum:
+      - root_squash
+      - no_root_squash
+      - all_squash
+    FtpDirectory:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: FTP directory identifier.
+        name:
+          type: string
+          description: Name of the FTP directory.
+        path:
+          type: string
+          description: Path of the FTP directory.
+        comment:
+          type: string
+          description: Any comments regarding the FTP directory.
+        readonly:
+          type: boolean
+          description: If true, users cannot change the contents of the directory.
+        visibility:
+          type: string
+          description: 'Controls what files and directories users can see.
+
+            * "default" - Every file is visible to user, even if user does not have access permissions. * "hide" - Users only see files they have permission to access. * "invisible" - No files are visible to user. If user has filename and permission, user can access file.'
+          enum:
+          - default
+          - hide
+          - invisible
+        allow_from:
+          type: string
+          description: 'Comma-separated list of IP addresses or subnet addresses of hosts
+
+            allowed to access FTP directory. If blank, all hosts on your
+
+            network have access. This feature cannot be used in conjunction
+
+            with Users/Groups restrictions.
+
+            '
+        allow_users:
+          type: string
+          description: The users that will be allowed to access the FTP directory.
+        allow_groups:
+          type: string
+          description: The groups that will be allowed to access the FTP directory.
+        anonymous:
+          type: boolean
+          description: If true, allow anonymous FTP access.
+        anonymous_only:
+          type: boolean
+          description: 'If true, only the anonymous user will be granted access. This feature
+
+            cannot be used in conjunction with IP address restrictions.
+
+            '
+        umask:
+          type: string
+          description: 'Normally, newly created files and directories have read and write
+
+            access for the owner, groups and other users. This option allows
+
+            you to restrict read and write access for groups or others.
+
+
+            * ''000'' - No Extra Restrictions (Default)
+
+            * ''002'' - Read-Only Others
+
+            * ''022'' - Read-Only Groups and Others
+
+            * ''006'' - Restrict Others
+
+            * ''066'' - Restrict Groups and Others
+
+            * ''026'' - Read-Only Groups, Restrict Others
+
+            '
+          enum:
+          - '000'
+          - '002'
+          - '022'
+          - '006'
+          - '066'
+          - '026'
+        hide_ownership:
+          type: boolean
+          description: 'All directory listings will show owner and group information as "ftp",
+
+            hiding the underlying owner and group. This may also be used to work
+
+            around directory listing issues on some non-interactive clients.
+
+            '
+        hidden_stores:
+          type: boolean
+          description: 'File uploads are done in two steps using a temporary file. This prevents
+
+            issues with incomplete uploads and file use before upload is complete.
+
+            This feature prevents resuming uploads. This is automatically enabled for
+
+            anonymous uploads.
+
+            '
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+        volume_guid:
+          type: string
+          description: Unique identifier for the associated volume.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+            volume:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: FTP directory object
     VolumeFilerSetting:
       type: object
       properties:
@@ -5466,217 +5383,30 @@ components:
               $ref: '#/components/schemas/Link'
           description: Links to related resources, collections, and actions.
       description: Filer specfic volume settings.
-    ExportPerfModeField:
-      type: string
-      description: 'Controls the method in which the NFS server replies to clients.
-
-        Changing this may impact the safety of data if the Nasuni Filer is shut down abnormally!
-
-        Possible values:
-
-
-        * ''sync'' - Default
-
-        * ''no_wdelay'' - No Write Delay
-
-        * ''async'' - Asynchronous Replies
-
-        '
-      enum:
-      - sync
-      - no_wdelay
-      - async
-    GroupNameField:
-      type: string
-      description: Group name
-    FtpDirectory:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: FTP directory identifier.
-        name:
-          type: string
-          description: Name of the FTP directory.
-        path:
-          type: string
-          description: Path of the FTP directory.
-        comment:
-          type: string
-          description: Any comments regarding the FTP directory.
-        readonly:
-          type: boolean
-          description: If true, users cannot change the contents of the directory.
-        visibility:
-          type: string
-          description: 'Controls what files and directories users can see.
-
-            * "default" - Every file is visible to user, even if user does not have access permissions. * "hide" - Users only see files they have permission to access. * "invisible" - No files are visible to user. If user has filename and permission, user can access file.'
-          enum:
-          - default
-          - hide
-          - invisible
-        allow_from:
-          type: string
-          description: 'Comma-separated list of IP addresses or subnet addresses of hosts
-
-            allowed to access FTP directory. If blank, all hosts on your
-
-            network have access. This feature cannot be used in conjunction
-
-            with Users/Groups restrictions.
-
-            '
-        allow_users:
-          type: string
-          description: The users that will be allowed to access the FTP directory.
-        allow_groups:
-          type: string
-          description: The groups that will be allowed to access the FTP directory.
-        anonymous:
-          type: boolean
-          description: If true, allow anonymous FTP access.
-        anonymous_only:
-          type: boolean
-          description: 'If true, only the anonymous user will be granted access. This feature
-
-            cannot be used in conjunction with IP address restrictions.
-
-            '
-        umask:
-          type: string
-          description: 'Normally, newly created files and directories have read and write
-
-            access for the owner, groups and other users. This option allows
-
-            you to restrict read and write access for groups or others.
-
-
-            * ''000'' - No Extra Restrictions (Default)
-
-            * ''002'' - Read-Only Others
-
-            * ''022'' - Read-Only Groups and Others
-
-            * ''006'' - Restrict Others
-
-            * ''066'' - Restrict Groups and Others
-
-            * ''026'' - Read-Only Groups, Restrict Others
-
-            '
-          enum:
-          - '000'
-          - '002'
-          - '022'
-          - '006'
-          - '066'
-          - '026'
-        hide_ownership:
-          type: boolean
-          description: 'All directory listings will show owner and group information as "ftp",
-
-            hiding the underlying owner and group. This may also be used to work
-
-            around directory listing issues on some non-interactive clients.
-
-            '
-        hidden_stores:
-          type: boolean
-          description: 'File uploads are done in two steps using a temporary file. This prevents
-
-            issues with incomplete uploads and file use before upload is complete.
-
-            This feature prevents resuming uploads. This is automatically enabled for
-
-            anonymous uploads.
-
-            '
-        filer_serial_number:
-          type: string
-          description: Unique identifier for the associated filer.
-        volume_guid:
-          type: string
-          description: Unique identifier for the associated volume.
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link'
-            filer:
-              $ref: '#/components/schemas/Link'
-            volume:
-              $ref: '#/components/schemas/Link'
-          description: Links to related resources, collections, and actions.
-      description: FTP directory object
-    UserNameField:
-      type: string
-      description: User name
-    Paging:
+    Link:
       type: object
       properties:
         href:
           type: string
-          description: A link to the requested endpoint.
-        limit:
-          type: integer
-          description: The maximum number of items in a page.
-        next:
+          description: Hyperlink to the resource.
+        method:
           type: string
-          description: A link to the next page of objects. The value will be null if there isn't one.
-        offset:
-          type: integer
-          description: The item number the page starts on.
-        previous:
-          type: string
-          description: A link to the previous page of objects. The value will be null if there isn't one.
-        total:
-          type: integer
-          description: Total number of items available at the requested endpoint.
-      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
-    VolumeConnection:
-      type: object
-      properties:
-        connected:
-          type: boolean
-          description: If true, the specified filer is connected to the volume.
-        volume_guid:
-          type: string
-          description: Volume identifier.
-        filer_serial_number:
-          type: string
-          description: Filer identifier.
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link'
-            filer:
-              $ref: '#/components/schemas/Link'
-          description: Links to related resources, collections, and actions.
-      description: Volume to filer connection.
-    ExportReadOnlyField_2:
+          description: HTTP method to use on the link.
+    ExportReadOnlyField:
       type: boolean
-      description: If true, files and directories cannot be changed on the exported directory. Default is false.
-      default: false
-    Share_2:
-      required:
-      - name
-      - path
+      description: If true, files and directories cannot be changed on the exported directory.
+    Share:
       type: object
       properties:
         id:
           type: integer
           description: Share identifier.
-          readOnly: true
         filer_serial_number:
           type: string
           description: Unique identifier for the associated filer.
-          readOnly: true
         volume_guid:
           type: string
           description: Unique identifier for the associated volume.
-          readOnly: true
         name:
           type: string
           description: The name of the CIFS share.
@@ -5689,31 +5419,24 @@ components:
         readonly:
           type: boolean
           description: If enabled, users can not change the contents of the share.
-          default: false
         browseable:
           type: boolean
           description: If enabled, this share will appear when browsing.
-          default: true
         hosts_allow:
           type: string
           description: Hosts allowed to access the share. IP addresses or IP address/netmask values separated by spaces. Blank allows all hosts
-          default: ''
         hide_unreadable:
           type: boolean
           description: Files and folders that the user cannot access do not appear in folder listings.
-          default: true
         enable_previous_vers:
           type: boolean
           description: Allow users to view and restore files using the Previous Versions tab in Windows
-          default: false
         case_sensitive:
           type: boolean
           description: Files and folders are considered different if the case of letters in the name differs. (Enabling case sensitivity aids performance)
-          default: false
         enable_snapshot_dirs:
           type: boolean
           description: Allows clients to access the hidden snapshot directories, showing previous versions of the file system (requires enabling Snapshot Directory Access for the volume).
-          default: false
         homedir_support:
           type: integer
           description: 'When enabled, the target folder path for the share is automatically
@@ -5729,34 +5452,26 @@ components:
         mobile:
           type: boolean
           description: Enable desktop and/or mobile device support
-          default: false
         browser_access:
           type: boolean
           description: Enable web access
-          default: false
         browser_access_settings:
           type: object
           properties:
             shared_links_enabled:
               type: boolean
               description: Allow creating shared links to Web Access.
-              default: false
             link_force_password:
               type: boolean
               description: Require passwords for all shared links.
-              default: true
             link_allow_rw:
               type: boolean
               description: Allow the user to create writable shared links to directories.
-              default: false
             external_share_url:
               type: string
               description: External hostname for shared links.
             link_expire_limit:
-              maximum: 999
-              minimum: 0
               type: integer
-              description: Maximum number of days until shared links expire. Set to 0 for unlimited.
             link_auth:
               type: object
               properties:
@@ -5769,7 +5484,6 @@ components:
                     or a group the user is a member of, is specified.
 
                     '
-                  default: true
                 allow_groups_ro:
                   type: array
                   description: Groups with read-only access to shared links.
@@ -5805,7 +5519,6 @@ components:
         aio_enabled:
           type: boolean
           description: Asynchronous I/O. Enable concurrent read/write access per client connection.
-          default: true
         veto_files:
           type: string
           description: 'Block files. Specify file or directory name patterns that the share will make both
@@ -5817,15 +5530,12 @@ components:
             or directories. The ''/'' character is not valid. Note: This feature can break compatibility with some clients.
 
             '
-          default: ''
         fruit_enabled:
           type: boolean
           description: Enhances share behavior, including SMB2 protocol support, for Mac OS X Clients when possible.
-          default: false
         smb_encrypt:
           type: string
           description: Control if clients are desired or required to use SMB encryption when connecting to the share. Includes SMB3 encryption for Windows clients. Empty string indicates that client usage of encryption is optional.
-          default: ''
           enum:
           - ''
           - desired
@@ -5842,7 +5552,6 @@ components:
                 have access to the share until a user, or a group the user is a member of, is specified.
 
                 '
-              default: true
             rw_groups:
               type: array
               description: Groups with read-write access to the share.
@@ -5878,6 +5587,182 @@ components:
           type: object
           properties:
             self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+            volume:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: CIFS Share
+    AntivirusViolation:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Antivirus violation identifier
+        fpath:
+          type: string
+          description: The file path of the infected source file.
+        vname:
+          type: string
+          description: The name of the virus.
+        volume_uri:
+          type: string
+          description: The URI of the file, including the associated volume identifier.
+        seqno:
+          type: integer
+          description: Sequence number of the violation.
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+        volume_guid:
+          type: string
+          description: Unique identifier for the associated volume.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            filer:
+              $ref: '#/components/schemas/Link'
+            volume:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+      description: Antivirus violation object
+    ExportPerfModeField:
+      type: string
+      description: 'Controls the method in which the NFS server replies to clients.
+
+        Changing this may impact the safety of data if the Nasuni Filer is shut down abnormally!
+
+        Possible values:
+
+
+        * ''sync'' - Default
+
+        * ''no_wdelay'' - No Write Delay
+
+        * ''async'' - Asynchronous Replies
+
+        '
+      enum:
+      - sync
+      - no_wdelay
+      - async
+    GroupNameField:
+      type: string
+      description: Group name
+    UserNameField:
+      type: string
+      description: User name
+    Export_2:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Export identifier
+          readOnly: true
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+          readOnly: true
+        volume_guid:
+          type: string
+          description: Unique identifier for the associated volume.
+          readOnly: true
+        name:
+          type: string
+          description: Name of the export.
+        path:
+          type: string
+          description: Path of the exported directory. Default is '/'.
+          default: /
+        comment:
+          type: string
+          description: Any comments regarding the export.
+        readonly:
+          $ref: '#/components/schemas/ExportReadOnlyField_2'
+        hostspec:
+          $ref: '#/components/schemas/ExportHostSpecField_2'
+        access_mode:
+          $ref: '#/components/schemas/ExportAccessModeField_2'
+        perf_mode:
+          $ref: '#/components/schemas/ExportPerfModeField_2'
+        sec_options:
+          $ref: '#/components/schemas/ExportSecOptionsField_2'
+        nfs_host_options:
+          type: array
+          description: Additional host options for the Export. The items in this list can be created, read, updated, and deleted via the host option endpoints.
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/NfsHostOption'
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_2'
+            filer:
+              $ref: '#/components/schemas/Link_2'
+            volume:
+              $ref: '#/components/schemas/Link_2'
+            nfs_host_options:
+              $ref: '#/components/schemas/Link_2'
+          description: Links to related resources, collections, and actions.
+          readOnly: true
+      description: Export object
+    ExportAccessModeField_2:
+      type: string
+      description: 'Controls what User IDs are allowed when a client writes
+
+        to the exported directory. Possible values:
+
+
+        * ''root_squash'' - Normal Users Permitted - Default
+
+        * ''no_root_squash'' - All Users Permitted
+
+        * ''all_squash'' - Anonymize All Users
+
+        '
+      default: root_squash
+      enum:
+      - root_squash
+      - no_root_squash
+      - all_squash
+    AntivirusViolation_2:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Antivirus violation identifier
+          readOnly: true
+        fpath:
+          type: string
+          description: The file path of the infected source file.
+          readOnly: true
+        vname:
+          type: string
+          description: The name of the virus.
+        volume_uri:
+          type: string
+          description: The URI of the file, including the associated volume identifier.
+          readOnly: true
+        seqno:
+          type: integer
+          description: Sequence number of the violation.
+          readOnly: true
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+          readOnly: true
+        volume_guid:
+          type: string
+          description: Unique identifier for the associated volume.
+          readOnly: true
+        links:
+          type: object
+          properties:
+            self:
               $ref: '#/components/schemas/Link_2'
             filer:
               $ref: '#/components/schemas/Link_2'
@@ -5885,42 +5770,66 @@ components:
               $ref: '#/components/schemas/Link_2'
           description: Links to related resources, collections, and actions.
           readOnly: true
-      description: CIFS Share
-    ExportSecOptionsField_2:
-      maxItems: 4
-      type: array
-      description: Security options in use by the exported directory. Multiple options may be applied, but they cannot be repeated.
-      items:
-        type: string
-        description: 'Possible values:
-
-
-          * ''sys'' - Traditional - Default
-
-          * ''krb5'' - Authentication
-
-          * ''krb5i'' - Integrity Protection
-
-          * ''krb5p'' - Privacy Protection
-
-          '
-        enum:
-        - sys
-        - krb5
-        - krb5i
-        - krb5p
-    CachePath:
+      description: Antivirus violation object
+    Message:
       type: object
       properties:
-        metadata_only:
-          type: boolean
-          description: Whether or not directory metadata should be brought into cache
-          default: false
-        force:
-          type: boolean
-          description: Whether or not to force the action of brining the data into cache. This causes the request to not care about the available amount of cache and try to bring as much data into the cache as it can. This is only necessary when metadata_only is false.
-          default: false
-      description: Cache object
+        id:
+          type: string
+          description: ID of the message.
+        filer_serial_number:
+          type: string
+          description: Identifier to the Filer the message is associated with.
+        description:
+          type: string
+          description: Description of the intent of message.
+        code:
+          type: string
+          description: A code identifying the intent of the message.
+        status:
+          type: string
+          description: 'Current status of the message.
+
+            * ''synced'' - Message has been received by the Filer, and the Filer returned a success response. * ''pending'' - Message is currently in transit. * ''failure'' - Messages has been received by the Filer, but returned an error response.'
+          enum:
+          - synced
+          - pending
+          - failure
+        send_time:
+          type: string
+          description: Time the message was sent.
+        expiration_time:
+          type: string
+          description: Time a synced message will expire and be removed from the messages list.
+        response_time:
+          type: string
+          description: Time a message response was received.
+        initiated_by:
+          type: string
+          description: The username of the user who triggered the message, or '[console]' if triggered by the NMC itself.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_2'
+            filer:
+              $ref: '#/components/schemas/Link_2'
+            acknowledge:
+              $ref: '#/components/schemas/Link_2'
+            applied_resource:
+              type: object
+              properties:
+                href:
+                  type: string
+                  description: Hyperlink to the resource.
+                method:
+                  type: string
+                  description: HTTP method to use on the link.
+              description: Provides a link to the resource being acted on or that was created. When creating a resource, this link will only be available after the message is successfully synced ('status' is 'synced').
+          description: Links to related resources, collections, and actions.
+        error:
+          $ref: '#/components/schemas/Error_2'
+      description: The message object is used to track an action that we want the Filer to perform.
     Error_2:
       type: object
       properties:
@@ -5966,75 +5875,6 @@ components:
           type: string
           description: Description of the error reported.
           readOnly: true
-    NfsHostOption:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Host option identifier
-          readOnly: true
-        readonly:
-          $ref: '#/components/schemas/ExportReadOnlyField_2'
-        hostspec:
-          $ref: '#/components/schemas/ExportHostSpecField_2'
-        access_mode:
-          $ref: '#/components/schemas/ExportAccessModeField_2'
-        perf_mode:
-          $ref: '#/components/schemas/ExportPerfModeField_2'
-        sec_options:
-          $ref: '#/components/schemas/ExportSecOptionsField_2'
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link_2'
-            export:
-              $ref: '#/components/schemas/Link_2'
-          description: Links to related resources, collections, and actions.
-          readOnly: true
-      description: An NFS Export Host Option object
-    AntivirusViolation_2:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Antivirus violation identifier
-          readOnly: true
-        fpath:
-          type: string
-          description: The file path of the infected source file.
-          readOnly: true
-        vname:
-          type: string
-          description: The name of the virus.
-        volume_uri:
-          type: string
-          description: The URI of the file, including the associated volume identifier.
-          readOnly: true
-        seqno:
-          type: integer
-          description: Sequence number of the violation.
-          readOnly: true
-        filer_serial_number:
-          type: string
-          description: Unique identifier for the associated filer.
-          readOnly: true
-        volume_guid:
-          type: string
-          description: Unique identifier for the associated volume.
-          readOnly: true
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link_2'
-            filer:
-              $ref: '#/components/schemas/Link_2'
-            volume:
-              $ref: '#/components/schemas/Link_2'
-          description: Links to related resources, collections, and actions.
-          readOnly: true
-      description: Antivirus violation object
     AutoCachedFolders:
       type: object
       properties:
@@ -6077,41 +5917,72 @@ components:
           description: Links to related resources, collections, and actions.
           readOnly: true
       description: Auto Cache Folder object.
-    ErrorResponse:
+    Snapshot:
       type: object
       properties:
-        error:
-          $ref: '#/components/schemas/Error_2'
-    Link_2:
+        volume_guid:
+          type: string
+          description: Identifier of the associated Volume.
+        filer_serial_number:
+          type: string
+          description: Identifier of the associated Filer.
+        snapshot_status:
+          type: string
+          description: 'Current snapshot status. Possible values:
+
+
+            * ''idle'' - No snapshots are in progress.
+
+            * ''pending'' - A snapshot is pending and will be performed soon.
+
+            * ''in_progress'' - A snapshot is in progress.
+
+            '
+          enum:
+          - idle
+          - pending
+          - in_progress
+        snapshot_percent:
+          type: integer
+          description: If a snapshot is 'in_progress', this will show the percentage that it is complete.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_2'
+            filer:
+              $ref: '#/components/schemas/Link_2'
+          description: Links to related resources, collections, and actions.
+      description: Representation of a volume snapshot status
+    GlobalLocking:
       type: object
       properties:
-        href:
+        path:
           type: string
-          description: Hyperlink to the resource.
-          readOnly: true
-        method:
+          description: Path of the global locking settings.
+        mode:
           type: string
-          description: HTTP method to use on the link.
+          description: The desired mode of global locking.
+          enum:
+          - optimized
+          - advanced
+          - asynchronous
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
           readOnly: true
-    ExportAccessModeField_2:
-      type: string
-      description: 'Controls what User IDs are allowed when a client writes
-
-        to the exported directory. Possible values:
-
-
-        * ''root_squash'' - Normal Users Permitted - Default
-
-        * ''no_root_squash'' - All Users Permitted
-
-        * ''all_squash'' - Anonymize All Users
-
-        '
-      default: root_squash
-      enum:
-      - root_squash
-      - no_root_squash
-      - all_squash
+        volume_guid:
+          type: string
+          description: Unique identifier for the associated volume.
+          readOnly: true
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_2'
+          description: Links to related resources, collections, and actions.
+          readOnly: true
+      description: Global locking object.
     ExportPerfModeField_2:
       type: string
       description: 'Controls the method in which the NFS server replies to clients.
@@ -6133,73 +6004,430 @@ components:
       - sync
       - no_wdelay
       - async
-    FolderQuota:
-      required:
-      - limit
-      - path
-      - type
+    ExportReadOnlyField_2:
+      type: boolean
+      description: If true, files and directories cannot be changed on the exported directory. Default is false.
+      default: false
+    CachePath:
       type: object
       properties:
-        id:
+        metadata_only:
+          type: boolean
+          description: Whether or not directory metadata should be brought into cache
+          default: false
+        force:
+          type: boolean
+          description: Whether or not to force the action of brining the data into cache. This causes the request to not care about the available amount of cache and try to bring as much data into the cache as it can. This is only necessary when metadata_only is false.
+          default: false
+      description: Cache object
+    Volume_2:
+      required:
+      - filer_serial_number
+      - name
+      type: object
+      properties:
+        guid:
           type: string
-          description: FolderQuota identifier
+          description: Volume identifier.
           readOnly: true
         filer_serial_number:
           type: string
-          description: Unique identifier for the associated filer.
+          description: Identifier to the Filer the volume was created on.
+        name:
+          type: string
+          description: The name of the volume.
+        nmc_managed:
+          type: boolean
+          description: Indicates if the volume is fully managed by the NMC.
           readOnly: true
-        volume_guid:
-          type: string
-          description: Unique identifier for the associated volume.
+        protocols:
+          required:
+          - protocols
+          type: object
+          properties:
+            permissions_policy:
+              type: string
+              description: 'Permission policy of the volume. Possible values:
+
+
+                * ''NTFS60'' - NTFS Compatible Mode
+
+                * ''NTFSONLY710'' - NTFS Exclusive Mode
+
+                * ''POSIX60'' - POSIX Mixed Mode
+
+                * ''MODEBITS60'' - UNIX/NFS Permissions Only Mode
+
+                * ''PUBLICMODE60'' - Unauthenticated Access Mode
+
+                '
+              enum:
+              - NTFS60
+              - NTFSONLY710
+              - POSIX60
+              - MODEBITS60
+              - PUBLICMODE60
+            protocols:
+              type: array
+              items:
+                type: string
+                description: Protocols enabled on the volume.
+                enum:
+                - CIFS
+                - NFS
+                - FTP
+          description: Volume protocol settings.
+        antivirus_service:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            days:
+              type: object
+              properties:
+                sun:
+                  type: boolean
+                mon:
+                  type: boolean
+                tue:
+                  type: boolean
+                wed:
+                  type: boolean
+                thu:
+                  type: boolean
+                fri:
+                  type: boolean
+                sat:
+                  type: boolean
+              description: Days of the week the antivirus service will run.
+            check_files_immediately:
+              type: boolean
+              description: If true, files will be checked as they are written (CIFS volumes only).
+            allday:
+              type: boolean
+              description: If true, the antivirus service will run all day.
+            start:
+              type: integer
+              description: Hour of the day to start the antivirus service. An integer between 0 and 23, with 0 = '12 AM', 1 = '1 AM', ... 23 = '11 PM'.
+            stop:
+              type: integer
+              description: Hour of the day to stop the antivirus service. An integer between 0 and 23, with 0 = '12 AM', 1 = '1 AM', ... 23 = '11 PM'.
+            frequency:
+              type: integer
+              description: Frequency the service will run (minutes).
+          description: Volume Antivirus Service settings
+        remote_access:
+          required:
+          - access_permissions
+          - enabled
+          - filer_access
+          type: object
+          properties:
+            enabled:
+              type: boolean
+              description: If true, remote access is enabled for the volume.
+            access_permissions:
+              type: string
+              description: 'The remote access permission for this volume applies to all other Nasuni Filers on your account.
+
+                A value of ''custom'' allows providing access permissions per Nasuni Filer (see ''filer_access'' property).
+
+                '
+              enum:
+              - readonly
+              - readwrite
+              - custom
+            filer_access:
+              type: array
+              items:
+                type: object
+                properties:
+                  filer_guid:
+                    type: string
+                    description: Filer identifier
+                  permission:
+                    type: string
+                    description: Access permission for the Filer.
+                    enum:
+                    - disabled
+                    - readonly
+                    - readwrite
+                description: Apply volume remote access permissions for an individual Filer.
+          description: Volume remote access settings
           readOnly: true
-        type:
-          type: string
-          description: The type of folder quota object
-          enum:
-          - rule
-          - quota
-        path:
-          type: string
-          description: Path of the folder quota.
-        email:
-          type: string
-          description: Email associated with the folder quota.
-        limit:
+        quota:
           minimum: 0
           type: integer
-          description: Usage limit of the folder quota in bytes.
-        usage:
-          type: integer
-          description: Current usage of the folder quota in bytes.
-          readOnly: true
-        children:
+          description: Maximum volume capacity in gigabytes. Set to 0 for unlimited. Quotas are applied after each successful snapshot.
+        case_sensitive:
           type: boolean
-          description: Whether a rule applies to child folders.
+          description: If true, the volume is case-sensitive. CIFS-only volumes perform better when volume is case-insensitive (value of false).
+          readOnly: true
+        snapshot_retention:
+          type: object
+          properties:
+            retain:
+              type: string
+              description: 'Type of snapshot retention imposed. Possible values:
+
+
+                * ''INFINITE'' - All snapshots
+
+                * ''BY_COUNT'' - Set number of snapshots
+
+                * ''BY_AGE'' - Snapshots within a range
+
+                '
+              enum:
+              - INFINITE
+              - BY_COUNT
+              - BY_AGE
+            number:
+              type: integer
+              description: Number of snapshots to retain.
+            years:
+              type: integer
+              description: Years to retain snapshots.
+            months:
+              type: integer
+              description: Months to retain snapshots.
+            days:
+              type: integer
+              description: Days to retain snapshots.
+          description: Volume snapshot retention
+        cloud_io:
+          type: object
+          properties:
+            dedupe:
+              type: boolean
+              description: If true, deduplication is enabled. Deduplication is a data compression technique for eliminating duplicate copies of repeating data.
+            compression:
+              type: boolean
+              description: If true, compression (via zlib) is enabled.
+            chunk_size:
+              type: integer
+              description: Chunk size in bytes for cloud I/O. Value of zero means the default value will be used.
+          description: Volume Cloud I/O settings.
+        provider:
+          required:
+          - location
+          - shortname
+          type: object
+          properties:
+            cred_id:
+              type: string
+              description: Credential identifier.
+            name:
+              type: string
+              description: Full name of the cloud provider.
+            shortname:
+              type: string
+              description: Shortname (code) of the cloud provider.
+              enum:
+              - amazons3
+              - azure
+              - cleversafe
+              - hcp
+              - ibmcos
+              - vipr
+              - googles3
+            location:
+              type: string
+              description: Location/region the volume was created in.
+            storage_class:
+              type: string
+              description: Storage class the volume was created in (Google only).
+        auth:
+          required:
+          - authenticated_access
+          type: object
+          properties:
+            authenticated_access:
+              type: boolean
+              description: If true, the users must authenticate to access the volume. If false, the volume is publicly available to all users.
+            policy:
+              type: string
+              description: Authentication policy.
+              enum:
+              - ads
+              - ldapds
+              - public
+            policy_label:
+              type: string
+              description: Full name of the Authentication policy.
+        root_handle:
+          type: string
+          description: The table of contents handle for the root of the volume for use with UniFS Exporter. Only appears if enabled by support.
+          readOnly: true
+        bucket:
+          type: string
+          description: If using BYOC, this is the bucket containing the volume.
+          readOnly: true
+        account_name:
+          type: string
+          description: If using Windows Azure Platform and BYOC, this is the storage account name associated with the volume.
+          readOnly: true
+        options:
+          type: object
+          properties:
+            auto_provision_cred:
+              type: boolean
+              description: If using BYOC and not providing a provider cred_id, this will provision one.
+              default: false
+            create_new_key:
+              type: boolean
+              description: Create a new key to use for volume data. Beginning with the 9.3 release, you must set an escrow passphrase before generating new encryption keys or escrowing uploaded encryption keys with Nasuni.
+              default: true
+            key_name:
+              type: string
+              description: If creating a new key, the optional name to use for the key. Otherwise the name of the existing key to use.
+            create_default_access_point:
+              type: boolean
+              description: After the volume is created, automatically create a CIFS share or NFS export.
+              default: true
         links:
           type: object
           properties:
             self:
               $ref: '#/components/schemas/Link_2'
-            delete:
+            filer:
+              $ref: '#/components/schemas/Link_2'
+            filer_settings:
+              $ref: '#/components/schemas/Link_2'
+            filer_connections:
+              $ref: '#/components/schemas/Link_2'
+            shares:
+              $ref: '#/components/schemas/Link_2'
+            exports:
+              $ref: '#/components/schemas/Link_2'
+            ftp_directories:
+              $ref: '#/components/schemas/Link_2'
+            antivirus_violations:
+              $ref: '#/components/schemas/Link_2'
+            folder_quotas:
+              $ref: '#/components/schemas/Link_2'
+            snapshots:
               $ref: '#/components/schemas/Link_2'
           description: Links to related resources, collections, and actions.
           readOnly: true
-      description: FolderQuota object
-    ExportHostSpecField_2:
-      type: string
-      description: 'A comma-separated list of the hostnames, IP addresses with optional
-
-        netmasks, or @-prefixed netgroup names allowed to access the export. If blank, all hosts
-
-        on your network can access the export. Hostnames may contain the * character as a wildcard (Default
-
-        when being set on an Export).
-
-        '
-      default: '*'
-    PinnedFolders:
+      description: Representation of a Volume object.
+    FtpDirectory_2:
       type: object
       properties:
+        id:
+          type: integer
+          description: FTP directory identifier.
+          readOnly: true
+        name:
+          type: string
+          description: Name of the FTP directory.
+          readOnly: true
+        path:
+          type: string
+          description: Path of the FTP directory.
+          readOnly: true
+        comment:
+          type: string
+          description: Any comments regarding the FTP directory.
+          readOnly: true
+        readonly:
+          type: boolean
+          description: If true, users cannot change the contents of the directory.
+          readOnly: true
+        visibility:
+          type: string
+          description: 'Controls what files and directories users can see.
+
+            * "default" - Every file is visible to user, even if user does not have access permissions. * "hide" - Users only see files they have permission to access. * "invisible" - No files are visible to user. If user has filename and permission, user can access file.'
+          readOnly: true
+          enum:
+          - default
+          - hide
+          - invisible
+        allow_from:
+          type: string
+          description: 'Comma-separated list of IP addresses or subnet addresses of hosts
+
+            allowed to access FTP directory. If blank, all hosts on your
+
+            network have access. This feature cannot be used in conjunction
+
+            with Users/Groups restrictions.
+
+            '
+          readOnly: true
+        allow_users:
+          type: string
+          description: The users that will be allowed to access the FTP directory.
+          readOnly: true
+        allow_groups:
+          type: string
+          description: The groups that will be allowed to access the FTP directory.
+          readOnly: true
+        anonymous:
+          type: boolean
+          description: If true, allow anonymous FTP access.
+          readOnly: true
+        anonymous_only:
+          type: boolean
+          description: 'If true, only the anonymous user will be granted access. This feature
+
+            cannot be used in conjunction with IP address restrictions.
+
+            '
+          readOnly: true
+        umask:
+          type: string
+          description: 'Normally, newly created files and directories have read and write
+
+            access for the owner, groups and other users. This option allows
+
+            you to restrict read and write access for groups or others.
+
+
+            * ''000'' - No Extra Restrictions (Default)
+
+            * ''002'' - Read-Only Others
+
+            * ''022'' - Read-Only Groups and Others
+
+            * ''006'' - Restrict Others
+
+            * ''066'' - Restrict Groups and Others
+
+            * ''026'' - Read-Only Groups, Restrict Others
+
+            '
+          readOnly: true
+          enum:
+          - '000'
+          - '002'
+          - '022'
+          - '006'
+          - '066'
+          - '026'
+        hide_ownership:
+          type: boolean
+          description: 'All directory listings will show owner and group information as "ftp",
+
+            hiding the underlying owner and group. This may also be used to work
+
+            around directory listing issues on some non-interactive clients.
+
+            '
+          readOnly: true
+        hidden_stores:
+          type: boolean
+          description: 'File uploads are done in two steps using a temporary file. This prevents
+
+            issues with incomplete uploads and file use before upload is complete.
+
+            This feature prevents resuming uploads. This is automatically enabled for
+
+            anonymous uploads.
+
+            '
+          readOnly: true
         filer_serial_number:
           type: string
           description: Unique identifier for the associated filer.
@@ -6208,23 +6436,6 @@ components:
           type: string
           description: Unique identifier for the associated volume.
           readOnly: true
-        path:
-          type: string
-          description: Path of the pinned folder.
-        mode:
-          type: string
-          description: 'Specifies the pinning mode to enable.
-
-
-            * "metadata" - Enable pinning only on metadata.
-
-            * "metadata_and_data" - Enable pinning on metadata and data.
-
-            '
-          default: metadata_and_data
-          enum:
-          - metadata
-          - metadata_and_data
         links:
           type: object
           properties:
@@ -6234,11 +6445,9 @@ components:
               $ref: '#/components/schemas/Link_2'
             volume:
               $ref: '#/components/schemas/Link_2'
-            disable:
-              $ref: '#/components/schemas/Link_2'
           description: Links to related resources, collections, and actions.
           readOnly: true
-      description: Pinned Folder object.
+      description: FTP directory object
     VolumeFilerSetting_2:
       type: object
       properties:
@@ -6532,122 +6741,32 @@ components:
           description: Links to related resources, collections, and actions.
           readOnly: true
       description: Filer specfic volume settings.
-    FtpDirectory_2:
+    Link_2:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+          readOnly: true
+        method:
+          type: string
+          description: HTTP method to use on the link.
+          readOnly: true
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error_2'
+    FolderQuota:
+      required:
+      - limit
+      - path
+      - type
       type: object
       properties:
         id:
-          type: integer
-          description: FTP directory identifier.
-          readOnly: true
-        name:
           type: string
-          description: Name of the FTP directory.
-          readOnly: true
-        path:
-          type: string
-          description: Path of the FTP directory.
-          readOnly: true
-        comment:
-          type: string
-          description: Any comments regarding the FTP directory.
-          readOnly: true
-        readonly:
-          type: boolean
-          description: If true, users cannot change the contents of the directory.
-          readOnly: true
-        visibility:
-          type: string
-          description: 'Controls what files and directories users can see.
-
-            * "default" - Every file is visible to user, even if user does not have access permissions. * "hide" - Users only see files they have permission to access. * "invisible" - No files are visible to user. If user has filename and permission, user can access file.'
-          readOnly: true
-          enum:
-          - default
-          - hide
-          - invisible
-        allow_from:
-          type: string
-          description: 'Comma-separated list of IP addresses or subnet addresses of hosts
-
-            allowed to access FTP directory. If blank, all hosts on your
-
-            network have access. This feature cannot be used in conjunction
-
-            with Users/Groups restrictions.
-
-            '
-          readOnly: true
-        allow_users:
-          type: string
-          description: The users that will be allowed to access the FTP directory.
-          readOnly: true
-        allow_groups:
-          type: string
-          description: The groups that will be allowed to access the FTP directory.
-          readOnly: true
-        anonymous:
-          type: boolean
-          description: If true, allow anonymous FTP access.
-          readOnly: true
-        anonymous_only:
-          type: boolean
-          description: 'If true, only the anonymous user will be granted access. This feature
-
-            cannot be used in conjunction with IP address restrictions.
-
-            '
-          readOnly: true
-        umask:
-          type: string
-          description: 'Normally, newly created files and directories have read and write
-
-            access for the owner, groups and other users. This option allows
-
-            you to restrict read and write access for groups or others.
-
-
-            * ''000'' - No Extra Restrictions (Default)
-
-            * ''002'' - Read-Only Others
-
-            * ''022'' - Read-Only Groups and Others
-
-            * ''006'' - Restrict Others
-
-            * ''066'' - Restrict Groups and Others
-
-            * ''026'' - Read-Only Groups, Restrict Others
-
-            '
-          readOnly: true
-          enum:
-          - '000'
-          - '002'
-          - '022'
-          - '006'
-          - '066'
-          - '026'
-        hide_ownership:
-          type: boolean
-          description: 'All directory listings will show owner and group information as "ftp",
-
-            hiding the underlying owner and group. This may also be used to work
-
-            around directory listing issues on some non-interactive clients.
-
-            '
-          readOnly: true
-        hidden_stores:
-          type: boolean
-          description: 'File uploads are done in two steps using a temporary file. This prevents
-
-            issues with incomplete uploads and file use before upload is complete.
-
-            This feature prevents resuming uploads. This is automatically enabled for
-
-            anonymous uploads.
-
-            '
+          description: FolderQuota identifier
           readOnly: true
         filer_serial_number:
           type: string
@@ -6657,23 +6776,39 @@ components:
           type: string
           description: Unique identifier for the associated volume.
           readOnly: true
+        type:
+          type: string
+          description: The type of folder quota object
+          enum:
+          - rule
+          - quota
+        path:
+          type: string
+          description: Path of the folder quota.
+        email:
+          type: string
+          description: Email associated with the folder quota.
+        limit:
+          minimum: 0
+          type: integer
+          description: Usage limit of the folder quota in bytes.
+        usage:
+          type: integer
+          description: Current usage of the folder quota in bytes.
+          readOnly: true
+        children:
+          type: boolean
+          description: Whether a rule applies to child folders.
         links:
           type: object
           properties:
             self:
               $ref: '#/components/schemas/Link_2'
-            filer:
-              $ref: '#/components/schemas/Link_2'
-            volume:
+            delete:
               $ref: '#/components/schemas/Link_2'
           description: Links to related resources, collections, and actions.
           readOnly: true
-      description: FTP directory object
-    MessageResponse:
-      type: object
-      properties:
-        message:
-          $ref: '#/components/schemas/Message'
+      description: FolderQuota object
     PathData:
       type: object
       properties:
@@ -6826,482 +6961,7 @@ components:
           description: Links to related resources, collections, and actions.
           readOnly: true
       description: Path information object
-    GlobalLocking:
-      type: object
-      properties:
-        path:
-          type: string
-          description: Path of the global locking settings.
-        mode:
-          type: string
-          description: The desired mode of global locking.
-          enum:
-          - optimized
-          - advanced
-          - asynchronous
-        filer_serial_number:
-          type: string
-          description: Unique identifier for the associated filer.
-          readOnly: true
-        volume_guid:
-          type: string
-          description: Unique identifier for the associated volume.
-          readOnly: true
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link_2'
-          description: Links to related resources, collections, and actions.
-          readOnly: true
-      description: Global locking object.
-    Export_2:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Export identifier
-          readOnly: true
-        filer_serial_number:
-          type: string
-          description: Unique identifier for the associated filer.
-          readOnly: true
-        volume_guid:
-          type: string
-          description: Unique identifier for the associated volume.
-          readOnly: true
-        name:
-          type: string
-          description: Name of the export.
-        path:
-          type: string
-          description: Path of the exported directory. Default is '/'.
-          default: /
-        comment:
-          type: string
-          description: Any comments regarding the export.
-        readonly:
-          $ref: '#/components/schemas/ExportReadOnlyField_2'
-        hostspec:
-          $ref: '#/components/schemas/ExportHostSpecField_2'
-        access_mode:
-          $ref: '#/components/schemas/ExportAccessModeField_2'
-        perf_mode:
-          $ref: '#/components/schemas/ExportPerfModeField_2'
-        sec_options:
-          $ref: '#/components/schemas/ExportSecOptionsField_2'
-        nfs_host_options:
-          type: array
-          description: Additional host options for the Export. The items in this list can be created, read, updated, and deleted via the host option endpoints.
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/NfsHostOption'
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link_2'
-            filer:
-              $ref: '#/components/schemas/Link_2'
-            volume:
-              $ref: '#/components/schemas/Link_2'
-            nfs_host_options:
-              $ref: '#/components/schemas/Link_2'
-          description: Links to related resources, collections, and actions.
-          readOnly: true
-      description: Export object
-    Message:
-      type: object
-      properties:
-        id:
-          type: string
-          description: ID of the message.
-        filer_serial_number:
-          type: string
-          description: Identifier to the Filer the message is associated with.
-        description:
-          type: string
-          description: Description of the intent of message.
-        code:
-          type: string
-          description: A code identifying the intent of the message.
-        status:
-          type: string
-          description: 'Current status of the message.
-
-            * ''synced'' - Message has been received by the Filer, and the Filer returned a success response. * ''pending'' - Message is currently in transit. * ''failure'' - Messages has been received by the Filer, but returned an error response.'
-          enum:
-          - synced
-          - pending
-          - failure
-        send_time:
-          type: string
-          description: Time the message was sent.
-        expiration_time:
-          type: string
-          description: Time a synced message will expire and be removed from the messages list.
-        response_time:
-          type: string
-          description: Time a message response was received.
-        initiated_by:
-          type: string
-          description: The username of the user who triggered the message, or '[console]' if triggered by the NMC itself.
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link_2'
-            filer:
-              $ref: '#/components/schemas/Link_2'
-            acknowledge:
-              $ref: '#/components/schemas/Link_2'
-            applied_resource:
-              type: object
-              properties:
-                href:
-                  type: string
-                  description: Hyperlink to the resource.
-                method:
-                  type: string
-                  description: HTTP method to use on the link.
-              description: Provides a link to the resource being acted on or that was created. When creating a resource, this link will only be available after the message is successfully synced ('status' is 'synced').
-          description: Links to related resources, collections, and actions.
-        error:
-          $ref: '#/components/schemas/Error_2'
-      description: The message object is used to track an action that we want the Filer to perform.
-    Volume_2:
-      required:
-      - filer_serial_number
-      - name
-      type: object
-      properties:
-        guid:
-          type: string
-          description: Volume identifier.
-          readOnly: true
-        filer_serial_number:
-          type: string
-          description: Identifier to the Filer the volume was created on.
-        name:
-          type: string
-          description: The name of the volume.
-        nmc_managed:
-          type: boolean
-          description: Indicates if the volume is fully managed by the NMC.
-          readOnly: true
-        protocols:
-          required:
-          - protocols
-          type: object
-          properties:
-            permissions_policy:
-              type: string
-              description: 'Permission policy of the volume. Possible values:
-
-
-                * ''NTFS60'' - NTFS Compatible Mode
-
-                * ''NTFSONLY710'' - NTFS Exclusive Mode
-
-                * ''POSIX60'' - POSIX Mixed Mode
-
-                * ''MODEBITS60'' - UNIX/NFS Permissions Only Mode
-
-                * ''PUBLICMODE60'' - Unauthenticated Access Mode
-
-                '
-              enum:
-              - NTFS60
-              - NTFSONLY710
-              - POSIX60
-              - MODEBITS60
-              - PUBLICMODE60
-            protocols:
-              type: array
-              items:
-                type: string
-                description: Protocols enabled on the volume.
-                enum:
-                - CIFS
-                - NFS
-                - FTP
-          description: Volume protocol settings.
-        antivirus_service:
-          type: object
-          properties:
-            enabled:
-              type: boolean
-            days:
-              type: object
-              properties:
-                sun:
-                  type: boolean
-                mon:
-                  type: boolean
-                tue:
-                  type: boolean
-                wed:
-                  type: boolean
-                thu:
-                  type: boolean
-                fri:
-                  type: boolean
-                sat:
-                  type: boolean
-              description: Days of the week the antivirus service will run.
-            check_files_immediately:
-              type: boolean
-              description: If true, files will be checked as they are written (CIFS volumes only).
-            allday:
-              type: boolean
-              description: If true, the antivirus service will run all day.
-            start:
-              type: integer
-              description: Hour of the day to start the antivirus service. An integer between 0 and 23, with 0 = '12 AM', 1 = '1 AM', ... 23 = '11 PM'.
-            stop:
-              type: integer
-              description: Hour of the day to stop the antivirus service. An integer between 0 and 23, with 0 = '12 AM', 1 = '1 AM', ... 23 = '11 PM'.
-            frequency:
-              type: integer
-              description: Frequency the service will run (minutes).
-          description: Volume Antivirus Service settings
-        remote_access:
-          required:
-          - access_permissions
-          - enabled
-          - filer_access
-          type: object
-          properties:
-            enabled:
-              type: boolean
-              description: If true, remote access is enabled for the volume.
-            access_permissions:
-              type: string
-              description: 'The remote access permission for this volume applies to all other Nasuni Filers on your account.
-
-                A value of ''custom'' allows providing access permissions per Nasuni Filer (see ''filer_access'' property).
-
-                '
-              enum:
-              - readonly
-              - readwrite
-              - custom
-            filer_access:
-              type: array
-              items:
-                type: object
-                properties:
-                  filer_guid:
-                    type: string
-                    description: Filer identifier
-                  permission:
-                    type: string
-                    description: Access permission for the Filer.
-                    enum:
-                    - disabled
-                    - readonly
-                    - readwrite
-                description: Apply volume remote access permissions for an individual Filer.
-          description: Volume remote access settings
-          readOnly: true
-        quota:
-          minimum: 0
-          type: integer
-          description: Maximum volume capacity in gigabytes. Set to 0 for unlimited. Quotas are applied after each successful snapshot.
-        case_sensitive:
-          type: boolean
-          description: If true, the volume is case-sensitive. CIFS-only volumes perform better when volume is case-insensitive (value of false).
-          readOnly: true
-        snapshot_retention:
-          type: object
-          properties:
-            retain:
-              type: string
-              description: 'Type of snapshot retention imposed. Possible values:
-
-
-                * ''INFINITE'' - All snapshots
-
-                * ''BY_COUNT'' - Set number of snapshots
-
-                * ''BY_AGE'' - Snapshots within a range
-
-                '
-              enum:
-              - INFINITE
-              - BY_COUNT
-              - BY_AGE
-            number:
-              type: integer
-              description: Number of snapshots to retain.
-            years:
-              type: integer
-              description: Years to retain snapshots.
-            months:
-              type: integer
-              description: Months to retain snapshots.
-            days:
-              type: integer
-              description: Days to retain snapshots.
-          description: Volume snapshot retention
-        cloud_io:
-          type: object
-          properties:
-            dedupe:
-              type: boolean
-              description: If true, deduplication is enabled. Deduplication is a data compression technique for eliminating duplicate copies of repeating data.
-            compression:
-              type: boolean
-              description: If true, compression (via zlib) is enabled.
-            chunk_size:
-              type: integer
-              description: Chunk size in bytes for cloud I/O. Value of zero means the default value will be used.
-          description: Volume Cloud I/O settings.
-        provider:
-          required:
-          - location
-          - shortname
-          type: object
-          properties:
-            cred_id:
-              type: string
-              description: Credential identifier.
-            name:
-              type: string
-              description: Full name of the cloud provider.
-            shortname:
-              type: string
-              description: Shortname (code) of the cloud provider.
-              enum:
-              - amazons3
-              - azure
-              - cleversafe
-              - hcp
-              - ibmcos
-              - vipr
-              - googles3
-            location:
-              type: string
-              description: Location/region the volume was created in.
-            storage_class:
-              type: string
-              description: Storage class the volume was created in (Google only).
-        auth:
-          required:
-          - authenticated_access
-          type: object
-          properties:
-            authenticated_access:
-              type: boolean
-              description: If true, the users must authenticate to access the volume. If false, the volume is publicly available to all users.
-            policy:
-              type: string
-              description: Authentication policy.
-              enum:
-              - ads
-              - ldapds
-              - public
-            policy_label:
-              type: string
-              description: Full name of the Authentication policy.
-        root_handle:
-          type: string
-          description: The table of contents handle for the root of the volume for use with UniFS Exporter. Only appears if enabled by support.
-          readOnly: true
-        bucket:
-          type: string
-          description: If using BYOC, this is the bucket containing the volume.
-          readOnly: true
-        account_name:
-          type: string
-          description: If using Windows Azure Platform and BYOC, this is the storage account name associated with the volume.
-          readOnly: true
-        options:
-          type: object
-          properties:
-            auto_provision_cred:
-              type: boolean
-              description: If using BYOC and not providing a provider cred_id, this will provision one.
-              default: false
-            create_new_key:
-              type: boolean
-              description: Create a new key to use for volume data. Beginning with the 9.3 release, you must set an escrow passphrase before generating new encryption keys or escrowing uploaded encryption keys with Nasuni.
-              default: true
-            key_name:
-              type: string
-              description: If creating a new key, the optional name to use for the key. Otherwise the name of the existing key to use.
-            create_default_access_point:
-              type: boolean
-              description: After the volume is created, automatically create a CIFS share or NFS export.
-              default: true
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link_2'
-            filer:
-              $ref: '#/components/schemas/Link_2'
-            filer_settings:
-              $ref: '#/components/schemas/Link_2'
-            filer_connections:
-              $ref: '#/components/schemas/Link_2'
-            shares:
-              $ref: '#/components/schemas/Link_2'
-            exports:
-              $ref: '#/components/schemas/Link_2'
-            ftp_directories:
-              $ref: '#/components/schemas/Link_2'
-            antivirus_violations:
-              $ref: '#/components/schemas/Link_2'
-            folder_quotas:
-              $ref: '#/components/schemas/Link_2'
-            snapshots:
-              $ref: '#/components/schemas/Link_2'
-          description: Links to related resources, collections, and actions.
-          readOnly: true
-      description: Representation of a Volume object.
-    Snapshot:
-      type: object
-      properties:
-        volume_guid:
-          type: string
-          description: Identifier of the associated Volume.
-        filer_serial_number:
-          type: string
-          description: Identifier of the associated Filer.
-        snapshot_status:
-          type: string
-          description: 'Current snapshot status. Possible values:
-
-
-            * ''idle'' - No snapshots are in progress.
-
-            * ''pending'' - A snapshot is pending and will be performed soon.
-
-            * ''in_progress'' - A snapshot is in progress.
-
-            '
-          enum:
-          - idle
-          - pending
-          - in_progress
-        snapshot_percent:
-          type: integer
-          description: If a snapshot is 'in_progress', this will show the percentage that it is complete.
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link_2'
-            filer:
-              $ref: '#/components/schemas/Link_2'
-          description: Links to related resources, collections, and actions.
-      description: Representation of a volume snapshot status
-    ExportReadOnlyField_3:
-      type: boolean
-      description: If true, files and directories cannot be changed on the exported directory. Default is false.
-      default: false
-    Share_3:
+    Share_2:
       required:
       - name
       - path
@@ -7472,10 +7132,6 @@ components:
           - ''
           - desired
           - required
-        agl_oplocks:
-          type: boolean
-          description: Enable Oplocks for Advanced Global Locking. This supports client read caching and can accelerate some applications. Only applies to 9.12+ Filers
-          default: true
         auth:
           type: object
           properties:
@@ -7524,15 +7180,20 @@ components:
           type: object
           properties:
             self:
-              $ref: '#/components/schemas/Link_3'
+              $ref: '#/components/schemas/Link_2'
             filer:
-              $ref: '#/components/schemas/Link_3'
+              $ref: '#/components/schemas/Link_2'
             volume:
-              $ref: '#/components/schemas/Link_3'
+              $ref: '#/components/schemas/Link_2'
           description: Links to related resources, collections, and actions.
           readOnly: true
       description: CIFS Share
-    ExportSecOptionsField_3:
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          $ref: '#/components/schemas/Message'
+    ExportSecOptionsField_2:
       maxItems: 4
       type: array
       description: Security options in use by the exported directory. Multiple options may be applied, but they cannot be repeated.
@@ -7555,13 +7216,304 @@ components:
         - krb5
         - krb5i
         - krb5p
-    VolumeUpdateRemoteAccess:
-      required:
-      - remote_access
+    PinnedFolders:
       type: object
       properties:
-        remote_access:
-          $ref: '#/components/schemas/VolumeUpdateRemoteAccessField'
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+          readOnly: true
+        volume_guid:
+          type: string
+          description: Unique identifier for the associated volume.
+          readOnly: true
+        path:
+          type: string
+          description: Path of the pinned folder.
+        mode:
+          type: string
+          description: 'Specifies the pinning mode to enable.
+
+
+            * "metadata" - Enable pinning only on metadata.
+
+            * "metadata_and_data" - Enable pinning on metadata and data.
+
+            '
+          default: metadata_and_data
+          enum:
+          - metadata
+          - metadata_and_data
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_2'
+            filer:
+              $ref: '#/components/schemas/Link_2'
+            volume:
+              $ref: '#/components/schemas/Link_2'
+            disable:
+              $ref: '#/components/schemas/Link_2'
+          description: Links to related resources, collections, and actions.
+          readOnly: true
+      description: Pinned Folder object.
+    ExportHostSpecField_2:
+      type: string
+      description: 'A comma-separated list of the hostnames, IP addresses with optional
+
+        netmasks, or @-prefixed netgroup names allowed to access the export. If blank, all hosts
+
+        on your network can access the export. Hostnames may contain the * character as a wildcard (Default
+
+        when being set on an Export).
+
+        '
+      default: '*'
+    NfsHostOption:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Host option identifier
+          readOnly: true
+        readonly:
+          $ref: '#/components/schemas/ExportReadOnlyField_2'
+        hostspec:
+          $ref: '#/components/schemas/ExportHostSpecField_2'
+        access_mode:
+          $ref: '#/components/schemas/ExportAccessModeField_2'
+        perf_mode:
+          $ref: '#/components/schemas/ExportPerfModeField_2'
+        sec_options:
+          $ref: '#/components/schemas/ExportSecOptionsField_2'
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_2'
+            export:
+              $ref: '#/components/schemas/Link_2'
+          description: Links to related resources, collections, and actions.
+          readOnly: true
+      description: An NFS Export Host Option object
+    VolumeUpdateRemoteAccessField:
+      required:
+      - access_permissions
+      - enabled
+      - filer_access
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: If true, remote access is enabled for the volume.
+        access_permissions:
+          type: string
+          description: 'The remote access permission for this volume applies to all other Nasuni Filers on your account.
+
+            A value of ''custom'' allows providing access permissions per Nasuni Filer (see ''filer_access'' property).
+
+            '
+          enum:
+          - readonly
+          - readwrite
+          - custom
+        filer_access:
+          type: array
+          items:
+            type: object
+            properties:
+              filer_guid:
+                type: string
+                description: Filer identifier
+              permission:
+                type: string
+                description: Access permission for the Filer.
+                enum:
+                - disabled
+                - readonly
+                - readwrite
+            description: Apply volume remote access permissions for an individual Filer.
+      description: Volume remote access settings
+    Export_3:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Export identifier
+          readOnly: true
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+          readOnly: true
+        volume_guid:
+          type: string
+          description: Unique identifier for the associated volume.
+          readOnly: true
+        name:
+          type: string
+          description: Name of the export.
+        path:
+          type: string
+          description: Path of the exported directory. Default is '/'.
+          default: /
+        comment:
+          type: string
+          description: Any comments regarding the export.
+        readonly:
+          $ref: '#/components/schemas/ExportReadOnlyField_3'
+        hostspec:
+          $ref: '#/components/schemas/ExportHostSpecField_3'
+        access_mode:
+          $ref: '#/components/schemas/ExportAccessModeField_3'
+        perf_mode:
+          $ref: '#/components/schemas/ExportPerfModeField_3'
+        sec_options:
+          $ref: '#/components/schemas/ExportSecOptionsField_3'
+        nfs_host_options:
+          type: array
+          description: Additional host options for the Export. The items in this list can be created, read, updated, and deleted via the host option endpoints.
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/NfsHostOption_2'
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_3'
+            filer:
+              $ref: '#/components/schemas/Link_3'
+            volume:
+              $ref: '#/components/schemas/Link_3'
+            nfs_host_options:
+              $ref: '#/components/schemas/Link_3'
+          description: Links to related resources, collections, and actions.
+          readOnly: true
+      description: Export object
+    ExportAccessModeField_3:
+      type: string
+      description: 'Controls what User IDs are allowed when a client writes
+
+        to the exported directory. Possible values:
+
+
+        * ''root_squash'' - Normal Users Permitted - Default
+
+        * ''no_root_squash'' - All Users Permitted
+
+        * ''all_squash'' - Anonymize All Users
+
+        '
+      default: root_squash
+      enum:
+      - root_squash
+      - no_root_squash
+      - all_squash
+    AntivirusViolation_3:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Antivirus violation identifier
+          readOnly: true
+        fpath:
+          type: string
+          description: The file path of the infected source file.
+          readOnly: true
+        vname:
+          type: string
+          description: The name of the virus.
+        volume_uri:
+          type: string
+          description: The URI of the file, including the associated volume identifier.
+          readOnly: true
+        seqno:
+          type: integer
+          description: Sequence number of the violation.
+          readOnly: true
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+          readOnly: true
+        volume_guid:
+          type: string
+          description: Unique identifier for the associated volume.
+          readOnly: true
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_3'
+            filer:
+              $ref: '#/components/schemas/Link_3'
+            volume:
+              $ref: '#/components/schemas/Link_3'
+          description: Links to related resources, collections, and actions.
+          readOnly: true
+      description: Antivirus violation object
+    Message_2:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the message.
+        filer_serial_number:
+          type: string
+          description: Identifier to the Filer the message is associated with.
+        description:
+          type: string
+          description: Description of the intent of message.
+        code:
+          type: string
+          description: A code identifying the intent of the message.
+        status:
+          type: string
+          description: 'Current status of the message.
+
+            * ''synced'' - Message has been received by the Filer, and the Filer returned a success response. * ''pending'' - Message is currently in transit. * ''failure'' - Messages has been received by the Filer, but returned an error response.'
+          enum:
+          - synced
+          - pending
+          - failure
+        send_time:
+          type: string
+          description: Time the message was sent.
+        expiration_time:
+          type:
+          - string
+          - 'null'
+          description: Time a synced message will expire and be removed from the messages list.
+        response_time:
+          type:
+          - string
+          - 'null'
+          description: Time a message response was received.
+        initiated_by:
+          type: string
+          description: The username of the user who triggered the message, or '[console]' if triggered by the NMC itself.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_3'
+            filer:
+              $ref: '#/components/schemas/Link_3'
+            acknowledge:
+              $ref: '#/components/schemas/Link_3'
+            applied_resource:
+              type: object
+              properties:
+                href:
+                  type: string
+                  description: Hyperlink to the resource.
+                method:
+                  type: string
+                  description: HTTP method to use on the link.
+              description: Provides a link to the resource being acted on or that was created. When creating a resource, this link will only be available after the message is successfully synced ('status' is 'synced').
+          description: Links to related resources, collections, and actions.
+        error:
+          $ref: '#/components/schemas/Error_3'
+      description: The message object is used to track an action that we want the Filer to perform.
     Error_3:
       type: object
       properties:
@@ -7607,75 +7559,6 @@ components:
           type: string
           description: Description of the error reported.
           readOnly: true
-    NfsHostOption_2:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Host option identifier
-          readOnly: true
-        readonly:
-          $ref: '#/components/schemas/ExportReadOnlyField_3'
-        hostspec:
-          $ref: '#/components/schemas/ExportHostSpecField_3'
-        access_mode:
-          $ref: '#/components/schemas/ExportAccessModeField_3'
-        perf_mode:
-          $ref: '#/components/schemas/ExportPerfModeField_3'
-        sec_options:
-          $ref: '#/components/schemas/ExportSecOptionsField_3'
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link_3'
-            export:
-              $ref: '#/components/schemas/Link_3'
-          description: Links to related resources, collections, and actions.
-          readOnly: true
-      description: An NFS Export Host Option object
-    AntivirusViolation_3:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Antivirus violation identifier
-          readOnly: true
-        fpath:
-          type: string
-          description: The file path of the infected source file.
-          readOnly: true
-        vname:
-          type: string
-          description: The name of the virus.
-        volume_uri:
-          type: string
-          description: The URI of the file, including the associated volume identifier.
-          readOnly: true
-        seqno:
-          type: integer
-          description: Sequence number of the violation.
-          readOnly: true
-        filer_serial_number:
-          type: string
-          description: Unique identifier for the associated filer.
-          readOnly: true
-        volume_guid:
-          type: string
-          description: Unique identifier for the associated volume.
-          readOnly: true
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link_3'
-            filer:
-              $ref: '#/components/schemas/Link_3'
-            volume:
-              $ref: '#/components/schemas/Link_3'
-          description: Links to related resources, collections, and actions.
-          readOnly: true
-      description: Antivirus violation object
     AutoCachedFolders_2:
       type: object
       properties:
@@ -7718,83 +7601,39 @@ components:
           description: Links to related resources, collections, and actions.
           readOnly: true
       description: Auto Cache Folder object.
-    ErrorResponse_2:
+    GlobalLocking_2:
       type: object
       properties:
-        error:
-          $ref: '#/components/schemas/Error_3'
-    VolumeUpdateQuotaField:
-      minimum: 0
-      type: integer
-      description: Maximum volume capacity in gigabytes. Set to 0 for unlimited. Quotas are applied after each successful snapshot.
-    Link_3:
-      type: object
-      properties:
-        href:
+        path:
           type: string
-          description: Hyperlink to the resource.
-          readOnly: true
-        method:
+          description: Path of the global locking settings.
+        mode:
           type: string
-          description: HTTP method to use on the link.
-          readOnly: true
-    VolumeUpdateRemoteAccessField:
-      required:
-      - access_permissions
-      - enabled
-      - filer_access
-      type: object
-      properties:
-        enabled:
-          type: boolean
-          description: If true, remote access is enabled for the volume.
-        access_permissions:
-          type: string
-          description: 'The remote access permission for this volume applies to all other Nasuni Filers on your account.
-
-            A value of ''custom'' allows providing access permissions per Nasuni Filer (see ''filer_access'' property).
-
-            '
+          description: The desired mode of global locking.
           enum:
-          - readonly
-          - readwrite
-          - custom
-        filer_access:
-          type: array
-          items:
-            type: object
-            properties:
-              filer_guid:
-                type: string
-                description: Filer identifier
-              permission:
-                type: string
-                description: Access permission for the Filer.
-                enum:
-                - disabled
-                - readonly
-                - readwrite
-            description: Apply volume remote access permissions for an individual Filer.
-      description: Volume remote access settings
-    ExportAccessModeField_3:
-      type: string
-      description: 'Controls what User IDs are allowed when a client writes
-
-        to the exported directory. Possible values:
-
-
-        * ''root_squash'' - Normal Users Permitted - Default
-
-        * ''no_root_squash'' - All Users Permitted
-
-        * ''all_squash'' - Anonymize All Users
-
-        '
-      default: root_squash
-      enum:
-      - root_squash
-      - no_root_squash
-      - all_squash
+          - optimized
+          - advanced
+          - asynchronous
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+          readOnly: true
+        volume_guid:
+          type: string
+          description: Unique identifier for the associated volume.
+          readOnly: true
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_3'
+          description: Links to related resources, collections, and actions.
+          readOnly: true
+      description: Global locking object.
+    ExportReadOnlyField_3:
+      type: boolean
+      description: If true, files and directories cannot be changed on the exported directory. Default is false.
+      default: false
     ExportPerfModeField_3:
       type: string
       description: 'Controls the method in which the NFS server replies to clients.
@@ -7816,110 +7655,396 @@ components:
       - sync
       - no_wdelay
       - async
-    Paging_2:
-      type: object
-      properties:
-        href:
-          type: string
-          description: A link to the requested endpoint.
-        limit:
-          type: integer
-          description: The maximum number of items in a page.
-        next:
-          type:
-          - string
-          - 'null'
-          description: A link to the next page of objects. The value will be null if there isn't one.
-        offset:
-          type: integer
-          description: The item number the page starts on.
-        previous:
-          type:
-          - string
-          - 'null'
-          description: A link to the previous page of objects. The value will be null if there isn't one.
-        total:
-          type: integer
-          description: Total number of items available at the requested endpoint.
-      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
-    VolumeUpdateQuota:
+    VolumeUpdateQuotaField:
+      minimum: 0
+      type: integer
+      description: Maximum volume capacity in gigabytes. Set to 0 for unlimited. Quotas are applied after each successful snapshot.
+    Volume_3:
       required:
-      - quota
+      - filer_serial_number
+      - name
       type: object
       properties:
-        quota:
-          $ref: '#/components/schemas/VolumeUpdateQuotaField'
-    FolderQuota_2:
-      required:
-      - limit
-      - path
-      - type
-      type: object
-      properties:
-        id:
+        guid:
           type: string
-          description: FolderQuota identifier
+          description: Volume identifier.
           readOnly: true
         filer_serial_number:
           type: string
-          description: Unique identifier for the associated filer.
+          description: Identifier to the Filer the volume was created on.
+        name:
+          type: string
+          description: The name of the volume.
+        nmc_managed:
+          type: boolean
+          description: Indicates if the volume is fully managed by the NMC.
           readOnly: true
-        volume_guid:
-          type: string
-          description: Unique identifier for the associated volume.
+        protocols:
+          required:
+          - protocols
+          type: object
+          properties:
+            permissions_policy:
+              type: string
+              description: 'Permission policy of the volume. Possible values:
+
+
+                * ''NTFS60'' - NTFS Compatible Mode
+
+                * ''NTFSONLY710'' - NTFS Exclusive Mode
+
+                * ''NTFSMP'' - NTFS Multiprotocol Mode
+
+                * ''POSIX60'' - POSIX Mixed Mode
+
+                * ''MODEBITS60'' - UNIX/NFS Permissions Only Mode
+
+                * ''PUBLICMODE60'' - Unauthenticated Access Mode
+
+                '
+              enum:
+              - NTFS60
+              - NTFSONLY710
+              - NTFSMP
+              - POSIX60
+              - MODEBITS60
+              - PUBLICMODE60
+            protocols:
+              type: array
+              items:
+                type: string
+                description: Protocols enabled on the volume.
+                enum:
+                - CIFS
+                - NFS
+                - FTP
+          description: Volume protocol settings.
+        antivirus_service:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            days:
+              type: object
+              properties:
+                sun:
+                  type: boolean
+                mon:
+                  type: boolean
+                tue:
+                  type: boolean
+                wed:
+                  type: boolean
+                thu:
+                  type: boolean
+                fri:
+                  type: boolean
+                sat:
+                  type: boolean
+              description: Days of the week the antivirus service will run.
+            check_files_immediately:
+              type: boolean
+              description: If true, files will be checked as they are written (CIFS volumes only).
+            allday:
+              type: boolean
+              description: If true, the antivirus service will run all day.
+            start:
+              type: integer
+              description: Hour of the day to start the antivirus service. An integer between 0 and 23, with 0 = '12 AM', 1 = '1 AM', ... 23 = '11 PM'.
+            stop:
+              type: integer
+              description: Hour of the day to stop the antivirus service. An integer between 0 and 23, with 0 = '12 AM', 1 = '1 AM', ... 23 = '11 PM'.
+            frequency:
+              type: integer
+              description: Frequency the service will run (minutes).
+          description: Volume Antivirus Service settings
+        remote_access:
+          $ref: '#/components/schemas/VolumeUpdateRemoteAccessField'
+        quota:
+          $ref: '#/components/schemas/VolumeUpdateQuotaField'
+        case_sensitive:
+          type: boolean
+          description: If true, the volume is case-sensitive. CIFS-only volumes perform better when volume is case-insensitive (value of false).
           readOnly: true
-        type:
-          type: string
-          description: The type of folder quota object
-          enum:
-          - rule
-          - quota
-        path:
-          type: string
-          description: Path of the folder quota.
-        email:
+        snapshot_retention:
+          type: object
+          properties:
+            retain:
+              type: string
+              description: 'Type of snapshot retention imposed. Possible values:
+
+
+                * ''INFINITE'' - All snapshots
+
+                * ''BY_COUNT'' - Set number of snapshots
+
+                * ''BY_AGE'' - Snapshots within a range
+
+                '
+              enum:
+              - INFINITE
+              - BY_COUNT
+              - BY_AGE
+            number:
+              type: integer
+              description: Number of snapshots to retain.
+            years:
+              type: integer
+              description: Years to retain snapshots.
+            months:
+              type: integer
+              description: Months to retain snapshots.
+            days:
+              type: integer
+              description: Days to retain snapshots.
+          description: Volume snapshot retention
+        cloud_io:
+          type: object
+          properties:
+            dedupe:
+              type: boolean
+              description: If true, deduplication is enabled. Deduplication is a data compression technique for eliminating duplicate copies of repeating data.
+            compression:
+              type: boolean
+              description: If true, compression (via zlib) is enabled.
+            chunk_size:
+              type: integer
+              description: Chunk size in bytes for cloud I/O. Value of zero means the default value will be used.
+          description: Volume Cloud I/O settings.
+        provider:
+          required:
+          - location
+          - shortname
+          type: object
+          properties:
+            cred_uuid:
+              type: string
+              description: Credential identifier.
+            name:
+              type: string
+              description: Full name of the cloud provider.
+              readOnly: true
+            shortname:
+              type:
+              - string
+              - 'null'
+              description: Shortname (code) of the cloud provider.
+              enum:
+              - null
+              - amazons3
+              - azure
+              - cleversafe
+              - hcp
+              - ibmcos
+              - vipr
+              - googles3
+            location:
+              type:
+              - string
+              - 'null'
+              description: Location/region the volume was created in.
+            storage_class:
+              type:
+              - string
+              - 'null'
+              description: Storage class the volume was created in (Google only).
+        auth:
+          required:
+          - authenticated_access
+          type: object
+          properties:
+            authenticated_access:
+              type: boolean
+              description: If true, the users must authenticate to access the volume. If false, the volume is publicly available to all users.
+            policy:
+              type: string
+              description: Authentication policy.
+              enum:
+              - ads
+              - ldapds
+              - public
+            policy_label:
+              type: string
+              description: Full name of the Authentication policy.
+        root_handle:
           type:
           - string
           - 'null'
-          description: Email associated with the folder quota.
-        limit:
-          minimum: 0
-          type: integer
-          description: Usage limit of the folder quota in bytes.
-        usage:
-          type:
-          - integer
-          - 'null'
-          description: Current usage of the folder quota in bytes.
+          description: The table of contents handle for the root of the volume for use with UniFS Exporter. Only appears if enabled by support.
           readOnly: true
-        children:
-          type: boolean
-          description: Whether a rule applies to child folders.
+        bucket:
+          type:
+          - string
+          - 'null'
+          description: If using BYOC, this is the bucket containing the volume.
+          readOnly: true
+        account_name:
+          type:
+          - string
+          - 'null'
+          description: If using Windows Azure Platform and BYOC, this is the storage account name associated with the volume.
+          readOnly: true
+        options:
+          type: object
+          properties:
+            auto_provision_cred:
+              type: boolean
+              description: If using BYOC and not providing a provider cred_id, this will provision one.
+              default: false
+            create_new_key:
+              type: boolean
+              description: Create a new key to use for volume data. Beginning with the 9.3 release, you must set an escrow passphrase before generating new encryption keys or escrowing uploaded encryption keys with Nasuni.
+              default: true
+            key_name:
+              type: string
+              description: If creating a new key, the optional name to use for the key. Otherwise the name of the existing key to use.
+            create_default_access_point:
+              type: boolean
+              description: After the volume is created, automatically create a CIFS share or NFS export.
+              default: true
         links:
           type: object
           properties:
             self:
               $ref: '#/components/schemas/Link_3'
-            delete:
+            filer:
+              $ref: '#/components/schemas/Link_3'
+            filer_settings:
+              $ref: '#/components/schemas/Link_3'
+            filer_connections:
+              $ref: '#/components/schemas/Link_3'
+            shares:
+              $ref: '#/components/schemas/Link_3'
+            exports:
+              $ref: '#/components/schemas/Link_3'
+            ftp_directories:
+              $ref: '#/components/schemas/Link_3'
+            antivirus_violations:
+              $ref: '#/components/schemas/Link_3'
+            folder_quotas:
+              $ref: '#/components/schemas/Link_3'
+            snapshots:
               $ref: '#/components/schemas/Link_3'
           description: Links to related resources, collections, and actions.
           readOnly: true
-      description: FolderQuota object
-    ExportHostSpecField_3:
-      type: string
-      description: 'A comma-separated list of the hostnames, IP addresses with optional
-
-        netmasks, or @-prefixed netgroup names allowed to access the export. If blank, all hosts
-
-        on your network can access the export. Hostnames may contain the * character as a wildcard (Default
-
-        when being set on an Export).
-
-        '
-      default: '*'
-    PinnedFolders_2:
+      description: Representation of a Volume object.
+    FtpDirectory_3:
       type: object
       properties:
+        id:
+          type: integer
+          description: FTP directory identifier.
+          readOnly: true
+        name:
+          type: string
+          description: Name of the FTP directory.
+          readOnly: true
+        path:
+          type: string
+          description: Path of the FTP directory.
+          readOnly: true
+        comment:
+          type: string
+          description: Any comments regarding the FTP directory.
+          readOnly: true
+        readonly:
+          type: boolean
+          description: If true, users cannot change the contents of the directory.
+          readOnly: true
+        visibility:
+          type: string
+          description: 'Controls what files and directories users can see.
+
+            * "default" - Every file is visible to user, even if user does not have access permissions. * "hide" - Users only see files they have permission to access. * "invisible" - No files are visible to user. If user has filename and permission, user can access file.'
+          readOnly: true
+          enum:
+          - default
+          - hide
+          - invisible
+        allow_from:
+          type: string
+          description: 'Comma-separated list of IP addresses or subnet addresses of hosts
+
+            allowed to access FTP directory. If blank, all hosts on your
+
+            network have access. This feature cannot be used in conjunction
+
+            with Users/Groups restrictions.
+
+            '
+          readOnly: true
+        allow_users:
+          type: string
+          description: The users that will be allowed to access the FTP directory.
+          readOnly: true
+        allow_groups:
+          type: string
+          description: The groups that will be allowed to access the FTP directory.
+          readOnly: true
+        anonymous:
+          type: boolean
+          description: If true, allow anonymous FTP access.
+          readOnly: true
+        anonymous_only:
+          type: boolean
+          description: 'If true, only the anonymous user will be granted access. This feature
+
+            cannot be used in conjunction with IP address restrictions.
+
+            '
+          readOnly: true
+        umask:
+          type: string
+          description: 'Normally, newly created files and directories have read and write
+
+            access for the owner, groups and other users. This option allows
+
+            you to restrict read and write access for groups or others.
+
+
+            * ''000'' - No Extra Restrictions (Default)
+
+            * ''002'' - Read-Only Others
+
+            * ''022'' - Read-Only Groups and Others
+
+            * ''006'' - Restrict Others
+
+            * ''066'' - Restrict Groups and Others
+
+            * ''026'' - Read-Only Groups, Restrict Others
+
+            '
+          readOnly: true
+          enum:
+          - '000'
+          - '002'
+          - '022'
+          - '006'
+          - '066'
+          - '026'
+        hide_ownership:
+          type: boolean
+          description: 'All directory listings will show owner and group information as "ftp",
+
+            hiding the underlying owner and group. This may also be used to work
+
+            around directory listing issues on some non-interactive clients.
+
+            '
+          readOnly: true
+        hidden_stores:
+          type: boolean
+          description: 'File uploads are done in two steps using a temporary file. This prevents
+
+            issues with incomplete uploads and file use before upload is complete.
+
+            This feature prevents resuming uploads. This is automatically enabled for
+
+            anonymous uploads.
+
+            '
+          readOnly: true
         filer_serial_number:
           type: string
           description: Unique identifier for the associated filer.
@@ -7928,23 +8053,6 @@ components:
           type: string
           description: Unique identifier for the associated volume.
           readOnly: true
-        path:
-          type: string
-          description: Path of the pinned folder.
-        mode:
-          type: string
-          description: 'Specifies the pinning mode to enable.
-
-
-            * "metadata" - Enable pinning only on metadata.
-
-            * "metadata_and_data" - Enable pinning on metadata and data.
-
-            '
-          default: metadata_and_data
-          enum:
-          - metadata
-          - metadata_and_data
         links:
           type: object
           properties:
@@ -7954,11 +8062,9 @@ components:
               $ref: '#/components/schemas/Link_3'
             volume:
               $ref: '#/components/schemas/Link_3'
-            disable:
-              $ref: '#/components/schemas/Link_3'
           description: Links to related resources, collections, and actions.
           readOnly: true
-      description: Pinned Folder object.
+      description: FTP directory object
     VolumeFilerSetting_3:
       type: object
       properties:
@@ -8258,122 +8364,32 @@ components:
           description: Links to related resources, collections, and actions.
           readOnly: true
       description: Filer specfic volume settings.
-    FtpDirectory_3:
+    Link_3:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+          readOnly: true
+        method:
+          type: string
+          description: HTTP method to use on the link.
+          readOnly: true
+    ErrorResponse_2:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error_3'
+    FolderQuota_2:
+      required:
+      - limit
+      - path
+      - type
       type: object
       properties:
         id:
-          type: integer
-          description: FTP directory identifier.
-          readOnly: true
-        name:
           type: string
-          description: Name of the FTP directory.
-          readOnly: true
-        path:
-          type: string
-          description: Path of the FTP directory.
-          readOnly: true
-        comment:
-          type: string
-          description: Any comments regarding the FTP directory.
-          readOnly: true
-        readonly:
-          type: boolean
-          description: If true, users cannot change the contents of the directory.
-          readOnly: true
-        visibility:
-          type: string
-          description: 'Controls what files and directories users can see.
-
-            * "default" - Every file is visible to user, even if user does not have access permissions. * "hide" - Users only see files they have permission to access. * "invisible" - No files are visible to user. If user has filename and permission, user can access file.'
-          readOnly: true
-          enum:
-          - default
-          - hide
-          - invisible
-        allow_from:
-          type: string
-          description: 'Comma-separated list of IP addresses or subnet addresses of hosts
-
-            allowed to access FTP directory. If blank, all hosts on your
-
-            network have access. This feature cannot be used in conjunction
-
-            with Users/Groups restrictions.
-
-            '
-          readOnly: true
-        allow_users:
-          type: string
-          description: The users that will be allowed to access the FTP directory.
-          readOnly: true
-        allow_groups:
-          type: string
-          description: The groups that will be allowed to access the FTP directory.
-          readOnly: true
-        anonymous:
-          type: boolean
-          description: If true, allow anonymous FTP access.
-          readOnly: true
-        anonymous_only:
-          type: boolean
-          description: 'If true, only the anonymous user will be granted access. This feature
-
-            cannot be used in conjunction with IP address restrictions.
-
-            '
-          readOnly: true
-        umask:
-          type: string
-          description: 'Normally, newly created files and directories have read and write
-
-            access for the owner, groups and other users. This option allows
-
-            you to restrict read and write access for groups or others.
-
-
-            * ''000'' - No Extra Restrictions (Default)
-
-            * ''002'' - Read-Only Others
-
-            * ''022'' - Read-Only Groups and Others
-
-            * ''006'' - Restrict Others
-
-            * ''066'' - Restrict Groups and Others
-
-            * ''026'' - Read-Only Groups, Restrict Others
-
-            '
-          readOnly: true
-          enum:
-          - '000'
-          - '002'
-          - '022'
-          - '006'
-          - '066'
-          - '026'
-        hide_ownership:
-          type: boolean
-          description: 'All directory listings will show owner and group information as "ftp",
-
-            hiding the underlying owner and group. This may also be used to work
-
-            around directory listing issues on some non-interactive clients.
-
-            '
-          readOnly: true
-        hidden_stores:
-          type: boolean
-          description: 'File uploads are done in two steps using a temporary file. This prevents
-
-            issues with incomplete uploads and file use before upload is complete.
-
-            This feature prevents resuming uploads. This is automatically enabled for
-
-            anonymous uploads.
-
-            '
+          description: FolderQuota identifier
           readOnly: true
         filer_serial_number:
           type: string
@@ -8383,18 +8399,43 @@ components:
           type: string
           description: Unique identifier for the associated volume.
           readOnly: true
+        type:
+          type: string
+          description: The type of folder quota object
+          enum:
+          - rule
+          - quota
+        path:
+          type: string
+          description: Path of the folder quota.
+        email:
+          type:
+          - string
+          - 'null'
+          description: Email associated with the folder quota.
+        limit:
+          minimum: 0
+          type: integer
+          description: Usage limit of the folder quota in bytes.
+        usage:
+          type:
+          - integer
+          - 'null'
+          description: Current usage of the folder quota in bytes.
+          readOnly: true
+        children:
+          type: boolean
+          description: Whether a rule applies to child folders.
         links:
           type: object
           properties:
             self:
               $ref: '#/components/schemas/Link_3'
-            filer:
-              $ref: '#/components/schemas/Link_3'
-            volume:
+            delete:
               $ref: '#/components/schemas/Link_3'
           description: Links to related resources, collections, and actions.
           readOnly: true
-      description: FTP directory object
+      description: FolderQuota object
     PathData_2:
       type: object
       properties:
@@ -8567,41 +8608,15 @@ components:
           description: Links to related resources, collections, and actions.
           readOnly: true
       description: Path information object
-    GlobalLocking_2:
-      type: object
-      properties:
-        path:
-          type: string
-          description: Path of the global locking settings.
-        mode:
-          type: string
-          description: The desired mode of global locking.
-          enum:
-          - optimized
-          - advanced
-          - asynchronous
-        filer_serial_number:
-          type: string
-          description: Unique identifier for the associated filer.
-          readOnly: true
-        volume_guid:
-          type: string
-          description: Unique identifier for the associated volume.
-          readOnly: true
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link_3'
-          description: Links to related resources, collections, and actions.
-          readOnly: true
-      description: Global locking object.
-    Export_3:
+    Share_3:
+      required:
+      - name
+      - path
       type: object
       properties:
         id:
           type: integer
-          description: Export identifier
+          description: Share identifier.
           readOnly: true
         filer_serial_number:
           type: string
@@ -8613,14 +8628,327 @@ components:
           readOnly: true
         name:
           type: string
-          description: Name of the export.
+          description: The name of the CIFS share.
         path:
           type: string
-          description: Path of the exported directory. Default is '/'.
-          default: /
+          description: Path of the share.
         comment:
           type: string
-          description: Any comments regarding the export.
+          description: Any comments regarding the share.
+        readonly:
+          type: boolean
+          description: If enabled, users can not change the contents of the share.
+          default: false
+        browseable:
+          type: boolean
+          description: If enabled, this share will appear when browsing.
+          default: true
+        hosts_allow:
+          type: string
+          description: Hosts allowed to access the share. IP addresses or IP address/netmask values separated by spaces. Blank allows all hosts
+          default: ''
+        hide_unreadable:
+          type: boolean
+          description: Files and folders that the user cannot access do not appear in folder listings.
+          default: true
+        enable_previous_vers:
+          type: boolean
+          description: Allow users to view and restore files using the Previous Versions tab in Windows
+          default: false
+        case_sensitive:
+          type: boolean
+          description: Files and folders are considered different if the case of letters in the name differs. (Enabling case sensitivity aids performance)
+          default: false
+        enable_snapshot_dirs:
+          type: boolean
+          description: Allows clients to access the hidden snapshot directories, showing previous versions of the file system (requires enabling Snapshot Directory Access for the volume).
+          default: false
+        homedir_support:
+          type: integer
+          description: 'When enabled, the target folder path for the share is automatically
+
+            appended with a folder named for the user. Possible values:
+
+
+            * 0 - Disable
+
+            * 2 - Enable
+
+            '
+        mobile:
+          type: boolean
+          description: Enable desktop and/or mobile device support
+          default: false
+        browser_access:
+          type: boolean
+          description: Enable web access
+          default: false
+        browser_access_settings:
+          type: object
+          properties:
+            shared_links_enabled:
+              type: boolean
+              description: Allow creating shared links to Web Access.
+              default: false
+            link_force_password:
+              type: boolean
+              description: Require passwords for all shared links.
+              default: true
+            link_allow_rw:
+              type: boolean
+              description: Allow the user to create writable shared links to directories.
+              default: false
+            external_share_url:
+              type: string
+              description: External hostname for shared links.
+            link_expire_limit:
+              maximum: 999
+              minimum: 0
+              type: integer
+              description: Maximum number of days until shared links expire. Set to 0 for unlimited.
+            link_auth:
+              type: object
+              properties:
+                authall:
+                  type: boolean
+                  description: 'When true, all users will be allowed to create shared links.
+
+                    When false, no user will have access to the shared links until a user,
+
+                    or a group the user is a member of, is specified.
+
+                    '
+                  default: true
+                allow_groups_ro:
+                  type: array
+                  description: Groups with read-only access to shared links.
+                  items:
+                    $ref: '#/components/schemas/GroupNameField'
+                allow_groups_rw:
+                  type: array
+                  description: Groups with read-write access to shared links.
+                  items:
+                    $ref: '#/components/schemas/GroupNameField'
+                deny_groups:
+                  type: array
+                  description: Groups denied access to shared links.
+                  items:
+                    $ref: '#/components/schemas/GroupNameField'
+                allow_users_ro:
+                  type: array
+                  description: Users with read-only access to shared links.
+                  items:
+                    $ref: '#/components/schemas/UserNameField'
+                allow_users_rw:
+                  type: array
+                  description: Users with read-write access to shared links.
+                  items:
+                    $ref: '#/components/schemas/UserNameField'
+                deny_users:
+                  type: array
+                  description: Users denied access to shared links.
+                  items:
+                    $ref: '#/components/schemas/UserNameField'
+              description: Shared link authentication settings.
+          description: Settings that can be applied to web access.
+        aio_enabled:
+          type: boolean
+          description: Asynchronous I/O. Enable concurrent read/write access per client connection.
+          default: true
+        veto_files:
+          type: string
+          description: 'Block files. Specify file or directory name patterns that the share will make both
+
+            invisible and inaccessible. Enter one pattern per line.
+
+            The wildcard characters ''*'' and ''?'' may be used to specify multiple files
+
+            or directories. The ''/'' character is not valid. Note: This feature can break compatibility with some clients.
+
+            '
+          default: ''
+        fruit_enabled:
+          type: boolean
+          description: Enhances share behavior, including SMB2 protocol support, for Mac OS X Clients when possible.
+          default: false
+        smb_encrypt:
+          type: string
+          description: Control if clients are desired or required to use SMB encryption when connecting to the share. Includes SMB3 encryption for Windows clients. Empty string indicates that client usage of encryption is optional.
+          default: ''
+          enum:
+          - ''
+          - desired
+          - required
+        agl_oplocks:
+          type: boolean
+          description: Enable Oplocks for Advanced Global Locking. This supports client read caching and can accelerate some applications. Only applies to 9.12+ Filers
+          default: true
+        auth:
+          type: object
+          properties:
+            authall:
+              type: boolean
+              description: 'When true, all Users can authenticate. When false, only specific
+
+                Groups and Users can authenticate. In this situation, no user will
+
+                have access to the share until a user, or a group the user is a member of, is specified.
+
+                '
+              default: true
+            rw_groups:
+              type: array
+              description: Groups with read-write access to the share.
+              items:
+                $ref: '#/components/schemas/GroupNameField'
+            ro_groups:
+              type: array
+              description: Groups with read-only access to the share.
+              items:
+                $ref: '#/components/schemas/GroupNameField'
+            deny_groups:
+              type: array
+              description: Groups to deny access to the share.
+              items:
+                $ref: '#/components/schemas/GroupNameField'
+            ro_users:
+              type: array
+              description: Users with read-only access to the share.
+              items:
+                $ref: '#/components/schemas/UserNameField'
+            rw_users:
+              type: array
+              description: Users with read-write access to the share.
+              items:
+                $ref: '#/components/schemas/UserNameField'
+            deny_users:
+              type: array
+              description: Users to deny access to the share.
+              items:
+                $ref: '#/components/schemas/UserNameField'
+          description: Share authentication settings.
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_3'
+            filer:
+              $ref: '#/components/schemas/Link_3'
+            volume:
+              $ref: '#/components/schemas/Link_3'
+          description: Links to related resources, collections, and actions.
+          readOnly: true
+      description: CIFS Share
+    Paging_2:
+      type: object
+      properties:
+        href:
+          type: string
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type:
+          - string
+          - 'null'
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type:
+          - string
+          - 'null'
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
+    ExportSecOptionsField_3:
+      maxItems: 4
+      type: array
+      description: Security options in use by the exported directory. Multiple options may be applied, but they cannot be repeated.
+      items:
+        type: string
+        description: 'Possible values:
+
+
+          * ''sys'' - Traditional - Default
+
+          * ''krb5'' - Authentication
+
+          * ''krb5i'' - Integrity Protection
+
+          * ''krb5p'' - Privacy Protection
+
+          '
+        enum:
+        - sys
+        - krb5
+        - krb5i
+        - krb5p
+    PinnedFolders_2:
+      type: object
+      properties:
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+          readOnly: true
+        volume_guid:
+          type: string
+          description: Unique identifier for the associated volume.
+          readOnly: true
+        path:
+          type: string
+          description: Path of the pinned folder.
+        mode:
+          type: string
+          description: 'Specifies the pinning mode to enable.
+
+
+            * "metadata" - Enable pinning only on metadata.
+
+            * "metadata_and_data" - Enable pinning on metadata and data.
+
+            '
+          default: metadata_and_data
+          enum:
+          - metadata
+          - metadata_and_data
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link_3'
+            filer:
+              $ref: '#/components/schemas/Link_3'
+            volume:
+              $ref: '#/components/schemas/Link_3'
+            disable:
+              $ref: '#/components/schemas/Link_3'
+          description: Links to related resources, collections, and actions.
+          readOnly: true
+      description: Pinned Folder object.
+    ExportHostSpecField_3:
+      type: string
+      description: 'A comma-separated list of the hostnames, IP addresses with optional
+
+        netmasks, or @-prefixed netgroup names allowed to access the export. If blank, all hosts
+
+        on your network can access the export. Hostnames may contain the * character as a wildcard (Default
+
+        when being set on an Export).
+
+        '
+      default: '*'
+    NfsHostOption_2:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Host option identifier
+          readOnly: true
         readonly:
           $ref: '#/components/schemas/ExportReadOnlyField_3'
         hostspec:
@@ -8631,539 +8959,64 @@ components:
           $ref: '#/components/schemas/ExportPerfModeField_3'
         sec_options:
           $ref: '#/components/schemas/ExportSecOptionsField_3'
-        nfs_host_options:
-          type: array
-          description: Additional host options for the Export. The items in this list can be created, read, updated, and deleted via the host option endpoints.
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/NfsHostOption_2'
         links:
           type: object
           properties:
             self:
               $ref: '#/components/schemas/Link_3'
-            filer:
-              $ref: '#/components/schemas/Link_3'
-            volume:
-              $ref: '#/components/schemas/Link_3'
-            nfs_host_options:
+            export:
               $ref: '#/components/schemas/Link_3'
           description: Links to related resources, collections, and actions.
           readOnly: true
-      description: Export object
-    Message_2:
-      type: object
-      properties:
-        id:
-          type: string
-          description: ID of the message.
-        filer_serial_number:
-          type: string
-          description: Identifier to the Filer the message is associated with.
-        description:
-          type: string
-          description: Description of the intent of message.
-        code:
-          type: string
-          description: A code identifying the intent of the message.
-        status:
-          type: string
-          description: 'Current status of the message.
-
-            * ''synced'' - Message has been received by the Filer, and the Filer returned a success response. * ''pending'' - Message is currently in transit. * ''failure'' - Messages has been received by the Filer, but returned an error response.'
-          enum:
-          - synced
-          - pending
-          - failure
-        send_time:
-          type: string
-          description: Time the message was sent.
-        expiration_time:
-          type:
-          - string
-          - 'null'
-          description: Time a synced message will expire and be removed from the messages list.
-        response_time:
-          type:
-          - string
-          - 'null'
-          description: Time a message response was received.
-        initiated_by:
-          type: string
-          description: The username of the user who triggered the message, or '[console]' if triggered by the NMC itself.
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link_3'
-            filer:
-              $ref: '#/components/schemas/Link_3'
-            acknowledge:
-              $ref: '#/components/schemas/Link_3'
-            applied_resource:
-              type: object
-              properties:
-                href:
-                  type: string
-                  description: Hyperlink to the resource.
-                method:
-                  type: string
-                  description: HTTP method to use on the link.
-              description: Provides a link to the resource being acted on or that was created. When creating a resource, this link will only be available after the message is successfully synced ('status' is 'synced').
-          description: Links to related resources, collections, and actions.
-        error:
-          $ref: '#/components/schemas/Error_3'
-      description: The message object is used to track an action that we want the Filer to perform.
-    Volume_3:
+      description: An NFS Export Host Option object
+    VolumeUpdateQuota:
       required:
-      - filer_serial_number
-      - name
+      - quota
       type: object
       properties:
-        guid:
-          type: string
-          description: Volume identifier.
-          readOnly: true
-        filer_serial_number:
-          type: string
-          description: Identifier to the Filer the volume was created on.
-        name:
-          type: string
-          description: The name of the volume.
-        nmc_managed:
-          type: boolean
-          description: Indicates if the volume is fully managed by the NMC.
-          readOnly: true
-        protocols:
-          required:
-          - protocols
-          type: object
-          properties:
-            permissions_policy:
-              type: string
-              description: 'Permission policy of the volume. Possible values:
-
-
-                * ''NTFS60'' - NTFS Compatible Mode
-
-                * ''NTFSONLY710'' - NTFS Exclusive Mode
-
-                * ''NTFSMP'' - NTFS Multiprotocol Mode
-
-                * ''POSIX60'' - POSIX Mixed Mode
-
-                * ''MODEBITS60'' - UNIX/NFS Permissions Only Mode
-
-                * ''PUBLICMODE60'' - Unauthenticated Access Mode
-
-                '
-              enum:
-              - NTFS60
-              - NTFSONLY710
-              - NTFSMP
-              - POSIX60
-              - MODEBITS60
-              - PUBLICMODE60
-            protocols:
-              type: array
-              items:
-                type: string
-                description: Protocols enabled on the volume.
-                enum:
-                - CIFS
-                - NFS
-                - FTP
-          description: Volume protocol settings.
-        antivirus_service:
-          type: object
-          properties:
-            enabled:
-              type: boolean
-            days:
-              type: object
-              properties:
-                sun:
-                  type: boolean
-                mon:
-                  type: boolean
-                tue:
-                  type: boolean
-                wed:
-                  type: boolean
-                thu:
-                  type: boolean
-                fri:
-                  type: boolean
-                sat:
-                  type: boolean
-              description: Days of the week the antivirus service will run.
-            check_files_immediately:
-              type: boolean
-              description: If true, files will be checked as they are written (CIFS volumes only).
-            allday:
-              type: boolean
-              description: If true, the antivirus service will run all day.
-            start:
-              type: integer
-              description: Hour of the day to start the antivirus service. An integer between 0 and 23, with 0 = '12 AM', 1 = '1 AM', ... 23 = '11 PM'.
-            stop:
-              type: integer
-              description: Hour of the day to stop the antivirus service. An integer between 0 and 23, with 0 = '12 AM', 1 = '1 AM', ... 23 = '11 PM'.
-            frequency:
-              type: integer
-              description: Frequency the service will run (minutes).
-          description: Volume Antivirus Service settings
-        remote_access:
-          $ref: '#/components/schemas/VolumeUpdateRemoteAccessField'
         quota:
           $ref: '#/components/schemas/VolumeUpdateQuotaField'
-        case_sensitive:
-          type: boolean
-          description: If true, the volume is case-sensitive. CIFS-only volumes perform better when volume is case-insensitive (value of false).
-          readOnly: true
-        snapshot_retention:
-          type: object
-          properties:
-            retain:
-              type: string
-              description: 'Type of snapshot retention imposed. Possible values:
-
-
-                * ''INFINITE'' - All snapshots
-
-                * ''BY_COUNT'' - Set number of snapshots
-
-                * ''BY_AGE'' - Snapshots within a range
-
-                '
-              enum:
-              - INFINITE
-              - BY_COUNT
-              - BY_AGE
-            number:
-              type: integer
-              description: Number of snapshots to retain.
-            years:
-              type: integer
-              description: Years to retain snapshots.
-            months:
-              type: integer
-              description: Months to retain snapshots.
-            days:
-              type: integer
-              description: Days to retain snapshots.
-          description: Volume snapshot retention
-        cloud_io:
-          type: object
-          properties:
-            dedupe:
-              type: boolean
-              description: If true, deduplication is enabled. Deduplication is a data compression technique for eliminating duplicate copies of repeating data.
-            compression:
-              type: boolean
-              description: If true, compression (via zlib) is enabled.
-            chunk_size:
-              type: integer
-              description: Chunk size in bytes for cloud I/O. Value of zero means the default value will be used.
-          description: Volume Cloud I/O settings.
-        provider:
-          required:
-          - location
-          - shortname
-          type: object
-          properties:
-            cred_uuid:
-              type: string
-              description: Credential identifier.
-            name:
-              type: string
-              description: Full name of the cloud provider.
-              readOnly: true
-            shortname:
-              type:
-              - string
-              - 'null'
-              description: Shortname (code) of the cloud provider.
-              enum:
-              - null
-              - amazons3
-              - azure
-              - cleversafe
-              - hcp
-              - ibmcos
-              - vipr
-              - googles3
-            location:
-              type:
-              - string
-              - 'null'
-              description: Location/region the volume was created in.
-            storage_class:
-              type:
-              - string
-              - 'null'
-              description: Storage class the volume was created in (Google only).
-        auth:
-          required:
-          - authenticated_access
-          type: object
-          properties:
-            authenticated_access:
-              type: boolean
-              description: If true, the users must authenticate to access the volume. If false, the volume is publicly available to all users.
-            policy:
-              type: string
-              description: Authentication policy.
-              enum:
-              - ads
-              - ldapds
-              - public
-            policy_label:
-              type: string
-              description: Full name of the Authentication policy.
-        root_handle:
-          type:
-          - string
-          - 'null'
-          description: The table of contents handle for the root of the volume for use with UniFS Exporter. Only appears if enabled by support.
-          readOnly: true
-        bucket:
-          type:
-          - string
-          - 'null'
-          description: If using BYOC, this is the bucket containing the volume.
-          readOnly: true
-        account_name:
-          type:
-          - string
-          - 'null'
-          description: If using Windows Azure Platform and BYOC, this is the storage account name associated with the volume.
-          readOnly: true
-        options:
-          type: object
-          properties:
-            auto_provision_cred:
-              type: boolean
-              description: If using BYOC and not providing a provider cred_id, this will provision one.
-              default: false
-            create_new_key:
-              type: boolean
-              description: Create a new key to use for volume data. Beginning with the 9.3 release, you must set an escrow passphrase before generating new encryption keys or escrowing uploaded encryption keys with Nasuni.
-              default: true
-            key_name:
-              type: string
-              description: If creating a new key, the optional name to use for the key. Otherwise the name of the existing key to use.
-            create_default_access_point:
-              type: boolean
-              description: After the volume is created, automatically create a CIFS share or NFS export.
-              default: true
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link_3'
-            filer:
-              $ref: '#/components/schemas/Link_3'
-            filer_settings:
-              $ref: '#/components/schemas/Link_3'
-            filer_connections:
-              $ref: '#/components/schemas/Link_3'
-            shares:
-              $ref: '#/components/schemas/Link_3'
-            exports:
-              $ref: '#/components/schemas/Link_3'
-            ftp_directories:
-              $ref: '#/components/schemas/Link_3'
-            antivirus_violations:
-              $ref: '#/components/schemas/Link_3'
-            folder_quotas:
-              $ref: '#/components/schemas/Link_3'
-            snapshots:
-              $ref: '#/components/schemas/Link_3'
-          description: Links to related resources, collections, and actions.
-          readOnly: true
-      description: Representation of a Volume object.
-    TaskState:
+    VolumeUpdateRemoteAccess:
+      required:
+      - remote_access
+      type: object
+      properties:
+        remote_access:
+          $ref: '#/components/schemas/VolumeUpdateRemoteAccessField'
+    SnapshotStatus:
       type: string
       enum:
+      - idle
+      - pending
       - in_progress
-      - completed
+      - succeeded
       - failed
-      title: TaskState
-    VolumeCapacityHistoryResponseDto:
-      properties:
-        volume_id:
-          type: string
-          title: Volume Id
-        data_points:
-          items:
-            $ref: '#/components/schemas/VolumeCapacityHistoryPointDto'
-          type: array
-          title: Data Points
-      type: object
-      required:
-      - volume_id
-      title: VolumeCapacityHistoryResponseDto
-    VolumeEdgesDto:
-      properties:
-        master:
-          $ref: '#/components/schemas/VolumeMasterDto'
-        connected:
-          items:
-            type: string
-            format: uuid
-          type: array
-          title: Connected
-        connected_count:
-          type: integer
-          title: Connected Count
-      type: object
-      required:
-      - master
-      - connected_count
-      title: VolumeEdgesDto
-    ErrorResponse_3:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    VolumeCapacityHistoryPointDto:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-        bytes_in_cloud:
-          type: integer
-          title: Bytes In Cloud
-      type: object
-      required:
-      - timestamp
-      - bytes_in_cloud
-      title: VolumeCapacityHistoryPointDto
-    TaskSummaryDto:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        resource:
-          type: string
-          title: Resource
-        resource_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: string
-          - type: 'null'
-          title: Resource Id
-        action:
-          type: string
-          title: Action
-        executor:
-          $ref: '#/components/schemas/TaskExecutor'
-        executor_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Executor Id
-        initiated_by:
-          $ref: '#/components/schemas/TaskInitiator'
-        initiator_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Initiator Id
-        activity_log_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Activity Log Id
-        reason:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Reason
-        state:
-          $ref: '#/components/schemas/TaskState'
-        last_updated_at:
-          type: string
-          format: date-time
-          title: Last Updated At
-        user_acknowledged_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: User Acknowledged At
-        deletion_time:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Deletion Time
-      type: object
-      required:
-      - id
-      - created_at
-      - resource
-      - action
-      - executor
-      - initiated_by
-      - state
-      - last_updated_at
-      title: TaskSummaryDto
-      description: 'Customer-facing job view: the rolled-up task `state` plus an optional,
-
-        curated task-level `reason`.
+      - cancelling
+      - cancelled
+      - cancel_rejected
+      - up_to_date
+      title: SnapshotStatus
+      description: 'Public snapshot lifecycle vocabulary surfaced by the snapshot APIs.
 
 
-        Deliberately carries no `steps`. Internal step `reason`s — unstructured,
+        The persisted column (``VolumeEdgeState.current_snapshot_status``)
 
-        engineering-facing strings (often raw exception detail) — stay in the
+        has a single writer: the EventHub ``VolumeSnapshotStatusProcessor``,
 
-        backend and never ride on this DTO. The task-level `reason` is a separate,
+        which translates filer ``volume_snapshot_status`` events. No other
 
-        customer-safe contract: it''s surfaced only when a caller deliberately sets
+        code path — API request handlers, heartbeat upserts, background
 
-        it on the task (it is not auto-promoted from a failed step), and is null
+        services — writes to that column. ``cancelling`` never reaches the
 
-        otherwise. The deliberate partial-failure aggregation policy that decides
+        DB: it exists as a FE-optimistic wire value only (clients render it
 
-        *what* to put there remains deferred (see the PORTAL-2195 ledger, FU-3).'
-    VolumeMasterDto:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        description:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Description
-      type: object
-      required:
-      - id
-      title: VolumeMasterDto
-    VolumeDto:
+        between the cancel dispatch and the filer''s ``cancelled`` /
+
+        ``cancel_rejected`` ack). ``pending`` is a real filer-reported
+
+        state.'
+    VolumeBaseDto:
       properties:
         id:
           type: string
@@ -9182,118 +9035,10 @@ components:
           anyOf:
           - $ref: '#/components/schemas/NocCloudProvider'
           - type: 'null'
-        edges:
-          anyOf:
-          - $ref: '#/components/schemas/VolumeEdgesDto'
-          - type: 'null'
-        location:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Location
-        gfl:
-          type: boolean
-          title: Gfl
-        lock_server:
-          type: string
-          title: Lock Server
-        used_capacity:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Used Capacity
-        percent_capacity_used:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Percent Capacity Used
-        compression_data_reduction_percent:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Compression Data Reduction Percent
-        share_features:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Share Features
-        gfa_mode:
-          type: boolean
-          title: Gfa Mode
       type: object
       required:
       - id
-      - gfl
-      - lock_server
-      - gfa_mode
-      title: VolumeDto
-    TaskInitiator:
-      type: string
-      enum:
-      - portal
-      - edge
-      title: TaskInitiator
-    ValidationErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
-      type: object
-      required:
-      - message
-      - detail
-      title: ValidationErrorResponse
-    ConnectionPermission:
-      type: string
-      enum:
-      - READONLY
-      - READWRITE
-      - Custom
-      title: ConnectionPermission
-    NocCloudProvider:
-      type: string
-      enum:
-      - amazons3
-      - amazons3gov
-      - azure
-      - google
-      - googles3
-      - atmos
-      - ironmountain
-      - rackspace
-      - nirvanix
-      - synaptic
-      - castor
-      - delldx
-      - cloudone
-      - hp
-      - cleversafe
-      - vipr
-      - ibmcos
-      - hcp
-      - s3_compatible
-      title: NocCloudProvider
-      description: Cloud provider identity as used by NOC (shortname).
-    TaskExecutor:
-      type: string
-      enum:
-      - edge
-      title: TaskExecutor
+      title: VolumeBaseDto
     PermissionPolicy:
       type: string
       enum:
@@ -9304,44 +9049,19 @@ components:
       - NTFS Exclusive Mode
       - NTFS Multiprotocol Mode
       title: PermissionPolicy
-    SnapshotStatusResponseDto:
-      properties:
-        volume_id:
-          type: string
-          title: Volume Id
-        edge_id:
-          type: string
-          format: uuid
-          title: Edge Id
-        current_snapshot_status:
-          $ref: '#/components/schemas/SnapshotStatus'
-          default: idle
-      type: object
-      required:
-      - volume_id
-      - edge_id
-      title: SnapshotStatusResponseDto
-      description: 'Per-edge snapshot status — ``VolumeEdgeState.current_snapshot_status``
-
-        for a single ``(volume_id, edge_id)``. Defaults to ``idle`` when
-
-        no state row exists (no UI difference).'
-    VolumesResponseDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/VolumeBaseDto'
-          type: array
-          title: Items
-      type: object
-      title: VolumesResponseDto
-    Protocol:
+    SecurityMode:
       type: string
       enum:
-      - NFS
-      - SMB
-      - FTP
-      title: Protocol
+      - Publicly Available
+      - Active Directory
+      - LDAP Directory
+      title: SecurityMode
+    TaskInitiator:
+      type: string
+      enum:
+      - portal
+      - edge
+      title: TaskInitiator
     VolumeDetailsDto:
       properties:
         volume_id:
@@ -9511,7 +9231,268 @@ components:
         consumers compose their own views without a UI-shaped
 
         "details+connections" fusion endpoint.'
-    VolumeBaseDto:
+    VolumesResponseDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/VolumeBaseDto'
+          type: array
+          title: Items
+      type: object
+      title: VolumesResponseDto
+    TaskSummaryDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        resource:
+          type: string
+          title: Resource
+        resource_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: string
+          - type: 'null'
+          title: Resource Id
+        action:
+          type: string
+          title: Action
+        executor:
+          $ref: '#/components/schemas/TaskExecutor'
+        executor_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Executor Id
+        initiated_by:
+          $ref: '#/components/schemas/TaskInitiator'
+        initiator_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Initiator Id
+        activity_log_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Activity Log Id
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        state:
+          $ref: '#/components/schemas/TaskState'
+        last_updated_at:
+          type: string
+          format: date-time
+          title: Last Updated At
+        user_acknowledged_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: User Acknowledged At
+        deletion_time:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Deletion Time
+      type: object
+      required:
+      - id
+      - created_at
+      - resource
+      - action
+      - executor
+      - initiated_by
+      - state
+      - last_updated_at
+      title: TaskSummaryDto
+      description: 'Customer-facing job view: the rolled-up task `state` plus an optional,
+
+        curated task-level `reason`.
+
+
+        Deliberately carries no `steps`. Internal step `reason`s — unstructured,
+
+        engineering-facing strings (often raw exception detail) — stay in the
+
+        backend and never ride on this DTO. The task-level `reason` is a separate,
+
+        customer-safe contract: it''s surfaced only when a caller deliberately sets
+
+        it on the task (it is not auto-promoted from a failed step), and is null
+
+        otherwise. The deliberate partial-failure aggregation policy that decides
+
+        *what* to put there remains deferred (see the PORTAL-2195 ledger, FU-3).'
+    SnapshotStatusResponseDto:
+      properties:
+        volume_id:
+          type: string
+          title: Volume Id
+        edge_id:
+          type: string
+          format: uuid
+          title: Edge Id
+        current_snapshot_status:
+          $ref: '#/components/schemas/SnapshotStatus'
+          default: idle
+      type: object
+      required:
+      - volume_id
+      - edge_id
+      title: SnapshotStatusResponseDto
+      description: 'Per-edge snapshot status — ``VolumeEdgeState.current_snapshot_status``
+
+        for a single ``(volume_id, edge_id)``. Defaults to ``idle`` when
+
+        no state row exists (no UI difference).'
+    VolumeCapacityHistoryPointDto:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        bytes_in_cloud:
+          type: integer
+          title: Bytes In Cloud
+      type: object
+      required:
+      - timestamp
+      - bytes_in_cloud
+      title: VolumeCapacityHistoryPointDto
+    VolumeMasterDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - id
+      title: VolumeMasterDto
+    ErrorResponse_3:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    TaskExecutor:
+      type: string
+      enum:
+      - edge
+      title: TaskExecutor
+    VolumeCapacityHistoryResponseDto:
+      properties:
+        volume_id:
+          type: string
+          title: Volume Id
+        data_points:
+          items:
+            $ref: '#/components/schemas/VolumeCapacityHistoryPointDto'
+          type: array
+          title: Data Points
+      type: object
+      required:
+      - volume_id
+      title: VolumeCapacityHistoryResponseDto
+    ConnectionPermission:
+      type: string
+      enum:
+      - READONLY
+      - READWRITE
+      - Custom
+      title: ConnectionPermission
+    NocCloudProvider:
+      type: string
+      enum:
+      - amazons3
+      - amazons3gov
+      - azure
+      - google
+      - googles3
+      - atmos
+      - ironmountain
+      - rackspace
+      - nirvanix
+      - synaptic
+      - castor
+      - delldx
+      - cloudone
+      - hp
+      - cleversafe
+      - vipr
+      - ibmcos
+      - hcp
+      - s3_compatible
+      title: NocCloudProvider
+      description: Cloud provider identity as used by NOC (shortname).
+    TaskState:
+      type: string
+      enum:
+      - in_progress
+      - completed
+      - failed
+      title: TaskState
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    Protocol:
+      type: string
+      enum:
+      - NFS
+      - SMB
+      - FTP
+      title: Protocol
+    VolumeDto:
       properties:
         id:
           type: string
@@ -9530,50 +9511,69 @@ components:
           anyOf:
           - $ref: '#/components/schemas/NocCloudProvider'
           - type: 'null'
+        edges:
+          anyOf:
+          - $ref: '#/components/schemas/VolumeEdgesDto'
+          - type: 'null'
+        location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Location
+        gfl:
+          type: boolean
+          title: Gfl
+        lock_server:
+          type: string
+          title: Lock Server
+        used_capacity:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Used Capacity
+        percent_capacity_used:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Percent Capacity Used
+        compression_data_reduction_percent:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Compression Data Reduction Percent
+        share_features:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Share Features
+        gfa_mode:
+          type: boolean
+          title: Gfa Mode
       type: object
       required:
       - id
-      title: VolumeBaseDto
-    SecurityMode:
-      type: string
-      enum:
-      - Publicly Available
-      - Active Directory
-      - LDAP Directory
-      title: SecurityMode
-    SnapshotStatus:
-      type: string
-      enum:
-      - idle
-      - pending
-      - in_progress
-      - succeeded
-      - failed
-      - cancelling
-      - cancelled
-      - cancel_rejected
-      - up_to_date
-      title: SnapshotStatus
-      description: 'Public snapshot lifecycle vocabulary surfaced by the snapshot APIs.
-
-
-        The persisted column (``VolumeEdgeState.current_snapshot_status``)
-
-        has a single writer: the EventHub ``VolumeSnapshotStatusProcessor``,
-
-        which translates filer ``volume_snapshot_status`` events. No other
-
-        code path — API request handlers, heartbeat upserts, background
-
-        services — writes to that column. ``cancelling`` never reaches the
-
-        DB: it exists as a FE-optimistic wire value only (clients render it
-
-        between the cancel dispatch and the filer''s ``cancelled`` /
-
-        ``cancel_rejected`` ack). ``pending`` is a real filer-reported
-
-        state.'
+      - gfl
+      - lock_server
+      - gfa_mode
+      title: VolumeDto
+    VolumeEdgesDto:
+      properties:
+        master:
+          $ref: '#/components/schemas/VolumeMasterDto'
+        connected:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Connected
+        connected_count:
+          type: integer
+          title: Connected Count
+      type: object
+      required:
+      - master
+      - connected_count
+      title: VolumeEdgesDto
   securitySchemes:
     AuthToken:
       type: apiKey

@@ -214,6 +214,92 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    NocCloudProvider:
+      type: string
+      enum:
+      - amazons3
+      - amazons3gov
+      - azure
+      - google
+      - googles3
+      - atmos
+      - ironmountain
+      - rackspace
+      - nirvanix
+      - synaptic
+      - castor
+      - delldx
+      - cloudone
+      - hp
+      - cleversafe
+      - vipr
+      - ibmcos
+      - hcp
+      - s3_compatible
+      title: NocCloudProvider
+      description: Cloud provider identity as used by NOC (shortname).
+    AccountInformationDto:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+        first_name:
+          type: string
+          title: First Name
+        last_name:
+          type: string
+          title: Last Name
+        company:
+          type: string
+          title: Company
+        phone:
+          type: string
+          title: Phone
+        created:
+          type: string
+          format: date-time
+          title: Created
+        id:
+          type: string
+          format: uuid
+          title: Id
+      type: object
+      required:
+      - email
+      - first_name
+      - last_name
+      - company
+      - phone
+      - created
+      - id
+      title: AccountInformationDto
+      description: Response model for account infromation for webbff/account
     AiActivateAccountSubscriptionDto:
       properties:
         subscribed_limit:
@@ -236,41 +322,6 @@ components:
       - consumed
       - remaining
       title: AiActivateAccountSubscriptionDto
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    CloudProviderEntryDto:
-      properties:
-        protocol:
-          $ref: '#/components/schemas/NocCloudStorageProtocol'
-        vendor:
-          $ref: '#/components/schemas/NocCloudVendor'
-        shortname:
-          $ref: '#/components/schemas/NocCloudProvider'
-        display_name:
-          type: string
-          title: Display Name
-          description: Human-readable name for the cloud provider
-      type: object
-      required:
-      - protocol
-      - vendor
-      - shortname
-      - display_name
-      title: CloudProviderEntryDto
-      description: A cloud provider available to the account.
     AccountLicenseDto:
       properties:
         subscription_status:
@@ -363,30 +414,6 @@ components:
       - awada_enabled
       - ops_iq_premium
       title: AccountLicenseDto
-    NocCloudProvider:
-      type: string
-      enum:
-      - amazons3
-      - amazons3gov
-      - azure
-      - google
-      - googles3
-      - atmos
-      - ironmountain
-      - rackspace
-      - nirvanix
-      - synaptic
-      - castor
-      - delldx
-      - cloudone
-      - hp
-      - cleversafe
-      - vipr
-      - ibmcos
-      - hcp
-      - s3_compatible
-      title: NocCloudProvider
-      description: Cloud provider identity as used by NOC (shortname).
     NocCloudStorageProtocol:
       type: string
       enum:
@@ -401,6 +428,14 @@ components:
       - s3_compatible
       title: NocCloudStorageProtocol
       description: The underlying storage API/protocol (maps to 'type' in NOC response).
+    NocCloudVendor:
+      type: string
+      enum:
+      - customer
+      - private
+      - nasuni
+      title: NocCloudVendor
+      description: Who provisions the cloud infrastructure.
     AiActivateAccountInfoDto:
       properties:
         mcp:
@@ -415,6 +450,21 @@ components:
         MCP is currently the only AI Activate workload. A Search subscription will be
 
         reintroduced here once that workload lands.'
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
     UpdateAccountInformationDto:
       properties:
         first_name:
@@ -437,76 +487,26 @@ components:
       - phone
       title: UpdateAccountInformationDto
       description: Request model for account information change for WebApi route /account
-    AccountInformationDto:
+    CloudProviderEntryDto:
       properties:
-        email:
+        protocol:
+          $ref: '#/components/schemas/NocCloudStorageProtocol'
+        vendor:
+          $ref: '#/components/schemas/NocCloudVendor'
+        shortname:
+          $ref: '#/components/schemas/NocCloudProvider'
+        display_name:
           type: string
-          format: email
-          title: Email
-        first_name:
-          type: string
-          title: First Name
-        last_name:
-          type: string
-          title: Last Name
-        company:
-          type: string
-          title: Company
-        phone:
-          type: string
-          title: Phone
-        created:
-          type: string
-          format: date-time
-          title: Created
-        id:
-          type: string
-          format: uuid
-          title: Id
+          title: Display Name
+          description: Human-readable name for the cloud provider
       type: object
       required:
-      - email
-      - first_name
-      - last_name
-      - company
-      - phone
-      - created
-      - id
-      title: AccountInformationDto
-      description: Response model for account infromation for webbff/account
-    NocCloudVendor:
-      type: string
-      enum:
-      - customer
-      - private
-      - nasuni
-      title: NocCloudVendor
-      description: Who provisions the cloud infrastructure.
-    ValidationErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
-      type: object
-      required:
-      - message
-      - detail
-      title: ValidationErrorResponse
+      - protocol
+      - vendor
+      - shortname
+      - display_name
+      title: CloudProviderEntryDto
+      description: A cloud provider available to the account.
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

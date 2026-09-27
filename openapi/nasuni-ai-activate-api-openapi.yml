@@ -701,200 +701,31 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    AiActivateMcpVolumeConfigUpdateDto:
-      properties:
-        mcp_enabled:
-          type: boolean
-          title: Mcp Enabled
-        allowed_file_extensions:
-          items:
-            type: string
-          type: array
-          title: Allowed File Extensions
-        period:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Period
-        ignore_principals:
-          items:
-            type: string
-          type: array
-          title: Ignore Principals
-        ignore_everyone:
-          type: boolean
-          title: Ignore Everyone
-        ignore_domain_users:
-          type: boolean
-          title: Ignore Domain Users
-      type: object
-      title: AiActivateMcpVolumeConfigUpdateDto
-      description: 'Partial update body for PATCH /ai_activate/indexes/{volume_id}/mcp.
-
-
-        Omitted fields are left unchanged. Set period to null explicitly to select ''All time''.'
-    AiActivateIndexesResponseDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/AiActivateIndexListItemDto'
-          type: array
-          title: Items
-      type: object
-      title: AiActivateIndexesResponseDto
-    ErrorResponse:
+    ValidationErrorResponse:
       properties:
         message:
           type: string
           title: Message
         detail:
-          anyOf:
-          - {}
-          - type: 'null'
+          items:
+            additionalProperties: true
+            type: object
+          type: array
           title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
       type: object
       required:
       - message
       - detail
-      title: ErrorResponse
-    AiActivateCreateIndexRequestBodyDto:
-      properties:
-        volume_guid:
-          type: string
-          title: Volume Guid
-        mcp_enabled:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Mcp Enabled
-        include_paths:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Include Paths
-        exclude_paths:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Exclude Paths
-      type: object
-      required:
-      - volume_guid
-      title: AiActivateCreateIndexRequestBodyDto
-    AiActivateInventoriesResponseDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/AiActivateInventoryDto'
-          type: array
-          title: Items
-      type: object
-      title: AiActivateInventoriesResponseDto
-    AiActivateMcpVolumeConfigDto:
-      properties:
-        mcp_enabled:
-          type: boolean
-          title: Mcp Enabled
-          description: Whether the MCP server is enabled for this volume.
-        allowed_file_extensions:
-          items:
-            type: string
-          type: array
-          title: Allowed File Extensions
-          description: File extensions the MCP server filters results to. Empty list returns all file types.
-          examples:
-          - - pdf
-            - docx
-        period:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Period
-          description: Time-window filter applied to query results. Accepts an ISO 8601 duration (e.g. 'P30D') or explicit interval null means 'all time' — ISO 8601 has no valid 'all time' representation.
-          examples:
-          - P7D
-          - P30D
-          - P90D
-          - P1Y
-          - null
-        ignore_principals:
-          items:
-            type: string
-          type: array
-          title: Ignore Principals
-          description: Principal names (users or groups) whose ALLOW permissions the MCP server ignores.
-          examples:
-          - - DOMAIN\\contractors
-            - service-account@example.com
-        ignore_everyone:
-          type: boolean
-          title: Ignore Everyone
-          description: When true, the MCP server ignores the Everyone principal.
-          default: false
-        ignore_domain_users:
-          type: boolean
-          title: Ignore Domain Users
-          description: When true, the MCP server ignores the Domain Users principal.
-          default: false
-      type: object
-      required:
-      - mcp_enabled
-      title: AiActivateMcpVolumeConfigDto
-      description: 'MCP query-scope configuration for a single indexed volume.
-
-
-        Returned by GET /ai_activate/indexes/{volume_id}/mcp and by
-
-        PATCH /ai_activate/indexes/{volume_id}/mcp after a successful update.'
-    AiActivateCreateInventoryResponseDto:
-      properties:
-        volume_guid:
-          type: string
-          title: Volume Guid
-        volume_name:
-          type: string
-          title: Volume Name
-        provider:
-          type: string
-          title: Provider
-          description: Provider used to execute inventory indexing, as confirmed by NOC after inventory creation.
-        volume_region:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Volume Region
-          description: API-provided volume region (default NDS region unless changed by the user).
-        region:
-          type: string
-          title: Region
-          description: Region used to execute inventory indexing, as confirmed by NOC after inventory creation.
-        status:
-          $ref: '#/components/schemas/NocAiActivateInventoryStatus'
-        file_count:
-          anyOf:
-          - type: integer
-            minimum: 0
-          - type: 'null'
-          title: File Count
-          description: Number of files included in the volume inventory. May be unavailable until inventory data is ready.
-        volume_size:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Volume Size
-          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until the volume is fully indexed.
-      type: object
-      required:
-      - volume_guid
-      - volume_name
-      - provider
-      - region
-      - status
-      title: AiActivateCreateInventoryResponseDto
+      title: ValidationErrorResponse
     AiActivateIndexListItemDto:
       properties:
         volume_guid:
@@ -935,6 +766,71 @@ components:
       - status
       title: AiActivateIndexListItemDto
       description: A single content-index entry for a volume in the AI Activate indexes list.
+    AiActivateCreateInventoryRequestBodyDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Region
+          description: Required for Azure volumes only. Use an Azure location code such as 'centralus', not a display name. For AWS volumes, this is optional, but when provided it must match the volume storage region.
+      type: object
+      required:
+      - volume_guid
+      title: AiActivateCreateInventoryRequestBodyDto
+    NocAiActivateInventoryStatus:
+      type: string
+      enum:
+      - Not Indexed
+      - Waiting for NDS creation
+      - Waiting for NDS configuration
+      - NDS Ready
+      - Metadata Index in progress
+      - Metadata Index Complete
+      - Full Content Index in progress
+      - Full Content Index Pending
+      - Full Content Index Complete
+      - Incremental Content Index in progress
+      - Incremental Content Index failed
+      - Volume Inventory Expired
+      - Soft Deleted
+      - Indexing Failed
+      title: NocAiActivateInventoryStatus
+    AiActivateMcpVolumeConfigUpdateDto:
+      properties:
+        mcp_enabled:
+          type: boolean
+          title: Mcp Enabled
+        allowed_file_extensions:
+          items:
+            type: string
+          type: array
+          title: Allowed File Extensions
+        period:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Period
+        ignore_principals:
+          items:
+            type: string
+          type: array
+          title: Ignore Principals
+        ignore_everyone:
+          type: boolean
+          title: Ignore Everyone
+        ignore_domain_users:
+          type: boolean
+          title: Ignore Domain Users
+      type: object
+      title: AiActivateMcpVolumeConfigUpdateDto
+      description: 'Partial update body for PATCH /ai_activate/indexes/{volume_id}/mcp.
+
+
+        Omitted fields are left unchanged. Set period to null explicitly to select ''All time''.'
     AiActivateInventoryDto:
       properties:
         volume_guid:
@@ -981,65 +877,6 @@ components:
       - provider
       - status
       title: AiActivateInventoryDto
-    AiActivateIndexConfigDto:
-      properties:
-        include_paths:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Include Paths
-        exclude_paths:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Exclude Paths
-      additionalProperties: false
-      type: object
-      title: AiActivateIndexConfigDto
-      description: 'AI Activate search configuration (include/exclude paths) for a volume.
-
-
-        Unified model shared by GET/POST/PATCH request bodies for
-
-        ``/ai_activate/indexes/{volume_id}``. Fields are optional so PATCH callers
-
-        can send only what they want to update; POST callers may omit them to
-
-        accept the defaults (empty include/exclude).
-
-
-        ``extra="forbid"`` — MCP toggles moved to ``/indexes/{volume_id}/mcp``.
-
-        Reject legacy PATCH bodies that include ``mcp_enabled`` here so callers
-
-        fail loudly (422) instead of silently having the field ignored.'
-    AiActivateCreateInventoryRequestBodyDto:
-      properties:
-        volume_guid:
-          type: string
-          title: Volume Guid
-        region:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Region
-          description: Required for Azure volumes only. Use an Azure location code such as 'centralus', not a display name. For AWS volumes, this is optional, but when provided it must match the volume storage region.
-      type: object
-      required:
-      - volume_guid
-      title: AiActivateCreateInventoryRequestBodyDto
-    AiActivateIndexStatus:
-      type: string
-      enum:
-      - in_progress
-      - complete
-      - failed
-      - queued_for_deletion
-      title: AiActivateIndexStatus
     AiActivateIndexDetailsDto:
       properties:
         volume_guid:
@@ -1158,49 +995,212 @@ components:
       - status
       title: AiActivateIndexConfigResponseDto
       description: AI Activate index configuration returned by NOC. Reused across GET PATCH and POST
-    NocAiActivateInventoryStatus:
+    AiActivateIndexesResponseDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AiActivateIndexListItemDto'
+          type: array
+          title: Items
+      type: object
+      title: AiActivateIndexesResponseDto
+    AiActivateIndexStatus:
       type: string
       enum:
-      - Not Indexed
-      - Waiting for NDS creation
-      - Waiting for NDS configuration
-      - NDS Ready
-      - Metadata Index in progress
-      - Metadata Index Complete
-      - Full Content Index in progress
-      - Full Content Index Pending
-      - Full Content Index Complete
-      - Incremental Content Index in progress
-      - Incremental Content Index failed
-      - Volume Inventory Expired
-      - Soft Deleted
-      - Indexing Failed
-      title: NocAiActivateInventoryStatus
-    ValidationErrorResponse:
+      - in_progress
+      - complete
+      - failed
+      - queued_for_deletion
+      title: AiActivateIndexStatus
+    ErrorResponse:
       properties:
         message:
           type: string
           title: Message
         detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
+          anyOf:
+          - {}
+          - type: 'null'
           title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
       type: object
       required:
       - message
       - detail
-      title: ValidationErrorResponse
+      title: ErrorResponse
+    AiActivateIndexConfigDto:
+      properties:
+        include_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Include Paths
+        exclude_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Exclude Paths
+      additionalProperties: false
+      type: object
+      title: AiActivateIndexConfigDto
+      description: 'AI Activate search configuration (include/exclude paths) for a volume.
+
+
+        Unified model shared by GET/POST/PATCH request bodies for
+
+        ``/ai_activate/indexes/{volume_id}``. Fields are optional so PATCH callers
+
+        can send only what they want to update; POST callers may omit them to
+
+        accept the defaults (empty include/exclude).
+
+
+        ``extra="forbid"`` — MCP toggles moved to ``/indexes/{volume_id}/mcp``.
+
+        Reject legacy PATCH bodies that include ``mcp_enabled`` here so callers
+
+        fail loudly (422) instead of silently having the field ignored.'
+    AiActivateCreateIndexRequestBodyDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        mcp_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Mcp Enabled
+        include_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Include Paths
+        exclude_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Exclude Paths
+      type: object
+      required:
+      - volume_guid
+      title: AiActivateCreateIndexRequestBodyDto
+    AiActivateCreateInventoryResponseDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        volume_name:
+          type: string
+          title: Volume Name
+        provider:
+          type: string
+          title: Provider
+          description: Provider used to execute inventory indexing, as confirmed by NOC after inventory creation.
+        volume_region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Region
+          description: API-provided volume region (default NDS region unless changed by the user).
+        region:
+          type: string
+          title: Region
+          description: Region used to execute inventory indexing, as confirmed by NOC after inventory creation.
+        status:
+          $ref: '#/components/schemas/NocAiActivateInventoryStatus'
+        file_count:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          title: File Count
+          description: Number of files included in the volume inventory. May be unavailable until inventory data is ready.
+        volume_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Size
+          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until the volume is fully indexed.
+      type: object
+      required:
+      - volume_guid
+      - volume_name
+      - provider
+      - region
+      - status
+      title: AiActivateCreateInventoryResponseDto
+    AiActivateInventoriesResponseDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AiActivateInventoryDto'
+          type: array
+          title: Items
+      type: object
+      title: AiActivateInventoriesResponseDto
+    AiActivateMcpVolumeConfigDto:
+      properties:
+        mcp_enabled:
+          type: boolean
+          title: Mcp Enabled
+          description: Whether the MCP server is enabled for this volume.
+        allowed_file_extensions:
+          items:
+            type: string
+          type: array
+          title: Allowed File Extensions
+          description: File extensions the MCP server filters results to. Empty list returns all file types.
+          examples:
+          - - pdf
+            - docx
+        period:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Period
+          description: Time-window filter applied to query results. Accepts an ISO 8601 duration (e.g. 'P30D') or explicit interval null means 'all time' — ISO 8601 has no valid 'all time' representation.
+          examples:
+          - P7D
+          - P30D
+          - P90D
+          - P1Y
+          - null
+        ignore_principals:
+          items:
+            type: string
+          type: array
+          title: Ignore Principals
+          description: Principal names (users or groups) whose ALLOW permissions the MCP server ignores.
+          examples:
+          - - DOMAIN\\contractors
+            - service-account@example.com
+        ignore_everyone:
+          type: boolean
+          title: Ignore Everyone
+          description: When true, the MCP server ignores the Everyone principal.
+          default: false
+        ignore_domain_users:
+          type: boolean
+          title: Ignore Domain Users
+          description: When true, the MCP server ignores the Domain Users principal.
+          default: false
+      type: object
+      required:
+      - mcp_enabled
+      title: AiActivateMcpVolumeConfigDto
+      description: 'MCP query-scope configuration for a single indexed volume.
+
+
+        Returned by GET /ai_activate/indexes/{volume_id}/mcp and by
+
+        PATCH /ai_activate/indexes/{volume_id}/mcp after a successful update.'
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

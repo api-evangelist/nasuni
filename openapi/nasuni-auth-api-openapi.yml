@@ -363,17 +363,6 @@ paths:
       description: Base URL for accounts assigned the Asia-Pacific region.
 components:
   schemas:
-    ValidationError:
-      type: object
-      properties:
-        code:
-          type: string
-        description:
-          type: string
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/FieldError'
     FieldError:
       type: object
       properties:
@@ -384,13 +373,6 @@ components:
           type: array
           items:
             type: string
-    AuthToken:
-      type: object
-      properties:
-        token:
-          type: string
-        expires:
-          type: string
     Error:
       type: object
       properties:
@@ -425,6 +407,24 @@ components:
         description:
           type: string
           description: Description of the error reported.
+    AuthToken:
+      type: object
+      properties:
+        token:
+          type: string
+        expires:
+          type: string
+    ValidationError:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldError'
     ErrorResponse:
       type: object
       properties:
@@ -525,21 +525,6 @@ components:
           type: string
           description: Description of the error reported.
           readOnly: true
-    ErrorResponse_3:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
     ValidationErrorResponse:
       properties:
         message:
@@ -565,15 +550,6 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
-    McpAuthorizeRequest:
-      properties:
-        request_id:
-          type: string
-          title: Request Id
-      type: object
-      required:
-      - request_id
-      title: McpAuthorizeRequest
     TokenRequestDto:
       properties:
         token:
@@ -583,6 +559,21 @@ components:
       required:
       - token
       title: TokenRequestDto
+    ErrorResponse_3:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
     TokensDto:
       properties:
         access_token:
@@ -605,6 +596,15 @@ components:
       - access_token
       - refresh_token
       title: TokensDto
+    McpAuthorizeRequest:
+      properties:
+        request_id:
+          type: string
+          title: Request Id
+      type: object
+      required:
+      - request_id
+      title: McpAuthorizeRequest
   securitySchemes:
     AuthToken:
       type: apiKey

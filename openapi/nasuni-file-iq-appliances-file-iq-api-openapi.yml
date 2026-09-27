@@ -172,21 +172,31 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
-    ErrorResponse:
+    ValidationErrorResponse:
       properties:
         message:
           type: string
           title: Message
         detail:
-          anyOf:
-          - {}
-          - type: 'null'
+          items:
+            additionalProperties: true
+            type: object
+          type: array
           title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
       type: object
       required:
       - message
       - detail
-      title: ErrorResponse
+      title: ValidationErrorResponse
     FiqApplianceUpdateDto:
       properties:
         enabled:
@@ -196,6 +206,17 @@ components:
           title: Enabled
       type: object
       title: FiqApplianceUpdateDto
+    FiqConnections:
+      properties:
+        edges:
+          items:
+            $ref: '#/components/schemas/FiqEdgeDto'
+          type: array
+          title: Edges
+      type: object
+      required:
+      - edges
+      title: FiqConnections
     FiqApplianceDto:
       properties:
         serial_number:
@@ -226,28 +247,6 @@ components:
       - enabled
       - connections
       title: FiqApplianceDto
-    FiqsDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/FiqApplianceDto'
-          type: array
-          title: Items
-      type: object
-      required:
-      - items
-      title: FiqsDto
-    FiqConnections:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/FiqEdgeDto'
-          type: array
-          title: Edges
-      type: object
-      required:
-      - edges
-      title: FiqConnections
     FiqEdgeDto:
       properties:
         serial_number:
@@ -275,31 +274,32 @@ components:
       - description
       - fiq_service_enabled
       title: FiqEdgeDto
-    ValidationErrorResponse:
+    ErrorResponse:
       properties:
         message:
           type: string
           title: Message
         detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
+          anyOf:
+          - {}
+          - type: 'null'
           title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
       type: object
       required:
       - message
       - detail
-      title: ValidationErrorResponse
+      title: ErrorResponse
+    FiqsDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/FiqApplianceDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: FiqsDto
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

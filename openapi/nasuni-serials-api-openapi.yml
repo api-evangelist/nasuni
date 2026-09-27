@@ -290,51 +290,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    SerialPatchRequestDto:
-      properties:
-        decommission:
-          type: boolean
-          title: Decommission
-          default: false
-      type: object
-      title: SerialPatchRequestDto
-    SerialPatchErrorResponseDto:
-      properties:
-        eligible:
-          type: boolean
-          title: Eligible
-        owned_volumes:
-          type: integer
-          title: Owned Volumes
-        remotely_connected_volumes:
-          type: integer
-          title: Remotely Connected Volumes
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - eligible
-      - owned_volumes
-      - remotely_connected_volumes
-      - message
-      title: SerialPatchErrorResponseDto
-    HTTPValidationError:
+    ValidationErrorResponse:
       properties:
         message:
           type: string
@@ -359,15 +315,6 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
-    SerialsDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/SerialDto'
-          type: array
-          title: Items
-      type: object
-      title: SerialsDto
     SerialDto:
       properties:
         id:
@@ -433,7 +380,7 @@ components:
       required:
       - auth_code
       title: AuthCodeDto
-    ValidationErrorResponse:
+    HTTPValidationError:
       properties:
         message:
           type: string
@@ -458,6 +405,59 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    SerialsDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/SerialDto'
+          type: array
+          title: Items
+      type: object
+      title: SerialsDto
+    SerialPatchErrorResponseDto:
+      properties:
+        eligible:
+          type: boolean
+          title: Eligible
+        owned_volumes:
+          type: integer
+          title: Owned Volumes
+        remotely_connected_volumes:
+          type: integer
+          title: Remotely Connected Volumes
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - eligible
+      - owned_volumes
+      - remotely_connected_volumes
+      - message
+      title: SerialPatchErrorResponseDto
+    SerialPatchRequestDto:
+      properties:
+        decommission:
+          type: boolean
+          title: Decommission
+          default: false
+      type: object
+      title: SerialPatchRequestDto
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

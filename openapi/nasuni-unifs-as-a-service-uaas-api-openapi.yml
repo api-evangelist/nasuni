@@ -667,390 +667,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    UaasUpdateNdsConfigDto:
-      properties:
-        enabled:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Enabled
-        azure_keys:
-          anyOf:
-          - items:
-              anyOf:
-              - type: string
-                format: password
-                writeOnly: true
-              - type: 'null'
-            type: array
-          - type: 'null'
-          title: Azure Keys
-      type: object
-      title: UaasUpdateNdsConfigDto
-    HTTPValidationError:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
-      type: object
-      required:
-      - message
-      - detail
-      title: ValidationErrorResponse
-    AnalyticsConnectorDto:
-      properties:
-        key:
-          type: string
-          format: uuid
-          title: Key
-        nac_link:
-          type: string
-          title: Nac Link
-        launchable:
-          type: boolean
-          title: Launchable
-        unlicensed:
-          type: boolean
-          title: Unlicensed
-        nac_run_history:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/NacRunHistoryDto'
-            type: array
-          - type: 'null'
-          title: Nac Run History
-        can_generate:
-          type: boolean
-          title: Can Generate
-        can_view:
-          type: boolean
-          title: Can View
-        unifx_aws_ids:
-          type: string
-          title: Unifx Aws Ids
-      type: object
-      required:
-      - key
-      - nac_link
-      - launchable
-      - unlicensed
-      - nac_run_history
-      - can_generate
-      - can_view
-      - unifx_aws_ids
-      title: AnalyticsConnectorDto
-    UaasStackUpdateDetailDto:
-      properties:
-        log_level:
-          anyOf:
-          - $ref: '#/components/schemas/NocUaasLogLevel'
-          - type: 'null'
-        log_retention:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Log Retention
-        remote_support_enabled:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Remote Support Enabled
-        volume_refresh_interval:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Volume Refresh Interval
-      type: object
-      title: UaasStackUpdateDetailDto
-    TaskState:
-      type: string
-      enum:
-      - in_progress
-      - completed
-      - failed
-      title: TaskState
-    UaasS3ConfigRevealedDto:
-      properties:
-        aws_enabled:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Aws Enabled
-        aws_volumes:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Aws Volumes
-        keys:
-          anyOf:
-          - items:
-              additionalProperties:
-                type: string
-                format: password
-                writeOnly: true
-              type: object
-            type: array
-          - type: 'null'
-          title: Keys
-      type: object
-      title: UaasS3ConfigRevealedDto
-    UaasS3ConfigDto:
-      properties:
-        aws_enabled:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Aws Enabled
-        aws_volumes:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Aws Volumes
-      type: object
-      title: UaasS3ConfigDto
-    UaasSasTokenResponseDto:
-      properties:
-        sas_token:
-          type: string
-          title: Sas Token
-        connection_string:
-          type: string
-          title: Connection String
-      type: object
-      required:
-      - sas_token
-      - connection_string
-      title: UaasSasTokenResponseDto
-    TaskStepState:
-      type: string
-      enum:
-      - pending
-      - in_progress
-      - completed
-      - failed
-      title: TaskStepState
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    UaasStackNdsConfigDto:
-      properties:
-        enabled:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Enabled
-        azure_keys:
-          anyOf:
-          - items:
-              anyOf:
-              - $ref: '#/components/schemas/UaasBlobAccessKeyDto'
-              - $ref: '#/components/schemas/UaasBlobAccessKeyRevealedDto'
-            type: array
-          - type: 'null'
-          title: Azure Keys
-      type: object
-      title: UaasStackNdsConfigDto
-      description: Response DTO for NDS config endpoint — only config-level fields.
-    TaskStepDto:
-      properties:
-        name:
-          type: string
-          title: Name
-        state:
-          $ref: '#/components/schemas/TaskStepState'
-        reason:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Reason
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        updated_at:
-          type: string
-          format: date-time
-          title: Updated At
-      type: object
-      required:
-      - name
-      - state
-      - created_at
-      - updated_at
-      title: TaskStepDto
-    UaasBlobAccessKeysDto:
-      properties:
-        items:
-          items:
-            anyOf:
-            - $ref: '#/components/schemas/UaasBlobAccessKeyRevealedDto'
-            - $ref: '#/components/schemas/UaasBlobAccessKeyDto'
-          type: array
-          title: Items
-      type: object
-      required:
-      - items
-      title: UaasBlobAccessKeysDto
-    UaasStackBaseDto:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        serial_number:
-          type: string
-          format: uuid
-          title: Serial Number
-        name:
-          type: string
-          title: Name
-        build:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Build
-        uaas_build:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Uaas Build
-        cloud_provider:
-          $ref: '#/components/schemas/NocStackCloudProvider'
-        region:
-          type: string
-          title: Region
-        created_date:
-          type: string
-          format: date-time
-          title: Created Date
-        last_used_date:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last Used Date
-        uaas_api_url:
-          anyOf:
-          - type: string
-            maxLength: 2083
-            minLength: 1
-            format: uri
-          - type: 'null'
-          title: Uaas Api Url
-        blob_endpoint_url:
-          anyOf:
-          - type: string
-            maxLength: 2083
-            minLength: 1
-            format: uri
-          - type: 'null'
-          title: Blob Endpoint Url
-        s3_obj_lambda_buckets:
-          anyOf:
-          - additionalProperties:
-              type: string
-            type: object
-          - type: 'null'
-          title: S3 Obj Lambda Buckets
-      type: object
-      required:
-      - id
-      - serial_number
-      - name
-      - cloud_provider
-      - region
-      - created_date
-      title: UaasStackBaseDto
-    TaskInitiator:
-      type: string
-      enum:
-      - portal
-      - edge
-      title: TaskInitiator
-    UaasVolumeNdsDto:
-      properties:
-        nds:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Nds
-        nds_excluded_paths:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Nds Excluded Paths
-        nds_included_paths:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Nds Included Paths
-      type: object
-      title: UaasVolumeNdsDto
-    ValidationErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
-      type: object
-      required:
-      - message
-      - detail
-      title: ValidationErrorResponse
-    NocUaasLogLevel:
-      type: string
-      enum:
-      - DEBUG
-      - INFO
-      - WARNING
-      - ERROR
-      - CRITICAL
-      title: NocUaasLogLevel
     NacRunHistoryDto:
       properties:
         error_count:
@@ -1121,6 +737,29 @@ components:
       - volume_guid
       - exported_bytes
       title: NacRunHistoryDto
+    UaasStackUpdateDetailDto:
+      properties:
+        log_level:
+          anyOf:
+          - $ref: '#/components/schemas/NocUaasLogLevel'
+          - type: 'null'
+        log_retention:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Log Retention
+        remote_support_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Remote Support Enabled
+        volume_refresh_interval:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Volume Refresh Interval
+      type: object
+      title: UaasStackUpdateDetailDto
     UaasBlobAccessKeyRevealedDto:
       properties:
         access_key:
@@ -1147,6 +786,97 @@ components:
       - id
       - connection_string
       title: UaasBlobAccessKeyRevealedDto
+    UaasSasTokenPermissionType:
+      type: string
+      enum:
+      - read_volume
+      - list_volume
+      title: UaasSasTokenPermissionType
+    UaasStackNdsConfigDto:
+      properties:
+        enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabled
+        azure_keys:
+          anyOf:
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/UaasBlobAccessKeyDto'
+              - $ref: '#/components/schemas/UaasBlobAccessKeyRevealedDto'
+            type: array
+          - type: 'null'
+          title: Azure Keys
+      type: object
+      title: UaasStackNdsConfigDto
+      description: Response DTO for NDS config endpoint — only config-level fields.
+    UaasStackSraasDto:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+        runs:
+          items:
+            $ref: '#/components/schemas/UaasRunMetricDto'
+          type: array
+          title: Runs
+      type: object
+      required:
+      - enabled
+      - runs
+      title: UaasStackSraasDto
+    AnalyticsConnectorDto:
+      properties:
+        key:
+          type: string
+          format: uuid
+          title: Key
+        nac_link:
+          type: string
+          title: Nac Link
+        launchable:
+          type: boolean
+          title: Launchable
+        unlicensed:
+          type: boolean
+          title: Unlicensed
+        nac_run_history:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/NacRunHistoryDto'
+            type: array
+          - type: 'null'
+          title: Nac Run History
+        can_generate:
+          type: boolean
+          title: Can Generate
+        can_view:
+          type: boolean
+          title: Can View
+        unifx_aws_ids:
+          type: string
+          title: Unifx Aws Ids
+      type: object
+      required:
+      - key
+      - nac_link
+      - launchable
+      - unlicensed
+      - nac_run_history
+      - can_generate
+      - can_view
+      - unifx_aws_ids
+      title: AnalyticsConnectorDto
+    NocUaasLogLevel:
+      type: string
+      enum:
+      - DEBUG
+      - INFO
+      - WARNING
+      - ERROR
+      - CRITICAL
+      title: NocUaasLogLevel
     UaasBlobAccessKeyDto:
       properties:
         access_key:
@@ -1174,34 +904,44 @@ components:
       - connection_string
       title: UaasBlobAccessKeyDto
       description: DTO for Azure Blob Access Keys used in UaaS stacks
-    TaskExecutor:
+    TaskInitiator:
       type: string
       enum:
+      - portal
       - edge
-      title: TaskExecutor
-    UaasStacksDto:
+      title: TaskInitiator
+    UaasSasTokenResponseDto:
       properties:
-        items:
-          items:
-            $ref: '#/components/schemas/UaasStackBaseDto'
-          type: array
-          title: Items
+        sas_token:
+          type: string
+          title: Sas Token
+        connection_string:
+          type: string
+          title: Connection String
       type: object
       required:
-      - items
-      title: UaasStacksDto
-    UaasSasTokenPermissionType:
-      type: string
-      enum:
-      - read_volume
-      - list_volume
-      title: UaasSasTokenPermissionType
-    NocStackCloudProvider:
-      type: string
-      enum:
-      - aws
-      - azure
-      title: NocStackCloudProvider
+      - sas_token
+      - connection_string
+      title: UaasSasTokenResponseDto
+    UaasVolumeNdsDto:
+      properties:
+        nds:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Nds
+        nds_excluded_paths:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Nds Excluded Paths
+        nds_included_paths:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Nds Included Paths
+      type: object
+      title: UaasVolumeNdsDto
     NdsVolumesResponseDto:
       properties:
         volumes:
@@ -1213,6 +953,49 @@ components:
           title: Volumes
       type: object
       title: NdsVolumesResponseDto
+    UaasBlobAccessKeysDto:
+      properties:
+        items:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/UaasBlobAccessKeyRevealedDto'
+            - $ref: '#/components/schemas/UaasBlobAccessKeyDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: UaasBlobAccessKeysDto
+    AnalyticsConnectorAwsIdsDto:
+      properties:
+        aws_ids:
+          items:
+            type: string
+          type: array
+          title: Aws Ids
+      type: object
+      required:
+      - aws_ids
+      title: AnalyticsConnectorAwsIdsDto
+    UpdateUaasVolumeNdsDto:
+      properties:
+        nds:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Nds
+        nds_excluded_paths:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Nds Excluded Paths
+        nds_included_paths:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Nds Included Paths
+      type: object
+      title: UpdateUaasVolumeNdsDto
     UaasSasTokenRequestDto:
       properties:
         selected_key:
@@ -1243,91 +1026,173 @@ components:
       - start_date
       - end_date
       title: UaasSasTokenRequestDto
-    UaasStackNdsDto:
+    ErrorResponse:
       properties:
-        azure_enabled:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    TaskExecutor:
+      type: string
+      enum:
+      - edge
+      title: TaskExecutor
+    TaskStepState:
+      type: string
+      enum:
+      - pending
+      - in_progress
+      - completed
+      - failed
+      title: TaskStepState
+    UaasUpdateNdsConfigDto:
+      properties:
+        enabled:
           anyOf:
           - type: boolean
           - type: 'null'
-          title: Azure Enabled
-        s3:
-          anyOf:
-          - $ref: '#/components/schemas/UaasS3ConfigDto'
-          - $ref: '#/components/schemas/UaasS3ConfigRevealedDto'
-          - type: 'null'
-          title: S3
+          title: Enabled
         azure_keys:
           anyOf:
           - items:
               anyOf:
-              - $ref: '#/components/schemas/UaasBlobAccessKeyDto'
-              - $ref: '#/components/schemas/UaasBlobAccessKeyRevealedDto'
+              - type: string
+                format: password
+                writeOnly: true
+              - type: 'null'
             type: array
           - type: 'null'
           title: Azure Keys
-        excluded_paths:
-          anyOf:
-          - additionalProperties:
-              type: string
-            type: object
-          - type: 'null'
-          title: Excluded Paths
-        included_paths:
-          anyOf:
-          - additionalProperties:
-              type: string
-            type: object
-          - type: 'null'
-          title: Included Paths
-        azure_volumes:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Azure Volumes
       type: object
-      title: UaasStackNdsDto
-    UpdateUaasVolumeNdsDto:
+      title: UaasUpdateNdsConfigDto
+    NocStackCloudProvider:
+      type: string
+      enum:
+      - aws
+      - azure
+      title: NocStackCloudProvider
+    TaskState:
+      type: string
+      enum:
+      - in_progress
+      - completed
+      - failed
+      title: TaskState
+    ValidationErrorResponse:
       properties:
-        nds:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Nds
-        nds_excluded_paths:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Nds Excluded Paths
-        nds_included_paths:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Nds Included Paths
-      type: object
-      title: UpdateUaasVolumeNdsDto
-    AnalyticsConnectorAwsIdsDto:
-      properties:
-        aws_ids:
+        message:
+          type: string
+          title: Message
+        detail:
           items:
-            type: string
+            additionalProperties: true
+            type: object
           type: array
-          title: Aws Ids
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
       type: object
       required:
-      - aws_ids
-      title: AnalyticsConnectorAwsIdsDto
-    AnalyticsConnectorKeyDto:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    UaasStacksDto:
       properties:
-        key:
+        items:
+          items:
+            $ref: '#/components/schemas/UaasStackBaseDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: UaasStacksDto
+    UaasStackBaseDto:
+      properties:
+        id:
           type: string
           format: uuid
-          title: Key
+          title: Id
+        serial_number:
+          type: string
+          format: uuid
+          title: Serial Number
+        name:
+          type: string
+          title: Name
+        build:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Build
+        uaas_build:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Uaas Build
+        cloud_provider:
+          $ref: '#/components/schemas/NocStackCloudProvider'
+        region:
+          type: string
+          title: Region
+        created_date:
+          type: string
+          format: date-time
+          title: Created Date
+        last_used_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Used Date
+        uaas_api_url:
+          anyOf:
+          - type: string
+            maxLength: 2083
+            minLength: 1
+            format: uri
+          - type: 'null'
+          title: Uaas Api Url
+        blob_endpoint_url:
+          anyOf:
+          - type: string
+            maxLength: 2083
+            minLength: 1
+            format: uri
+          - type: 'null'
+          title: Blob Endpoint Url
+        s3_obj_lambda_buckets:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: S3 Obj Lambda Buckets
       type: object
       required:
-      - key
-      title: AnalyticsConnectorKeyDto
+      - id
+      - serial_number
+      - name
+      - cloud_provider
+      - region
+      - created_date
+      title: UaasStackBaseDto
     TaskDto:
       properties:
         id:
@@ -1437,6 +1302,78 @@ components:
         caller rather than the eventhub Lambda identity. Internal-only by design —
 
         never include it on a customer-facing DTO.'
+    UaasStackNdsDto:
+      properties:
+        azure_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Azure Enabled
+        s3:
+          anyOf:
+          - $ref: '#/components/schemas/UaasS3ConfigDto'
+          - $ref: '#/components/schemas/UaasS3ConfigRevealedDto'
+          - type: 'null'
+          title: S3
+        azure_keys:
+          anyOf:
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/UaasBlobAccessKeyDto'
+              - $ref: '#/components/schemas/UaasBlobAccessKeyRevealedDto'
+            type: array
+          - type: 'null'
+          title: Azure Keys
+        excluded_paths:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Excluded Paths
+        included_paths:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Included Paths
+        azure_volumes:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Azure Volumes
+      type: object
+      title: UaasStackNdsDto
+    TaskStepDto:
+      properties:
+        name:
+          type: string
+          title: Name
+        state:
+          $ref: '#/components/schemas/TaskStepState'
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+      type: object
+      required:
+      - name
+      - state
+      - created_at
+      - updated_at
+      title: TaskStepDto
     UaasStackDetailDto:
       properties:
         id:
@@ -1561,21 +1498,84 @@ components:
       - objects_deleted
       - bytes_deleted
       title: UaasRunMetricDto
-    UaasStackSraasDto:
+    UaasS3ConfigDto:
       properties:
-        enabled:
-          type: boolean
-          title: Enabled
-        runs:
+        aws_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Aws Enabled
+        aws_volumes:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Aws Volumes
+      type: object
+      title: UaasS3ConfigDto
+    UaasS3ConfigRevealedDto:
+      properties:
+        aws_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Aws Enabled
+        aws_volumes:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Aws Volumes
+        keys:
+          anyOf:
+          - items:
+              additionalProperties:
+                type: string
+                format: password
+                writeOnly: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Keys
+      type: object
+      title: UaasS3ConfigRevealedDto
+    HTTPValidationError:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
           items:
-            $ref: '#/components/schemas/UaasRunMetricDto'
+            additionalProperties: true
+            type: object
           type: array
-          title: Runs
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
       type: object
       required:
-      - enabled
-      - runs
-      title: UaasStackSraasDto
+      - message
+      - detail
+      title: ValidationErrorResponse
+    AnalyticsConnectorKeyDto:
+      properties:
+        key:
+          type: string
+          format: uuid
+          title: Key
+      type: object
+      required:
+      - key
+      title: AnalyticsConnectorKeyDto
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

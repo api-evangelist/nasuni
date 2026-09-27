@@ -478,36 +478,31 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    EdgeFiqServiceDto:
-      properties:
-        enabled:
-          type: boolean
-          title: Enabled
-        connected_file_iq_serial:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Connected File Iq Serial
-      type: object
-      required:
-      - enabled
-      title: EdgeFiqServiceDto
-    ErrorResponse:
+    ValidationErrorResponse:
       properties:
         message:
           type: string
           title: Message
         detail:
-          anyOf:
-          - {}
-          - type: 'null'
+          items:
+            additionalProperties: true
+            type: object
+          type: array
           title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
       type: object
       required:
       - message
       - detail
-      title: ErrorResponse
+      title: ValidationErrorResponse
     EdgeDto:
       properties:
         id:
@@ -575,6 +570,51 @@ components:
       - build
       - machine
       title: EdgeDto
+    EdgeVolumes:
+      properties:
+        owned:
+          type: integer
+          title: Owned
+        remotely_connected:
+          type: integer
+          title: Remotely Connected
+      type: object
+      required:
+      - owned
+      - remotely_connected
+      title: EdgeVolumes
+    EdgesDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/SimpleEdgeDto'
+          type: array
+          title: Items
+      type: object
+      title: EdgesDto
+    UpdateEdgeFiqServiceDto:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+          default: false
+        connected_file_iq_serial:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Connected File Iq Serial
+      type: object
+      title: UpdateEdgeFiqServiceDto
+    EdgeS3EdgeConfigDto:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+      type: object
+      required:
+      - enabled
+      title: EdgeS3EdgeConfigDto
     EdgeBuild:
       properties:
         current:
@@ -594,6 +634,50 @@ components:
       required:
       - current
       title: EdgeBuild
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    EdgeServicesDto:
+      properties:
+        s3_edge:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: S3 Edge
+        file_iq:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: File Iq
+      type: object
+      title: EdgeServicesDto
+    EdgeFiqServiceDto:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+        connected_file_iq_serial:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Connected File Iq Serial
+      type: object
+      required:
+      - enabled
+      title: EdgeFiqServiceDto
     EdgeMachine:
       properties:
         cpu:
@@ -638,15 +722,6 @@ components:
       - fiq_disk
       - cow_disk
       title: EdgeMachine
-    EdgeS3EdgeConfigDto:
-      properties:
-        enabled:
-          type: boolean
-          title: Enabled
-      type: object
-      required:
-      - enabled
-      title: EdgeS3EdgeConfigDto
     SimpleEdgeDto:
       properties:
         id:
@@ -686,81 +761,6 @@ components:
       - serial
       - build
       title: SimpleEdgeDto
-    EdgesDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/SimpleEdgeDto'
-          type: array
-          title: Items
-      type: object
-      title: EdgesDto
-    UpdateEdgeFiqServiceDto:
-      properties:
-        enabled:
-          type: boolean
-          title: Enabled
-          default: false
-        connected_file_iq_serial:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Connected File Iq Serial
-      type: object
-      title: UpdateEdgeFiqServiceDto
-    EdgeVolumes:
-      properties:
-        owned:
-          type: integer
-          title: Owned
-        remotely_connected:
-          type: integer
-          title: Remotely Connected
-      type: object
-      required:
-      - owned
-      - remotely_connected
-      title: EdgeVolumes
-    EdgeServicesDto:
-      properties:
-        s3_edge:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: S3 Edge
-        file_iq:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: File Iq
-      type: object
-      title: EdgeServicesDto
-    ValidationErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
-      type: object
-      required:
-      - message
-      - detail
-      title: ValidationErrorResponse
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

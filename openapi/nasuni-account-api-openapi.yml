@@ -303,22 +303,28 @@ paths:
     - url: https://hostname/api/v1.2
 components:
   schemas:
-    ErrorResponse:
-      type: object
-      properties:
-        error:
-          $ref: '#/components/schemas/Error'
-    Link:
+    Paging:
       type: object
       properties:
         href:
           type: string
-          description: Hyperlink to the resource.
-          readOnly: true
-        method:
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
           type: string
-          description: HTTP method to use on the link.
-          readOnly: true
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type: string
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
     Error:
       type: object
       properties:
@@ -411,7 +417,23 @@ components:
           description: Links to related resources, collections, and actions.
           readOnly: true
       description: A cloud credential obeject
-    Paging:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error'
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+          readOnly: true
+        method:
+          type: string
+          description: HTTP method to use on the link.
+          readOnly: true
+    Paging_2:
       type: object
       properties:
         href:
@@ -421,13 +443,17 @@ components:
           type: integer
           description: The maximum number of items in a page.
         next:
-          type: string
+          type:
+          - string
+          - 'null'
           description: A link to the next page of objects. The value will be null if there isn't one.
         offset:
           type: integer
           description: The item number the page starts on.
         previous:
-          type: string
+          type:
+          - string
+          - 'null'
           description: A link to the previous page of objects. The value will be null if there isn't one.
         total:
           type: integer
@@ -487,32 +513,6 @@ components:
           description: Links to related resources, collections, and actions.
           readOnly: true
       description: A cloud credential object
-    Paging_2:
-      type: object
-      properties:
-        href:
-          type: string
-          description: A link to the requested endpoint.
-        limit:
-          type: integer
-          description: The maximum number of items in a page.
-        next:
-          type:
-          - string
-          - 'null'
-          description: A link to the next page of objects. The value will be null if there isn't one.
-        offset:
-          type: integer
-          description: The item number the page starts on.
-        previous:
-          type:
-          - string
-          - 'null'
-          description: A link to the previous page of objects. The value will be null if there isn't one.
-        total:
-          type: integer
-          description: Total number of items available at the requested endpoint.
-      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
   securitySchemes:
     AuthToken:
       type: apiKey

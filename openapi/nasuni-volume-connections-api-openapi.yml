@@ -184,59 +184,46 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    VolumeConnectionsResponseDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/VolumeConnectionItemDto'
-          type: array
-          title: Items
-      type: object
-      title: VolumeConnectionsResponseDto
-      description: GET /volume_connections response — all matching mounts (no pagination).
-    VolumeSortBy:
+    ConnectionPermission:
       type: string
       enum:
-      - volume_name
-      - cloud_provider
-      - cloud_region
-      - accessible_data
-      - unprotected_data
-      - last_snapshot_utc
-      - appliance_name
-      title: VolumeSortBy
-      description: 'Allowlist for volume-centric sort keys. Invalid values → 422.
-
-
-        All sorts produce a volume-cohesive ordering (mounts of the same
-
-        volume stay grouped). Per-mount keys are rolled up so they make
-
-        sense as a single value per volume: ``last_snapshot_utc`` → MAX
-
-        across mounts; ``appliance_name`` → master mount edge name.'
-    Protocol:
+      - READONLY
+      - READWRITE
+      - Custom
+      title: ConnectionPermission
+    SnapshotStatus:
       type: string
       enum:
-      - NFS
-      - SMB
-      - FTP
-      title: Protocol
+      - idle
+      - pending
+      - in_progress
+      - succeeded
+      - failed
+      - cancelling
+      - cancelled
+      - cancel_rejected
+      - up_to_date
+      title: SnapshotStatus
+      description: 'Public snapshot lifecycle vocabulary surfaced by the snapshot APIs.
+
+
+        The persisted column (``VolumeEdgeState.current_snapshot_status``)
+
+        has a single writer: the EventHub ``VolumeSnapshotStatusProcessor``,
+
+        which translates filer ``volume_snapshot_status`` events. No other
+
+        code path — API request handlers, heartbeat upserts, background
+
+        services — writes to that column. ``cancelling`` never reaches the
+
+        DB: it exists as a FE-optimistic wire value only (clients render it
+
+        between the cancel dispatch and the filer''s ``cancelled`` /
+
+        ``cancel_rejected`` ack). ``pending`` is a real filer-reported
+
+        state.'
     NocCloudProvider:
       type: string
       enum:
@@ -261,36 +248,31 @@ components:
       - s3_compatible
       title: NocCloudProvider
       description: Cloud provider identity as used by NOC (shortname).
-    SortOrder:
-      type: string
-      enum:
-      - asc
-      - desc
-      title: SortOrder
-      description: Short-form sort direction used by list APIs (asc/desc).
-    PermissionPolicy:
-      type: string
-      enum:
-      - POSIX Mixed Mode
-      - UNIX/NFS Permissions Only Mode
-      - Unauthenticated Access Mode
-      - NTFS Compatible Mode
-      - NTFS Exclusive Mode
-      - NTFS Multiprotocol Mode
-      title: PermissionPolicy
-    SecurityMode:
-      type: string
-      enum:
-      - Publicly Available
-      - Active Directory
-      - LDAP Directory
-      title: SecurityMode
-    portal__api__dto__volumes__Role:
-      type: string
-      enum:
-      - owner
-      - connected
-      title: Role
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
     VolumeConnectionItemDto:
       properties:
         cloud_provider:
@@ -427,71 +409,89 @@ components:
       - role
       title: VolumeConnectionItemDto
       description: "One ``(volume, appliance)`` connection row from\n``GET /volume_connections``.\n\nThe response is denormalised one-row-per-mount (N appliances → N\nrows). Nullability mirrors :class:`VolumeApplianceRow` end-to-end —\n``None`` means \"no data available yet\" and is intentionally\ndistinct from ``0`` / :attr:`SnapshotStatus.idle`.\n\n* ``protocol`` — full deduplicated list in canonical\n  SMB → NFS → FTP order; empty if no share configured.\n* ``connection_permission`` — derived from\n  ``volumes_v2.remoteaccess_autoaccept`` (master) or\n  ``volume_edge_states.remoteaccess_permission`` (non-master).\n* ``accessible_data`` / ``unprotected_data`` — parsed byte counts;\n  ``None`` when the appliance hasn't reported a number.\n* ``last_snapshot_utc`` — tz-aware UTC, serialised as ISO 8601.\n\nThe trailing per-edge state block (``appliance_hostname`` through\n``autofault_folders_count``) carries every column the Volume\nDetails \"Data Protection\", \"Protocols\", \"Data Growth\", and\n\"Additional Details\" cards need. Kept on this row (rather than a\nseparate detail endpoint) so ``/volume_connections`` remains the\nsingle low-level resource for per-mount data — Portal's BFF and\nexternal API consumers compose it with ``/volumes/{id}`` to build\nhigher-level views."
-    ValidationErrorResponse:
+    Protocol:
+      type: string
+      enum:
+      - NFS
+      - SMB
+      - FTP
+      title: Protocol
+    portal__api__dto__volumes__Role:
+      type: string
+      enum:
+      - owner
+      - connected
+      title: Role
+    PermissionPolicy:
+      type: string
+      enum:
+      - POSIX Mixed Mode
+      - UNIX/NFS Permissions Only Mode
+      - Unauthenticated Access Mode
+      - NTFS Compatible Mode
+      - NTFS Exclusive Mode
+      - NTFS Multiprotocol Mode
+      title: PermissionPolicy
+    SortOrder:
+      type: string
+      enum:
+      - asc
+      - desc
+      title: SortOrder
+      description: Short-form sort direction used by list APIs (asc/desc).
+    ErrorResponse:
       properties:
         message:
           type: string
           title: Message
         detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
+          anyOf:
+          - {}
+          - type: 'null'
           title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
       type: object
       required:
       - message
       - detail
-      title: ValidationErrorResponse
-    ConnectionPermission:
+      title: ErrorResponse
+    VolumeConnectionsResponseDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/VolumeConnectionItemDto'
+          type: array
+          title: Items
+      type: object
+      title: VolumeConnectionsResponseDto
+      description: GET /volume_connections response — all matching mounts (no pagination).
+    SecurityMode:
       type: string
       enum:
-      - READONLY
-      - READWRITE
-      - Custom
-      title: ConnectionPermission
-    SnapshotStatus:
+      - Publicly Available
+      - Active Directory
+      - LDAP Directory
+      title: SecurityMode
+    VolumeSortBy:
       type: string
       enum:
-      - idle
-      - pending
-      - in_progress
-      - succeeded
-      - failed
-      - cancelling
-      - cancelled
-      - cancel_rejected
-      - up_to_date
-      title: SnapshotStatus
-      description: 'Public snapshot lifecycle vocabulary surfaced by the snapshot APIs.
+      - volume_name
+      - cloud_provider
+      - cloud_region
+      - accessible_data
+      - unprotected_data
+      - last_snapshot_utc
+      - appliance_name
+      title: VolumeSortBy
+      description: 'Allowlist for volume-centric sort keys. Invalid values → 422.
 
 
-        The persisted column (``VolumeEdgeState.current_snapshot_status``)
+        All sorts produce a volume-cohesive ordering (mounts of the same
 
-        has a single writer: the EventHub ``VolumeSnapshotStatusProcessor``,
+        volume stay grouped). Per-mount keys are rolled up so they make
 
-        which translates filer ``volume_snapshot_status`` events. No other
+        sense as a single value per volume: ``last_snapshot_utc`` → MAX
 
-        code path — API request handlers, heartbeat upserts, background
-
-        services — writes to that column. ``cancelling`` never reaches the
-
-        DB: it exists as a FE-optimistic wire value only (clients render it
-
-        between the cancel dispatch and the filer''s ``cancelled`` /
-
-        ``cancel_rejected`` ack). ``pending`` is a real filer-reported
-
-        state.'
+        across mounts; ``appliance_name`` → master mount edge name.'
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey
