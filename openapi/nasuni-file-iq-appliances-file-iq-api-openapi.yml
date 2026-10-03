@@ -197,26 +197,21 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
-    FiqApplianceUpdateDto:
+    ErrorResponse:
       properties:
-        enabled:
+        message:
+          type: string
+          title: Message
+        detail:
           anyOf:
-          - type: boolean
+          - {}
           - type: 'null'
-          title: Enabled
-      type: object
-      title: FiqApplianceUpdateDto
-    FiqConnections:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/FiqEdgeDto'
-          type: array
-          title: Edges
+          title: Detail
       type: object
       required:
-      - edges
-      title: FiqConnections
+      - message
+      - detail
+      title: ErrorResponse
     FiqApplianceDto:
       properties:
         serial_number:
@@ -247,6 +242,17 @@ components:
       - enabled
       - connections
       title: FiqApplianceDto
+    FiqsDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/FiqApplianceDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: FiqsDto
     FiqEdgeDto:
       properties:
         serial_number:
@@ -274,32 +280,26 @@ components:
       - description
       - fiq_service_enabled
       title: FiqEdgeDto
-    ErrorResponse:
+    FiqConnections:
       properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    FiqsDto:
-      properties:
-        items:
+        edges:
           items:
-            $ref: '#/components/schemas/FiqApplianceDto'
+            $ref: '#/components/schemas/FiqEdgeDto'
           type: array
-          title: Items
+          title: Edges
       type: object
       required:
-      - items
-      title: FiqsDto
+      - edges
+      title: FiqConnections
+    FiqApplianceUpdateDto:
+      properties:
+        enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enabled
+      type: object
+      title: FiqApplianceUpdateDto
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

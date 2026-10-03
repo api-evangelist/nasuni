@@ -1035,75 +1035,17 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    UpdateRoleDto:
-      properties:
-        name:
-          type: string
-          title: Name
-        sso_group_names:
-          items:
-            type: string
-          type: array
-          title: Sso Group Names
-        permissions:
-          items:
-            type: string
-            format: uuid
-          type: array
-          title: Permissions
-      type: object
-      title: UpdateRoleDto
-    RolesAndPermissionsDto:
-      properties:
-        roles:
-          items:
-            $ref: '#/components/schemas/RoleDto'
-          type: array
-          title: Roles
-        permissions:
-          items:
-            $ref: '#/components/schemas/PermissionDto'
-          type: array
-          title: Permissions
-        is_sso_configured:
-          type: boolean
-          title: Is Sso Configured
-          default: false
-      type: object
-      title: RolesAndPermissionsDto
-    UsersDto:
+    ServiceKeysDto:
       properties:
         items:
           items:
-            $ref: '#/components/schemas/UserDto'
+            $ref: '#/components/schemas/ServiceKeyDto'
           type: array
           title: Items
       type: object
       required:
       - items
-      title: UsersDto
-    CreateRoleDto:
-      properties:
-        name:
-          type: string
-          title: Name
-        sso_group_names:
-          items:
-            type: string
-          type: array
-          title: Sso Group Names
-          default: []
-        permissions:
-          items:
-            type: string
-            format: uuid
-          type: array
-          title: Permissions
-          default: []
-      type: object
-      required:
-      - name
-      title: CreateRoleDto
+      title: ServiceKeysDto
     PermissionDto:
       properties:
         id:
@@ -1166,6 +1108,22 @@ components:
       - name
       - permissions
       title: RoleDto
+    CreateServiceKeyRequestBodyDto:
+      properties:
+        name:
+          type: string
+          title: Name
+        roles:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Roles
+      type: object
+      required:
+      - name
+      - roles
+      title: CreateServiceKeyRequestBodyDto
     UserDto:
       properties:
         id:
@@ -1194,34 +1152,152 @@ components:
       - created
       - last_login
       title: UserDto
-    RolesDto:
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    UserKeyDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        username:
+          type: string
+          title: Username
+        user:
+          type: string
+          format: uuid
+          title: User
+        key:
+          type: string
+          title: Key
+        expiration:
+          type: string
+          format: date-time
+          title: Expiration
+        date_created:
+          type: string
+          format: date-time
+          title: Date Created
+        last_accessed:
+          type: string
+          format: date-time
+          title: Last Accessed
+      type: object
+      required:
+      - id
+      - username
+      - user
+      - key
+      - expiration
+      - date_created
+      - last_accessed
+      title: UserKeyDto
+    UserKeysDto:
       properties:
         items:
           items:
-            $ref: '#/components/schemas/BaseRoleDto'
+            $ref: '#/components/schemas/UserKeyDto'
           type: array
           title: Items
       type: object
       required:
       - items
-      title: RolesDto
-    UpdateServiceKeyRequestBodyDto:
+      title: UserKeysDto
+    CreateRoleDto:
       properties:
         name:
-          anyOf:
-          - type: string
-          - type: 'null'
+          type: string
           title: Name
-        roles:
-          anyOf:
-          - items:
-              type: string
-              format: uuid
-            type: array
-          - type: 'null'
-          title: Roles
+        sso_group_names:
+          items:
+            type: string
+          type: array
+          title: Sso Group Names
+          default: []
+        permissions:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Permissions
+          default: []
       type: object
-      title: UpdateServiceKeyRequestBodyDto
+      required:
+      - name
+      title: CreateRoleDto
+    UsersDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/UserDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: UsersDto
+    CreateServiceKeyResponseDto:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          type: string
+          title: Name
+        key:
+          type: string
+          title: Key
+        roles:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Roles
+        date_created:
+          type: string
+          format: date-time
+          title: Date Created
+        last_accessed:
+          type: string
+          format: date-time
+          title: Last Accessed
+        secret:
+          type: string
+          title: Secret
+      type: object
+      required:
+      - id
+      - name
+      - key
+      - roles
+      - date_created
+      - last_accessed
+      - secret
+      title: CreateServiceKeyResponseDto
     BaseRoleDto:
       properties:
         id:
@@ -1260,17 +1336,6 @@ components:
       - last_updated
       - name
       title: BaseRoleDto
-    ServiceKeysDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/ServiceKeyDto'
-          type: array
-          title: Items
-      type: object
-      required:
-      - items
-      title: ServiceKeysDto
     PermissionKey:
       type: string
       enum:
@@ -1349,6 +1414,76 @@ components:
         within the Portal API, including appliance management, authentication, account operations,
 
         analytics, activity logs, downloads, GFA, IAM, S3 Edge, serials, SSO, Ops IQ, and UI features.'
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    RolesDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/BaseRoleDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: RolesDto
+    UpdateServiceKeyRequestBodyDto:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        roles:
+          anyOf:
+          - items:
+              type: string
+              format: uuid
+            type: array
+          - type: 'null'
+          title: Roles
+      type: object
+      title: UpdateServiceKeyRequestBodyDto
+    PermissionsDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/PermissionDto'
+          type: array
+          title: Items
+      type: object
+      title: PermissionsDto
+    RolesAndPermissionsDto:
+      properties:
+        roles:
+          items:
+            $ref: '#/components/schemas/RoleDto'
+          type: array
+          title: Roles
+        permissions:
+          items:
+            $ref: '#/components/schemas/PermissionDto'
+          type: array
+          title: Permissions
+        is_sso_configured:
+          type: boolean
+          title: Is Sso Configured
+          default: false
+      type: object
+      title: RolesAndPermissionsDto
     ServiceKeyDto:
       properties:
         id:
@@ -1384,125 +1519,6 @@ components:
       - date_created
       - last_accessed
       title: ServiceKeyDto
-    CreateServiceKeyRequestBodyDto:
-      properties:
-        name:
-          type: string
-          title: Name
-        roles:
-          items:
-            type: string
-            format: uuid
-          type: array
-          title: Roles
-      type: object
-      required:
-      - name
-      - roles
-      title: CreateServiceKeyRequestBodyDto
-    CreateServiceKeyResponseDto:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        name:
-          type: string
-          title: Name
-        key:
-          type: string
-          title: Key
-        roles:
-          items:
-            type: string
-            format: uuid
-          type: array
-          title: Roles
-        date_created:
-          type: string
-          format: date-time
-          title: Date Created
-        last_accessed:
-          type: string
-          format: date-time
-          title: Last Accessed
-        secret:
-          type: string
-          title: Secret
-      type: object
-      required:
-      - id
-      - name
-      - key
-      - roles
-      - date_created
-      - last_accessed
-      - secret
-      title: CreateServiceKeyResponseDto
-    UserKeysDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/UserKeyDto'
-          type: array
-          title: Items
-      type: object
-      required:
-      - items
-      title: UserKeysDto
-    UserKeyDto:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        username:
-          type: string
-          title: Username
-        user:
-          type: string
-          format: uuid
-          title: User
-        key:
-          type: string
-          title: Key
-        expiration:
-          type: string
-          format: date-time
-          title: Expiration
-        date_created:
-          type: string
-          format: date-time
-          title: Date Created
-        last_accessed:
-          type: string
-          format: date-time
-          title: Last Accessed
-      type: object
-      required:
-      - id
-      - username
-      - user
-      - key
-      - expiration
-      - date_created
-      - last_accessed
-      title: UserKeyDto
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
     DuplicateRoleDto:
       properties:
         source_role_id:
@@ -1523,40 +1539,24 @@ components:
       - source_role_id
       - name
       title: DuplicateRoleDto
-    ValidationErrorResponse:
+    UpdateRoleDto:
       properties:
-        message:
+        name:
           type: string
-          title: Message
-        detail:
+          title: Name
+        sso_group_names:
           items:
-            additionalProperties: true
-            type: object
+            type: string
           type: array
-          title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
-      type: object
-      required:
-      - message
-      - detail
-      title: ValidationErrorResponse
-    PermissionsDto:
-      properties:
-        items:
+          title: Sso Group Names
+        permissions:
           items:
-            $ref: '#/components/schemas/PermissionDto'
+            type: string
+            format: uuid
           type: array
-          title: Items
+          title: Permissions
       type: object
-      title: PermissionsDto
+      title: UpdateRoleDto
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

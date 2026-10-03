@@ -166,6 +166,21 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
     TaskSummaryDto:
       properties:
         id:
@@ -263,46 +278,12 @@ components:
         otherwise. The deliberate partial-failure aggregation policy that decides
 
         *what* to put there remains deferred (see the PORTAL-2195 ledger, FU-3).'
-    TaskState:
+    TaskInitiator:
       type: string
       enum:
-      - in_progress
-      - completed
-      - failed
-      title: TaskState
-    TaskResource:
-      type: string
-      enum:
+      - portal
       - edge
-      - volume
-      - cloud_credential
-      title: TaskResource
-    TasksSummaryDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/TaskSummaryDto'
-          type: array
-          title: Items
-      type: object
-      required:
-      - items
-      title: TasksSummaryDto
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
+      title: TaskInitiator
     HTTPValidationError:
       properties:
         message:
@@ -328,17 +309,36 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
-    TaskInitiator:
-      type: string
-      enum:
-      - portal
-      - edge
-      title: TaskInitiator
     TaskExecutor:
       type: string
       enum:
       - edge
       title: TaskExecutor
+    TaskState:
+      type: string
+      enum:
+      - in_progress
+      - completed
+      - failed
+      title: TaskState
+    TasksSummaryDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/TaskSummaryDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: TasksSummaryDto
+    TaskResource:
+      type: string
+      enum:
+      - edge
+      - volume
+      - cloud_credential
+      title: TaskResource
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

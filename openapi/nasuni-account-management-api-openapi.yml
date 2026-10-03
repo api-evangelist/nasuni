@@ -214,6 +214,30 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    NocCloudProvider:
+      type: string
+      enum:
+      - amazons3
+      - amazons3gov
+      - azure
+      - google
+      - googles3
+      - atmos
+      - ironmountain
+      - rackspace
+      - nirvanix
+      - synaptic
+      - castor
+      - delldx
+      - cloudone
+      - hp
+      - cleversafe
+      - vipr
+      - ibmcos
+      - hcp
+      - s3_compatible
+      title: NocCloudProvider
+      description: Cloud provider identity as used by NOC (shortname).
     ValidationErrorResponse:
       properties:
         message:
@@ -239,30 +263,21 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
-    NocCloudProvider:
-      type: string
-      enum:
-      - amazons3
-      - amazons3gov
-      - azure
-      - google
-      - googles3
-      - atmos
-      - ironmountain
-      - rackspace
-      - nirvanix
-      - synaptic
-      - castor
-      - delldx
-      - cloudone
-      - hp
-      - cleversafe
-      - vipr
-      - ibmcos
-      - hcp
-      - s3_compatible
-      title: NocCloudProvider
-      description: Cloud provider identity as used by NOC (shortname).
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
     AccountInformationDto:
       properties:
         email:
@@ -300,28 +315,6 @@ components:
       - id
       title: AccountInformationDto
       description: Response model for account infromation for webbff/account
-    AiActivateAccountSubscriptionDto:
-      properties:
-        subscribed_limit:
-          type: integer
-          minimum: 0
-          title: Subscribed Limit
-          description: Total files allowed for the subscription
-        consumed:
-          type: integer
-          minimum: 0
-          title: Consumed
-          description: Files currently consumed against the subscription
-        remaining:
-          type: integer
-          title: Remaining
-          description: Files remaining before reaching the limit; may be negative when over.
-      type: object
-      required:
-      - subscribed_limit
-      - consumed
-      - remaining
-      title: AiActivateAccountSubscriptionDto
     AccountLicenseDto:
       properties:
         subscription_status:
@@ -414,28 +407,6 @@ components:
       - awada_enabled
       - ops_iq_premium
       title: AccountLicenseDto
-    NocCloudStorageProtocol:
-      type: string
-      enum:
-      - amazons3
-      - amazons3gov
-      - azure
-      - ibmcos
-      - hcp
-      - vipr
-      - cleversafe
-      - googles3
-      - s3_compatible
-      title: NocCloudStorageProtocol
-      description: The underlying storage API/protocol (maps to 'type' in NOC response).
-    NocCloudVendor:
-      type: string
-      enum:
-      - customer
-      - private
-      - nasuni
-      title: NocCloudVendor
-      description: Who provisions the cloud infrastructure.
     AiActivateAccountInfoDto:
       properties:
         mcp:
@@ -450,21 +421,70 @@ components:
         MCP is currently the only AI Activate workload. A Search subscription will be
 
         reintroduced here once that workload lands.'
-    ErrorResponse:
+    NocCloudStorageProtocol:
+      type: string
+      enum:
+      - amazons3
+      - amazons3gov
+      - azure
+      - ibmcos
+      - hcp
+      - vipr
+      - cleversafe
+      - googles3
+      - s3_compatible
+      title: NocCloudStorageProtocol
+      description: The underlying storage API/protocol (maps to 'type' in NOC response).
+    CloudProviderEntryDto:
       properties:
-        message:
+        protocol:
+          $ref: '#/components/schemas/NocCloudStorageProtocol'
+        vendor:
+          $ref: '#/components/schemas/NocCloudVendor'
+        shortname:
+          $ref: '#/components/schemas/NocCloudProvider'
+        display_name:
           type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
+          title: Display Name
+          description: Human-readable name for the cloud provider
       type: object
       required:
-      - message
-      - detail
-      title: ErrorResponse
+      - protocol
+      - vendor
+      - shortname
+      - display_name
+      title: CloudProviderEntryDto
+      description: A cloud provider available to the account.
+    AiActivateAccountSubscriptionDto:
+      properties:
+        subscribed_limit:
+          type: integer
+          minimum: 0
+          title: Subscribed Limit
+          description: Total files allowed for the subscription
+        consumed:
+          type: integer
+          minimum: 0
+          title: Consumed
+          description: Files currently consumed against the subscription
+        remaining:
+          type: integer
+          title: Remaining
+          description: Files remaining before reaching the limit; may be negative when over.
+      type: object
+      required:
+      - subscribed_limit
+      - consumed
+      - remaining
+      title: AiActivateAccountSubscriptionDto
+    NocCloudVendor:
+      type: string
+      enum:
+      - customer
+      - private
+      - nasuni
+      title: NocCloudVendor
+      description: Who provisions the cloud infrastructure.
     UpdateAccountInformationDto:
       properties:
         first_name:
@@ -487,26 +507,6 @@ components:
       - phone
       title: UpdateAccountInformationDto
       description: Request model for account information change for WebApi route /account
-    CloudProviderEntryDto:
-      properties:
-        protocol:
-          $ref: '#/components/schemas/NocCloudStorageProtocol'
-        vendor:
-          $ref: '#/components/schemas/NocCloudVendor'
-        shortname:
-          $ref: '#/components/schemas/NocCloudProvider'
-        display_name:
-          type: string
-          title: Display Name
-          description: Human-readable name for the cloud provider
-      type: object
-      required:
-      - protocol
-      - vendor
-      - shortname
-      - display_name
-      title: CloudProviderEntryDto
-      description: A cloud provider available to the account.
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

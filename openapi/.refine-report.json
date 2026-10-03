@@ -38,9 +38,7 @@
     "nasuni-unifs-as-a-service-uaas-api-openapi.yml",
     "nasuni-volume-connections-api-openapi.yml"
   ],
-  "archived": [
-    "deleted 1 superseded output(s) from the previous generation"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
@@ -94,8 +92,7 @@
     "tag 'Notifications' spans 4 source specs (nasuni-nmc-v1-0-openapi.json, nasuni-nmc-v1-1-openapi.json, nasuni-nmc-v1-2-openapi.json, nasuni-portal-v0-openapi.json): per-path servers applied",
     "tag 'Volumes' spans 4 source specs (nasuni-nmc-v1-0-openapi.json, nasuni-nmc-v1-1-openapi.json, nasuni-nmc-v1-2-openapi.json, nasuni-portal-v0-openapi.json): per-path servers applied",
     "tag 'Account' spans 2 source specs (nasuni-nmc-v1-1-openapi.json, nasuni-nmc-v1-2-openapi.json): per-path servers applied",
-    "superseded outputs removed: nasuni-list-type-2-api-openapi.yml",
-    "apis.yml register: written (+0 apis, 29 total)"
+    "apis.yml register: already-registered"
   ],
   "skipped": [
     "_original/nasuni-portal-v0-openapi.yml: archived document superseded by a larger archived document",
@@ -121,7 +118,6 @@
     "nasuni-iam-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "nasuni-index-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "nasuni-jobs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "nasuni-list-type-2-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "nasuni-messages-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "nasuni-nasuni-data-service-nds-api-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "nasuni-nasuni-data-service-nds-aws-api-api-openapi.yml: previously refined output, superseded by openapi/_original/",

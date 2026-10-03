@@ -303,6 +303,69 @@ paths:
     - url: https://hostname/api/v1.2
 components:
   schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error'
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+          readOnly: true
+        method:
+          type: string
+          description: HTTP method to use on the link.
+          readOnly: true
+    CloudCredential:
+      type: object
+      properties:
+        cred_id:
+          type: string
+          description: Cloud credential identifier
+          readOnly: true
+        name:
+          type: string
+          description: The name of the cloud credential
+          readOnly: true
+        filer_serial_number:
+          type: string
+          description: Unique identifier for the associated filer.
+          readOnly: true
+        cloud_provider:
+          type: string
+          description: The name of the cloud provider for this credential
+          readOnly: true
+        account:
+          type: string
+          description: The account access key or username for the associated cloud account
+          readOnly: true
+        hostname:
+          type: string
+          description: The cloud hostname
+          readOnly: true
+        status:
+          type: string
+          description: Current status of the resource
+          readOnly: true
+        note:
+          type: string
+          description: Any notes regarding the credential.
+          readOnly: true
+        in_use:
+          type: boolean
+          description: If true, the cloud credential is in use by at least one volume.
+          readOnly: true
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+          description: Links to related resources, collections, and actions.
+          readOnly: true
+      description: A cloud credential obeject
     Paging:
       type: object
       properties:
@@ -370,95 +433,6 @@ components:
           type: string
           description: Description of the error reported.
           readOnly: true
-    CloudCredential:
-      type: object
-      properties:
-        cred_id:
-          type: string
-          description: Cloud credential identifier
-          readOnly: true
-        name:
-          type: string
-          description: The name of the cloud credential
-          readOnly: true
-        filer_serial_number:
-          type: string
-          description: Unique identifier for the associated filer.
-          readOnly: true
-        cloud_provider:
-          type: string
-          description: The name of the cloud provider for this credential
-          readOnly: true
-        account:
-          type: string
-          description: The account access key or username for the associated cloud account
-          readOnly: true
-        hostname:
-          type: string
-          description: The cloud hostname
-          readOnly: true
-        status:
-          type: string
-          description: Current status of the resource
-          readOnly: true
-        note:
-          type: string
-          description: Any notes regarding the credential.
-          readOnly: true
-        in_use:
-          type: boolean
-          description: If true, the cloud credential is in use by at least one volume.
-          readOnly: true
-        links:
-          type: object
-          properties:
-            self:
-              $ref: '#/components/schemas/Link'
-          description: Links to related resources, collections, and actions.
-          readOnly: true
-      description: A cloud credential obeject
-    ErrorResponse:
-      type: object
-      properties:
-        error:
-          $ref: '#/components/schemas/Error'
-    Link:
-      type: object
-      properties:
-        href:
-          type: string
-          description: Hyperlink to the resource.
-          readOnly: true
-        method:
-          type: string
-          description: HTTP method to use on the link.
-          readOnly: true
-    Paging_2:
-      type: object
-      properties:
-        href:
-          type: string
-          description: A link to the requested endpoint.
-        limit:
-          type: integer
-          description: The maximum number of items in a page.
-        next:
-          type:
-          - string
-          - 'null'
-          description: A link to the next page of objects. The value will be null if there isn't one.
-        offset:
-          type: integer
-          description: The item number the page starts on.
-        previous:
-          type:
-          - string
-          - 'null'
-          description: A link to the previous page of objects. The value will be null if there isn't one.
-        total:
-          type: integer
-          description: Total number of items available at the requested endpoint.
-      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
     CloudCredential_2:
       required:
       - account
@@ -513,6 +487,32 @@ components:
           description: Links to related resources, collections, and actions.
           readOnly: true
       description: A cloud credential object
+    Paging_2:
+      type: object
+      properties:
+        href:
+          type: string
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type:
+          - string
+          - 'null'
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type:
+          - string
+          - 'null'
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
   securitySchemes:
     AuthToken:
       type: apiKey

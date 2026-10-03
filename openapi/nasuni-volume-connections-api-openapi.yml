@@ -184,13 +184,87 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    ConnectionPermission:
+    NocCloudProvider:
       type: string
       enum:
-      - READONLY
-      - READWRITE
-      - Custom
-      title: ConnectionPermission
+      - amazons3
+      - amazons3gov
+      - azure
+      - google
+      - googles3
+      - atmos
+      - ironmountain
+      - rackspace
+      - nirvanix
+      - synaptic
+      - castor
+      - delldx
+      - cloudone
+      - hp
+      - cleversafe
+      - vipr
+      - ibmcos
+      - hcp
+      - s3_compatible
+      title: NocCloudProvider
+      description: Cloud provider identity as used by NOC (shortname).
+    PermissionPolicy:
+      type: string
+      enum:
+      - POSIX Mixed Mode
+      - UNIX/NFS Permissions Only Mode
+      - Unauthenticated Access Mode
+      - NTFS Compatible Mode
+      - NTFS Exclusive Mode
+      - NTFS Multiprotocol Mode
+      title: PermissionPolicy
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    Protocol:
+      type: string
+      enum:
+      - NFS
+      - SMB
+      - FTP
+      title: Protocol
     SnapshotStatus:
       type: string
       enum:
@@ -224,55 +298,6 @@ components:
         ``cancel_rejected`` ack). ``pending`` is a real filer-reported
 
         state.'
-    NocCloudProvider:
-      type: string
-      enum:
-      - amazons3
-      - amazons3gov
-      - azure
-      - google
-      - googles3
-      - atmos
-      - ironmountain
-      - rackspace
-      - nirvanix
-      - synaptic
-      - castor
-      - delldx
-      - cloudone
-      - hp
-      - cleversafe
-      - vipr
-      - ibmcos
-      - hcp
-      - s3_compatible
-      title: NocCloudProvider
-      description: Cloud provider identity as used by NOC (shortname).
-    ValidationErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
-      type: object
-      required:
-      - message
-      - detail
-      title: ValidationErrorResponse
     VolumeConnectionItemDto:
       properties:
         cloud_provider:
@@ -409,51 +434,13 @@ components:
       - role
       title: VolumeConnectionItemDto
       description: "One ``(volume, appliance)`` connection row from\n``GET /volume_connections``.\n\nThe response is denormalised one-row-per-mount (N appliances → N\nrows). Nullability mirrors :class:`VolumeApplianceRow` end-to-end —\n``None`` means \"no data available yet\" and is intentionally\ndistinct from ``0`` / :attr:`SnapshotStatus.idle`.\n\n* ``protocol`` — full deduplicated list in canonical\n  SMB → NFS → FTP order; empty if no share configured.\n* ``connection_permission`` — derived from\n  ``volumes_v2.remoteaccess_autoaccept`` (master) or\n  ``volume_edge_states.remoteaccess_permission`` (non-master).\n* ``accessible_data`` / ``unprotected_data`` — parsed byte counts;\n  ``None`` when the appliance hasn't reported a number.\n* ``last_snapshot_utc`` — tz-aware UTC, serialised as ISO 8601.\n\nThe trailing per-edge state block (``appliance_hostname`` through\n``autofault_folders_count``) carries every column the Volume\nDetails \"Data Protection\", \"Protocols\", \"Data Growth\", and\n\"Additional Details\" cards need. Kept on this row (rather than a\nseparate detail endpoint) so ``/volume_connections`` remains the\nsingle low-level resource for per-mount data — Portal's BFF and\nexternal API consumers compose it with ``/volumes/{id}`` to build\nhigher-level views."
-    Protocol:
+    SecurityMode:
       type: string
       enum:
-      - NFS
-      - SMB
-      - FTP
-      title: Protocol
-    portal__api__dto__volumes__Role:
-      type: string
-      enum:
-      - owner
-      - connected
-      title: Role
-    PermissionPolicy:
-      type: string
-      enum:
-      - POSIX Mixed Mode
-      - UNIX/NFS Permissions Only Mode
-      - Unauthenticated Access Mode
-      - NTFS Compatible Mode
-      - NTFS Exclusive Mode
-      - NTFS Multiprotocol Mode
-      title: PermissionPolicy
-    SortOrder:
-      type: string
-      enum:
-      - asc
-      - desc
-      title: SortOrder
-      description: Short-form sort direction used by list APIs (asc/desc).
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
+      - Publicly Available
+      - Active Directory
+      - LDAP Directory
+      title: SecurityMode
     VolumeConnectionsResponseDto:
       properties:
         items:
@@ -464,13 +451,12 @@ components:
       type: object
       title: VolumeConnectionsResponseDto
       description: GET /volume_connections response — all matching mounts (no pagination).
-    SecurityMode:
+    portal__api__dto__volumes__Role:
       type: string
       enum:
-      - Publicly Available
-      - Active Directory
-      - LDAP Directory
-      title: SecurityMode
+      - owner
+      - connected
+      title: Role
     VolumeSortBy:
       type: string
       enum:
@@ -492,6 +478,20 @@ components:
         sense as a single value per volume: ``last_snapshot_utc`` → MAX
 
         across mounts; ``appliance_name`` → master mount edge name.'
+    SortOrder:
+      type: string
+      enum:
+      - asc
+      - desc
+      title: SortOrder
+      description: Short-form sort direction used by list APIs (asc/desc).
+    ConnectionPermission:
+      type: string
+      enum:
+      - READONLY
+      - READWRITE
+      - Custom
+      title: ConnectionPermission
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

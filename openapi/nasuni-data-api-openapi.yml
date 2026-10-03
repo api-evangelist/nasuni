@@ -96,29 +96,28 @@ paths:
       - Data
 components:
   schemas:
-    propagation_metric:
+    volume_guid:
+      type: string
+      format: uuid
+    volume_metric:
       type: object
       required:
-      - filer_guid
-      - filer_title
-      - kind
       - metric_type
-      - prop_seconds
+      - mode
+      - profile
+      - time_to_protect
       - timestamp
       - version
       - volume_guid
       - volume_title
       properties:
-        filer_guid:
-          type: string
-          format: uuid
-        filer_title:
-          type: string
-        kind:
-          type: string
         metric_type:
           type: string
-        prop_seconds:
+        mode:
+          type: string
+        profile:
+          type: string
+        time_to_protect:
           type: integer
         timestamp:
           type: string
@@ -161,63 +160,6 @@ components:
           format: uuid
         volume_title:
           type: string
-    volume_metric:
-      type: object
-      required:
-      - metric_type
-      - mode
-      - profile
-      - time_to_protect
-      - timestamp
-      - version
-      - volume_guid
-      - volume_title
-      properties:
-        metric_type:
-          type: string
-        mode:
-          type: string
-        profile:
-          type: string
-        time_to_protect:
-          type: integer
-        timestamp:
-          type: string
-          format: date-time
-        version:
-          type: integer
-        volume_guid:
-          type: string
-          format: uuid
-        volume_title:
-          type: string
-    volume_guid:
-      type: string
-      format: uuid
-    metrics:
-      type: object
-      required:
-      - volumes
-      - filers
-      - propagation
-      - locks
-      properties:
-        volumes:
-          type: array
-          items:
-            $ref: '#/components/schemas/volume_metric'
-        filers:
-          type: array
-          items:
-            $ref: '#/components/schemas/filer_metric'
-        propagation:
-          type: array
-          items:
-            $ref: '#/components/schemas/propagation_metric'
-        locks:
-          type: array
-          items:
-            $ref: '#/components/schemas/lock_metric'
     lock_metric:
       type: object
       required:
@@ -254,6 +196,64 @@ components:
           format: uuid
         volume_title:
           type: string
+    propagation_metric:
+      type: object
+      required:
+      - filer_guid
+      - filer_title
+      - kind
+      - metric_type
+      - prop_seconds
+      - timestamp
+      - version
+      - volume_guid
+      - volume_title
+      properties:
+        filer_guid:
+          type: string
+          format: uuid
+        filer_title:
+          type: string
+        kind:
+          type: string
+        metric_type:
+          type: string
+        prop_seconds:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: integer
+        volume_guid:
+          type: string
+          format: uuid
+        volume_title:
+          type: string
+    metrics:
+      type: object
+      required:
+      - volumes
+      - filers
+      - propagation
+      - locks
+      properties:
+        volumes:
+          type: array
+          items:
+            $ref: '#/components/schemas/volume_metric'
+        filers:
+          type: array
+          items:
+            $ref: '#/components/schemas/filer_metric'
+        propagation:
+          type: array
+          items:
+            $ref: '#/components/schemas/propagation_metric'
+        locks:
+          type: array
+          items:
+            $ref: '#/components/schemas/lock_metric'
     info:
       type: object
       required:
@@ -283,6 +283,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/volume_guid'
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
   parameters:
     ClientKeyHeader:
       name: X-Nasuni-client-key
@@ -292,9 +295,6 @@ components:
       schema:
         type: string
         default: swagger client
-  responses:
-    UnauthorizedError:
-      description: Access token is missing or invalid
   securitySchemes:
     ApiTokenHeader:
       type: apiKey

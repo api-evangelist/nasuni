@@ -134,6 +134,28 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    DownloadsDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/DownloadInfoDto'
+          type: array
+          title: Items
+      type: object
+      title: DownloadsDto
+    ApplianceType:
+      type: string
+      enum:
+      - nmc
+      - naa
+      - edge
+      - uaas
+      - file_iq
+      - naada
+      - awada
+      - desktop
+      - ha_edge
+      title: ApplianceType
     ValidationErrorResponse:
       properties:
         message:
@@ -159,6 +181,21 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
     DownloadUrlResponseDto:
       properties:
         download_url:
@@ -206,43 +243,6 @@ components:
       - platform
       - display_name
       title: DownloadInfoDto
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    ApplianceType:
-      type: string
-      enum:
-      - nmc
-      - naa
-      - edge
-      - uaas
-      - file_iq
-      - naada
-      - awada
-      - desktop
-      - ha_edge
-      title: ApplianceType
-    DownloadsDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/DownloadInfoDto'
-          type: array
-          title: Items
-      type: object
-      title: DownloadsDto
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

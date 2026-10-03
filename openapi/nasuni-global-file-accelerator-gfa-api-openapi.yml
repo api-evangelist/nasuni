@@ -145,6 +145,28 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    GfaApiKeyDto:
+      properties:
+        key:
+          type: string
+          format: uuid
+          title: Key
+        created:
+          type: string
+          format: date-time
+          title: Created
+        last_used:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Used
+      type: object
+      required:
+      - key
+      - created
+      - last_used
+      title: GfaApiKeyDto
     ValidationErrorResponse:
       properties:
         message:
@@ -185,28 +207,6 @@ components:
       - message
       - detail
       title: ErrorResponse
-    GfaApiKeyDto:
-      properties:
-        key:
-          type: string
-          format: uuid
-          title: Key
-        created:
-          type: string
-          format: date-time
-          title: Created
-        last_used:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last Used
-      type: object
-      required:
-      - key
-      - created
-      - last_used
-      title: GfaApiKeyDto
     GfaApiKeysResponseDto:
       properties:
         items:

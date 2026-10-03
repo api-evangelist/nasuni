@@ -726,79 +726,65 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
-    AiActivateIndexListItemDto:
+    ErrorResponse:
       properties:
-        volume_guid:
+        message:
           type: string
-          title: Volume Guid
-        volume_name:
-          type: string
-          title: Volume Name
-        provider:
-          type: string
-          title: Provider
-        volume_region:
+          title: Message
+        detail:
           anyOf:
-          - type: string
+          - {}
           - type: 'null'
-          title: Volume Region
-          description: Storage region of the volume. May be null when NOC has no volume metadata.
-        status:
-          $ref: '#/components/schemas/AiActivateIndexStatus'
-        file_count:
-          anyOf:
-          - type: integer
-            minimum: 0
-          - type: 'null'
-          title: File Count
-          description: Number of files indexed for the volume. May be null until NOC reports a count.
-        volume_size:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Volume Size
-          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until indexing progresses.
+          title: Detail
       type: object
       required:
-      - volume_guid
-      - volume_name
-      - provider
-      - status
-      title: AiActivateIndexListItemDto
-      description: A single content-index entry for a volume in the AI Activate indexes list.
-    AiActivateCreateInventoryRequestBodyDto:
-      properties:
-        volume_guid:
-          type: string
-          title: Volume Guid
-        region:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Region
-          description: Required for Azure volumes only. Use an Azure location code such as 'centralus', not a display name. For AWS volumes, this is optional, but when provided it must match the volume storage region.
-      type: object
-      required:
-      - volume_guid
-      title: AiActivateCreateInventoryRequestBodyDto
-    NocAiActivateInventoryStatus:
+      - message
+      - detail
+      title: ErrorResponse
+    AiActivateIndexStatus:
       type: string
       enum:
-      - Not Indexed
-      - Waiting for NDS creation
-      - Waiting for NDS configuration
-      - NDS Ready
-      - Metadata Index in progress
-      - Metadata Index Complete
-      - Full Content Index in progress
-      - Full Content Index Pending
-      - Full Content Index Complete
-      - Incremental Content Index in progress
-      - Incremental Content Index failed
-      - Volume Inventory Expired
-      - Soft Deleted
-      - Indexing Failed
-      title: NocAiActivateInventoryStatus
+      - in_progress
+      - complete
+      - failed
+      - queued_for_deletion
+      title: AiActivateIndexStatus
+    AiActivateIndexConfigDto:
+      properties:
+        include_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Include Paths
+        exclude_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Exclude Paths
+      additionalProperties: false
+      type: object
+      title: AiActivateIndexConfigDto
+      description: 'AI Activate search configuration (include/exclude paths) for a volume.
+
+
+        Unified model shared by GET/POST/PATCH request bodies for
+
+        ``/ai_activate/indexes/{volume_id}``. Fields are optional so PATCH callers
+
+        can send only what they want to update; POST callers may omit them to
+
+        accept the defaults (empty include/exclude).
+
+
+        ``extra="forbid"`` — MCP toggles moved to ``/indexes/{volume_id}/mcp``.
+
+        Reject legacy PATCH bodies that include ``mcp_enabled`` here so callers
+
+        fail loudly (422) instead of silently having the field ignored.'
     AiActivateMcpVolumeConfigUpdateDto:
       properties:
         mcp_enabled:
@@ -831,52 +817,58 @@ components:
 
 
         Omitted fields are left unchanged. Set period to null explicitly to select ''All time''.'
-    AiActivateInventoryDto:
+    AiActivateCreateInventoryRequestBodyDto:
       properties:
         volume_guid:
           type: string
           title: Volume Guid
-        volume_name:
-          type: string
-          title: Volume Name
-        provider:
-          type: string
-          title: Provider
-          description: Provider used to execute inventory indexing. This should match the volume cloud provider, for example AWS or Azure.
-        volume_region:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Volume Region
-          description: API-provided volume region (default NDS region unless changed by the user).
         region:
           anyOf:
           - type: string
           - type: 'null'
           title: Region
-          description: Region used to execute inventory indexing. For AWS volumes, this must match the volume storage region. For Azure volumes, this must be a supported Azure location code; if different from the volume storage region, it may incur egress costs. May be null for volumes that have not been configured for indexing.
-        status:
-          $ref: '#/components/schemas/NocAiActivateInventoryStatus'
-        file_count:
-          anyOf:
-          - type: integer
-            minimum: 0
-          - type: 'null'
-          title: File Count
-          description: Number of files included in the volume inventory. May be unavailable until inventory data is ready.
-        volume_size:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Volume Size
-          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until the volume is fully indexed.
+          description: Required for Azure volumes only. Use an Azure location code such as 'centralus', not a display name. For AWS volumes, this is optional, but when provided it must match the volume storage region.
       type: object
       required:
       - volume_guid
-      - volume_name
-      - provider
-      - status
-      title: AiActivateInventoryDto
+      title: AiActivateCreateInventoryRequestBodyDto
+    AiActivateCreateIndexRequestBodyDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        mcp_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Mcp Enabled
+        include_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Include Paths
+        exclude_paths:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Exclude Paths
+      type: object
+      required:
+      - volume_guid
+      title: AiActivateCreateIndexRequestBodyDto
+    AiActivateIndexesResponseDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AiActivateIndexListItemDto'
+          type: array
+          title: Items
+      type: object
+      title: AiActivateIndexesResponseDto
     AiActivateIndexDetailsDto:
       properties:
         volume_guid:
@@ -940,6 +932,106 @@ components:
         endpoints so external API consumers see the same volume/index metadata as
 
         the list endpoint alongside the search configuration in a single response.'
+    AiActivateInventoriesResponseDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AiActivateInventoryDto'
+          type: array
+          title: Items
+      type: object
+      title: AiActivateInventoriesResponseDto
+    AiActivateInventoryDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        volume_name:
+          type: string
+          title: Volume Name
+        provider:
+          type: string
+          title: Provider
+          description: Provider used to execute inventory indexing. This should match the volume cloud provider, for example AWS or Azure.
+        volume_region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Region
+          description: API-provided volume region (default NDS region unless changed by the user).
+        region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Region
+          description: Region used to execute inventory indexing. For AWS volumes, this must match the volume storage region. For Azure volumes, this must be a supported Azure location code; if different from the volume storage region, it may incur egress costs. May be null for volumes that have not been configured for indexing.
+        status:
+          $ref: '#/components/schemas/NocAiActivateInventoryStatus'
+        file_count:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          title: File Count
+          description: Number of files included in the volume inventory. May be unavailable until inventory data is ready.
+        volume_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Size
+          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until the volume is fully indexed.
+      type: object
+      required:
+      - volume_guid
+      - volume_name
+      - provider
+      - status
+      title: AiActivateInventoryDto
+    AiActivateCreateInventoryResponseDto:
+      properties:
+        volume_guid:
+          type: string
+          title: Volume Guid
+        volume_name:
+          type: string
+          title: Volume Name
+        provider:
+          type: string
+          title: Provider
+          description: Provider used to execute inventory indexing, as confirmed by NOC after inventory creation.
+        volume_region:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Region
+          description: API-provided volume region (default NDS region unless changed by the user).
+        region:
+          type: string
+          title: Region
+          description: Region used to execute inventory indexing, as confirmed by NOC after inventory creation.
+        status:
+          $ref: '#/components/schemas/NocAiActivateInventoryStatus'
+        file_count:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          title: File Count
+          description: Number of files included in the volume inventory. May be unavailable until inventory data is ready.
+        volume_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Volume Size
+          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until the volume is fully indexed.
+      type: object
+      required:
+      - volume_guid
+      - volume_name
+      - provider
+      - region
+      - status
+      title: AiActivateCreateInventoryResponseDto
     AiActivateIndexConfigResponseDto:
       properties:
         volume_guid:
@@ -995,103 +1087,25 @@ components:
       - status
       title: AiActivateIndexConfigResponseDto
       description: AI Activate index configuration returned by NOC. Reused across GET PATCH and POST
-    AiActivateIndexesResponseDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/AiActivateIndexListItemDto'
-          type: array
-          title: Items
-      type: object
-      title: AiActivateIndexesResponseDto
-    AiActivateIndexStatus:
+    NocAiActivateInventoryStatus:
       type: string
       enum:
-      - in_progress
-      - complete
-      - failed
-      - queued_for_deletion
-      title: AiActivateIndexStatus
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    AiActivateIndexConfigDto:
-      properties:
-        include_paths:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Include Paths
-        exclude_paths:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Exclude Paths
-      additionalProperties: false
-      type: object
-      title: AiActivateIndexConfigDto
-      description: 'AI Activate search configuration (include/exclude paths) for a volume.
-
-
-        Unified model shared by GET/POST/PATCH request bodies for
-
-        ``/ai_activate/indexes/{volume_id}``. Fields are optional so PATCH callers
-
-        can send only what they want to update; POST callers may omit them to
-
-        accept the defaults (empty include/exclude).
-
-
-        ``extra="forbid"`` — MCP toggles moved to ``/indexes/{volume_id}/mcp``.
-
-        Reject legacy PATCH bodies that include ``mcp_enabled`` here so callers
-
-        fail loudly (422) instead of silently having the field ignored.'
-    AiActivateCreateIndexRequestBodyDto:
-      properties:
-        volume_guid:
-          type: string
-          title: Volume Guid
-        mcp_enabled:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Mcp Enabled
-        include_paths:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Include Paths
-        exclude_paths:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Exclude Paths
-      type: object
-      required:
-      - volume_guid
-      title: AiActivateCreateIndexRequestBodyDto
-    AiActivateCreateInventoryResponseDto:
+      - Not Indexed
+      - Waiting for NDS creation
+      - Waiting for NDS configuration
+      - NDS Ready
+      - Metadata Index in progress
+      - Metadata Index Complete
+      - Full Content Index in progress
+      - Full Content Index Pending
+      - Full Content Index Complete
+      - Incremental Content Index in progress
+      - Incremental Content Index failed
+      - Volume Inventory Expired
+      - Soft Deleted
+      - Indexing Failed
+      title: NocAiActivateInventoryStatus
+    AiActivateIndexListItemDto:
       properties:
         volume_guid:
           type: string
@@ -1102,49 +1116,35 @@ components:
         provider:
           type: string
           title: Provider
-          description: Provider used to execute inventory indexing, as confirmed by NOC after inventory creation.
         volume_region:
           anyOf:
           - type: string
           - type: 'null'
           title: Volume Region
-          description: API-provided volume region (default NDS region unless changed by the user).
-        region:
-          type: string
-          title: Region
-          description: Region used to execute inventory indexing, as confirmed by NOC after inventory creation.
+          description: Storage region of the volume. May be null when NOC has no volume metadata.
         status:
-          $ref: '#/components/schemas/NocAiActivateInventoryStatus'
+          $ref: '#/components/schemas/AiActivateIndexStatus'
         file_count:
           anyOf:
           - type: integer
             minimum: 0
           - type: 'null'
           title: File Count
-          description: Number of files included in the volume inventory. May be unavailable until inventory data is ready.
+          description: Number of files indexed for the volume. May be null until NOC reports a count.
         volume_size:
           anyOf:
           - type: string
           - type: 'null'
           title: Volume Size
-          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until the volume is fully indexed.
+          description: Human-readable volume size string e.g. '10.5 TB'. May be unavailable until indexing progresses.
       type: object
       required:
       - volume_guid
       - volume_name
       - provider
-      - region
       - status
-      title: AiActivateCreateInventoryResponseDto
-    AiActivateInventoriesResponseDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/AiActivateInventoryDto'
-          type: array
-          title: Items
-      type: object
-      title: AiActivateInventoriesResponseDto
+      title: AiActivateIndexListItemDto
+      description: A single content-index entry for a volume in the AI Activate indexes list.
     AiActivateMcpVolumeConfigDto:
       properties:
         mcp_enabled:
