@@ -2119,7 +2119,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    VolumeTelemetryObjectCountsDto:
+    ApplianceTelemetryFileIqDiskIoDto:
       properties:
         metadata:
           additionalProperties: true
@@ -2128,16 +2128,51 @@ components:
           description: Telemetry metadata (help text, metric definitions)
         items:
           items:
-            $ref: '#/components/schemas/VolumeTelemetryObjectCountsRecord'
+            $ref: '#/components/schemas/ApplianceTelemetryFileIqDiskIoRecord'
           type: array
           title: Items
-          description: List of object count records (files and directories)
       type: object
       required:
       - items
-      title: VolumeTelemetryObjectCountsDto
-      description: List of volume object counts records
-    ApplianceTelemetryFileIqDiskIoLatencyDto:
+      title: ApplianceTelemetryFileIqDiskIoDto
+      description: List of appliance File IQ DB Disk IOPS records
+    ApplianceTelemetryNetworkThroughputDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            $ref: '#/components/schemas/ApplianceTelemetryNetworkThroughputRecord'
+          type: array
+          title: Items
+          description: List of network throughput records
+      type: object
+      required:
+      - items
+      title: ApplianceTelemetryNetworkThroughputDto
+      description: List of appliance network throughput records
+    ApplianceTelemetryCacheUtilizationDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            $ref: '#/components/schemas/ApplianceTelemetryCacheUtilizationRecord'
+          type: array
+          title: Items
+          description: List of cache utilization records
+      type: object
+      required:
+      - items
+      title: ApplianceTelemetryCacheUtilizationDto
+      description: List of appliance cache utilization records
+    ApplianceTelemetryOsDiskIoLatencyDto:
       properties:
         metadata:
           additionalProperties: true
@@ -2153,8 +2188,8 @@ components:
       type: object
       required:
       - items
-      title: ApplianceTelemetryFileIqDiskIoLatencyDto
-      description: File IQ disk IO latency response with embedded metadata
+      title: ApplianceTelemetryOsDiskIoLatencyDto
+      description: OS disk IO latency response with embedded metadata
     ApplianceTelemetryMemoryUtilizationDetailsDto:
       properties:
         metadata:
@@ -2173,6 +2208,31 @@ components:
       - items
       title: ApplianceTelemetryMemoryUtilizationDetailsDto
       description: List of appliance memory utilization details records
+    ApplianceTelemetryFileIqDiskIoRecord:
+      properties:
+        time:
+          type: integer
+          title: Time
+          description: Timestamp in milliseconds
+        file_iq_disk_io_reads:
+          anyOf:
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: File Iq Disk Io Reads
+          description: Number of read operations per second on File IQ disk
+        file_iq_disk_io_writes:
+          anyOf:
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: File Iq Disk Io Writes
+          description: Number of write operations per second on File IQ disk
+      type: object
+      required:
+      - time
+      title: ApplianceTelemetryFileIqDiskIoRecord
+      description: Appliance File IQ DB Disk IOPS record.
     VolumeTelemetrySnapshotDetailsRecord:
       properties:
         appliance:
@@ -2278,7 +2338,127 @@ components:
         - When the metadata snapshot phase (P2) started and ended
 
         - Protection metrics and file counts at the time of snapshot'
-    ApplianceTelemetryOsDiskIoLatencyDto:
+    ApplianceTelemetryCacheDiskIoRecord:
+      properties:
+        time:
+          type: integer
+          title: Time
+          description: Timestamp in milliseconds
+        cache_io_reads:
+          anyOf:
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Cache Io Reads
+          description: Number of read operations per second performed by cache disk
+        cache_io_writes:
+          anyOf:
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Cache Io Writes
+          description: Number of write operations per second performed by cache disk
+      type: object
+      required:
+      - time
+      title: ApplianceTelemetryCacheDiskIoRecord
+      description: Appliance cache disk I/O record.
+    ApplianceTelemetryCacheHitsMissesRecord:
+      properties:
+        time:
+          type: integer
+          title: Time
+          description: Timestamp in milliseconds
+        cache_misses:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Cache Misses
+          description: Cache misses requiring cloud fetch - high values suggest insufficient cache or cold data
+        cache_reads:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Cache Reads
+          description: Number of cache read operations (hits)
+      type: object
+      required:
+      - time
+      title: ApplianceTelemetryCacheHitsMissesRecord
+      description: Appliance cache hits/misses record.
+    VolumeTelemetryPushTimelineDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        data_events:
+          items:
+            $ref: '#/components/schemas/VolumeTelemetryPushTimelineDataEventDto'
+          type: array
+          title: Data Events
+          description: Data snapshot phase (P1) events - multiple appliances can protect concurrently
+        metadata_events:
+          items:
+            $ref: '#/components/schemas/VolumeTelemetryPushTimelineMetadataEventDto'
+          type: array
+          title: Metadata Events
+          description: Metadata snapshot phase (P2) events - metadata snapshots are serialized
+        appliance_count:
+          type: integer
+          title: Appliance Count
+          description: Total number of appliances involved in snapshots
+        min_time:
+          type: integer
+          title: Min Time
+          description: Earliest timestamp in milliseconds across all events
+        max_time:
+          type: integer
+          title: Max Time
+          description: Latest timestamp in milliseconds across all events
+      type: object
+      required:
+      - data_events
+      - metadata_events
+      - appliance_count
+      - min_time
+      - max_time
+      title: VolumeTelemetryPushTimelineDto
+      description: Volume push timeline with data and metadata events.
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    ApplianceHealthScoreDescriptionDto:
+      properties:
+        health_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Health Status
+          description: Health status label returned by telemetry, e.g. Healthy or Warning
+        overview:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Overview
+          description: High-level explanation of the appliance condition
+      type: object
+      title: ApplianceHealthScoreDescriptionDto
+      description: Descriptive text returned with appliance health score.
+    ApplianceTelemetryFileIqDiskIoLatencyDto:
       properties:
         metadata:
           additionalProperties: true
@@ -2294,96 +2474,25 @@ components:
       type: object
       required:
       - items
-      title: ApplianceTelemetryOsDiskIoLatencyDto
-      description: OS disk IO latency response with embedded metadata
-    ApplianceHealthScoreStatisticsDto:
-      properties:
-        cpu_count:
-          type: integer
-          title: Cpu Count
-          description: Reported CPU count for the appliance used when contextualizing load
-          default: 0
-        avg_load:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          title: Avg Load
-          description: Average load (0-n) across the sampled window rounded to two decimals
-          default: '0'
-        max_load:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          title: Max Load
-          description: Maximum load observed within the sampled window rounded to two decimals
-          default: '0'
-      type: object
-      title: ApplianceHealthScoreStatisticsDto
-      description: Summary statistics for appliance health score.
-    ApplianceTelemetryCpuUsageDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            $ref: '#/components/schemas/ApplianceTelemetryCpuUsageRecord'
-          type: array
-          title: Items
-          description: List of CPU usage records
-      type: object
-      required:
-      - items
-      title: ApplianceTelemetryCpuUsageDto
-      description: List of appliance CPU usage records
-    ApplianceTelemetryCpuLoadAvgGraphDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Items
-          description: List of CPU load average records
-        num_cores:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Num Cores
-          description: CPU core count used for load comparison. Null when the core count is unavailable.
-      type: object
-      required:
-      - items
-      - num_cores
-      title: ApplianceTelemetryCpuLoadAvgGraphDto
-      description: CPU load average graph data with core count
-    VolumeTelemetryProtectMeanRecord:
+      title: ApplianceTelemetryFileIqDiskIoLatencyDto
+      description: File IQ disk IO latency response with embedded metadata
+    ApplianceTelemetrySMBConnectionsRecord:
       properties:
         time:
           type: integer
           title: Time
           description: Timestamp in milliseconds
-        protect_mean:
-          type: string
-          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          title: Protect Mean
-          description: Average time in seconds for files to be protected during this snapshot
-        volume_version:
-          type: integer
-          title: Volume Version
-          description: Sequential snapshot version number
+        connections:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Connections
+          description: Number of active SMB sessions - sudden drops may indicate network issues
       type: object
       required:
       - time
-      - protect_mean
-      - volume_version
-      title: VolumeTelemetryProtectMeanRecord
-      description: Volume protection mean record.
+      title: ApplianceTelemetrySMBConnectionsRecord
+      description: Appliance SMB connections record.
     VolumeTelemetryObjectCountsRecord:
       properties:
         appliance:
@@ -2427,64 +2536,24 @@ components:
       - volume_version
       title: VolumeTelemetryObjectCountsRecord
       description: Volume object counts record with appliance info.
-    ApplianceTelemetryCacheDiskIoLatencyDto:
+    ApplianceTelemetryCacheUtilizationRecord:
       properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            $ref: '#/components/schemas/ApplianceTelemetryDiskIoLatencyRecord'
-          type: array
-          title: Items
-          description: List of disk IO latency records
+        time:
+          type: integer
+          title: Time
+          description: Timestamp in milliseconds
+        cache_utilization:
+          anyOf:
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Cache Utilization
+          description: Percentage (0-100) of cache disk used - near 100% causes evictions and misses
       type: object
       required:
-      - items
-      title: ApplianceTelemetryCacheDiskIoLatencyDto
-      description: Cache disk IO latency response with embedded metadata
-    VolumeTelemetryPushTimelineDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        data_events:
-          items:
-            $ref: '#/components/schemas/VolumeTelemetryPushTimelineDataEventDto'
-          type: array
-          title: Data Events
-          description: Data snapshot phase (P1) events - multiple appliances can protect concurrently
-        metadata_events:
-          items:
-            $ref: '#/components/schemas/VolumeTelemetryPushTimelineMetadataEventDto'
-          type: array
-          title: Metadata Events
-          description: Metadata snapshot phase (P2) events - metadata snapshots are serialized
-        appliance_count:
-          type: integer
-          title: Appliance Count
-          description: Total number of appliances involved in snapshots
-        min_time:
-          type: integer
-          title: Min Time
-          description: Earliest timestamp in milliseconds across all events
-        max_time:
-          type: integer
-          title: Max Time
-          description: Latest timestamp in milliseconds across all events
-      type: object
-      required:
-      - data_events
-      - metadata_events
-      - appliance_count
-      - min_time
-      - max_time
-      title: VolumeTelemetryPushTimelineDto
-      description: Volume push timeline with data and metadata events.
+      - time
+      title: ApplianceTelemetryCacheUtilizationRecord
+      description: Appliance cache utilization record.
     ValidationErrorResponse:
       properties:
         message:
@@ -2510,6 +2579,284 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
+    ApplianceTelemetryCowDiskLatencyDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            $ref: '#/components/schemas/ApplianceTelemetryDiskLatencyRecord'
+          type: array
+          title: Items
+          description: List of disk I/O latency records
+      type: object
+      required:
+      - items
+      title: ApplianceTelemetryCowDiskLatencyDto
+      description: CoW disk latency response with embedded metadata
+    ApplianceHealthScoreRawDataRecord:
+      properties:
+        time:
+          type: integer
+          title: Time
+          description: Timestamp in milliseconds
+        value:
+          anyOf:
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Value
+          description: Metric value at this timestamp
+      type: object
+      required:
+      - time
+      title: ApplianceHealthScoreRawDataRecord
+      description: Single data point for appliance health score chart.
+    ApplianceTelemetryOsDiskIoRecord:
+      properties:
+        time:
+          type: integer
+          title: Time
+          description: Timestamp in milliseconds
+        os_disk_io_reads:
+          anyOf:
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Os Disk Io Reads
+          description: Number of read operations per second on OS disk
+        os_disk_io_writes:
+          anyOf:
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Os Disk Io Writes
+          description: Number of write operations per second on OS disk
+      type: object
+      required:
+      - time
+      title: ApplianceTelemetryOsDiskIoRecord
+      description: Appliance OS disk I/O record.
+    VolumeTelemetryObjectCountsDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            $ref: '#/components/schemas/VolumeTelemetryObjectCountsRecord'
+          type: array
+          title: Items
+          description: List of object count records (files and directories)
+      type: object
+      required:
+      - items
+      title: VolumeTelemetryObjectCountsDto
+      description: List of volume object counts records
+    ApplianceHealthScoreStatisticsDto:
+      properties:
+        cpu_count:
+          type: integer
+          title: Cpu Count
+          description: Reported CPU count for the appliance used when contextualizing load
+          default: 0
+        avg_load:
+          type: string
+          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          title: Avg Load
+          description: Average load (0-n) across the sampled window rounded to two decimals
+          default: '0'
+        max_load:
+          type: string
+          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          title: Max Load
+          description: Maximum load observed within the sampled window rounded to two decimals
+          default: '0'
+      type: object
+      title: ApplianceHealthScoreStatisticsDto
+      description: Summary statistics for appliance health score.
+    VolumeTelemetryRequestDto:
+      properties:
+        period:
+          type: string
+          title: Period
+          description: 'Time period in ISO 8601 format. Examples: ''PT1H'' (last 1 hour), ''P1D'' (last 1 day), ''2025-01-01T00:00:00Z/2025-01-02T00:00:00Z'' (specific interval), or millisecond timestamps ''1730390400000/1730476800000''. Minimum range: 6 minutes.'
+        serial_numbers:
+          items:
+            type: string
+            format: uuid
+          type: array
+          title: Serial Numbers
+          description: Appliance serial numbers to filter data - ensures stability across DR events
+        chart_width:
+          anyOf:
+          - type: integer
+            maximum: 5200
+            minimum: 100
+          - type: 'null'
+          title: Chart Width
+          description: Chart width in pixels (100-5200) - affects sampling density
+        smart_sampling:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Smart Sampling
+          description: Enable optimized dataset for trend analysis with faster load times
+      type: object
+      required:
+      - period
+      - serial_numbers
+      title: VolumeTelemetryRequestDto
+      description: Request DTO for volume telemetry data (volume_id is in URL path).
+    VolumeTelemetryPushTimelineDataEventDto:
+      properties:
+        phase:
+          type: string
+          const: data_snapshot
+          title: Phase
+          description: 'Event type: 1 indicates data snapshot phase (P1)'
+        appliance:
+          type: string
+          title: Appliance
+          description: Appliance name/description
+        serial_number:
+          type: string
+          title: Serial Number
+          description: Appliance serial number
+        start_time:
+          type: integer
+          title: Start Time
+          description: Timestamp in milliseconds when data snapshot phase started
+        end_time:
+          type: integer
+          title: End Time
+          description: Timestamp in milliseconds when data snapshot phase ended
+      type: object
+      required:
+      - phase
+      - appliance
+      - serial_number
+      - start_time
+      - end_time
+      title: VolumeTelemetryPushTimelineDataEventDto
+      description: 'Volume push timeline data event.
+
+
+        Represents when file data was pushed to cloud storage during snapshot creation.'
+    VolumeTelemetryProtectMeanDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            $ref: '#/components/schemas/VolumeTelemetryProtectMeanRecords'
+          type: array
+          title: Items
+          description: List of protection mean records grouped by appliance
+      type: object
+      required:
+      - items
+      title: VolumeTelemetryProtectMeanDto
+      description: List of volume protection mean records
+    VolumeTelemetryProtectMeanRecords:
+      properties:
+        appliance:
+          type: string
+          title: Appliance
+          description: Appliance name/description
+        serial_number:
+          type: string
+          title: Serial Number
+          description: Appliance serial number
+        snapshots:
+          items:
+            $ref: '#/components/schemas/VolumeTelemetryProtectMeanRecord'
+          type: array
+          title: Snapshots
+          description: Snapshot protection mean records for this appliance
+      type: object
+      required:
+      - appliance
+      - serial_number
+      title: VolumeTelemetryProtectMeanRecords
+      description: Volume protection mean records grouped by appliance.
+    ApplianceTelemetryCpuLoadAvgGraphDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Items
+          description: List of CPU load average records
+        num_cores:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Num Cores
+          description: CPU core count used for load comparison. Null when the core count is unavailable.
+      type: object
+      required:
+      - items
+      - num_cores
+      title: ApplianceTelemetryCpuLoadAvgGraphDto
+      description: CPU load average graph data with core count
+    ApplianceTelemetryDiskLatencyRecord:
+      properties:
+        time:
+          type: integer
+          title: Time
+          description: Timestamp in milliseconds
+        io_time:
+          anyOf:
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Io Time
+          description: Time in milliseconds spent on I/O operations
+        weighted_io_time:
+          anyOf:
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Weighted Io Time
+          description: Weighted I/O time in ms - much higher than io_time indicates saturation
+      type: object
+      required:
+      - time
+      title: ApplianceTelemetryDiskLatencyRecord
+      description: Appliance disk latency record.
+    ApplianceTelemetryCowDiskIoDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            $ref: '#/components/schemas/ApplianceTelemetryCowDiskIoRecord'
+          type: array
+          title: Items
+          description: List of Copy-on-Write disk I/O records
+      type: object
+      required:
+      - items
+      title: ApplianceTelemetryCowDiskIoDto
+      description: List of appliance CoW Disk IOPS records
     ApplianceTelemetryOsDiskLatencyDto:
       properties:
         metadata:
@@ -2528,49 +2875,6 @@ components:
       - items
       title: ApplianceTelemetryOsDiskLatencyDto
       description: OS disk latency response with embedded metadata
-    ApplianceTelemetryMemoryUtilizationDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            $ref: '#/components/schemas/ApplianceTelemetryMemoryUtilizationRecord'
-          type: array
-          title: Items
-          description: List of memory utilization records (pre-v10.0.4)
-      type: object
-      required:
-      - items
-      title: ApplianceTelemetryMemoryUtilizationDto
-      description: List of appliance memory utilization records
-    ApplianceTelemetryFileIqDiskIoRecord:
-      properties:
-        time:
-          type: integer
-          title: Time
-          description: Timestamp in milliseconds
-        file_iq_disk_io_reads:
-          anyOf:
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: File Iq Disk Io Reads
-          description: Number of read operations per second on File IQ disk
-        file_iq_disk_io_writes:
-          anyOf:
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: File Iq Disk Io Writes
-          description: Number of write operations per second on File IQ disk
-      type: object
-      required:
-      - time
-      title: ApplianceTelemetryFileIqDiskIoRecord
-      description: Appliance File IQ DB Disk IOPS record.
     ApplianceTelemetryNetworkThroughputRecord:
       properties:
         time:
@@ -2606,32 +2910,7 @@ components:
       - time
       title: ApplianceTelemetryNetworkThroughputRecord
       description: Appliance network throughput record.
-    ApplianceTelemetryOsDiskIoRecord:
-      properties:
-        time:
-          type: integer
-          title: Time
-          description: Timestamp in milliseconds
-        os_disk_io_reads:
-          anyOf:
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: Os Disk Io Reads
-          description: Number of read operations per second on OS disk
-        os_disk_io_writes:
-          anyOf:
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: Os Disk Io Writes
-          description: Number of write operations per second on OS disk
-      type: object
-      required:
-      - time
-      title: ApplianceTelemetryOsDiskIoRecord
-      description: Appliance OS disk I/O record.
-    VolumeTelemetryProtectMeanDto:
+    ApplianceTelemetryFileIqDiskLatencyDto:
       properties:
         metadata:
           additionalProperties: true
@@ -2640,67 +2919,137 @@ components:
           description: Telemetry metadata (help text, metric definitions)
         items:
           items:
-            $ref: '#/components/schemas/VolumeTelemetryProtectMeanRecords'
+            $ref: '#/components/schemas/ApplianceTelemetryDiskLatencyRecord'
           type: array
           title: Items
-          description: List of protection mean records grouped by appliance
+          description: List of disk I/O latency records
       type: object
       required:
       - items
-      title: VolumeTelemetryProtectMeanDto
-      description: List of volume protection mean records
-    ApplianceTelemetryRequestDto:
+      title: ApplianceTelemetryFileIqDiskLatencyDto
+      description: File IQ disk latency response with embedded metadata
+    ApplianceHealthScoreDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        serial_number:
+          type: string
+          title: Serial Number
+          description: Appliance serial number associated with this health score
+        appliance_name:
+          type: string
+          title: Appliance Name
+          description: Human-readable appliance name
+        health_score:
+          type: string
+          title: Health Score
+          description: Health score text rendered in UI (0-100 or textual state)
+        statistics:
+          $ref: '#/components/schemas/ApplianceHealthScoreStatisticsDto'
+          description: Summary statistics for the appliance health score
+        description:
+          $ref: '#/components/schemas/ApplianceHealthScoreDescriptionDto'
+          description: Descriptive text explaining current status
+        raw_data:
+          $ref: '#/components/schemas/ApplianceHealthScoreRawDataDto'
+          description: Raw charting data for the primary appliance health metric
+        anomaly_details:
+          additionalProperties: true
+          type: object
+          title: Anomaly Details
+          description: Additional context about detected anomalies (counts, window, metric, metadata)
+      type: object
+      required:
+      - serial_number
+      - appliance_name
+      - health_score
+      - statistics
+      - description
+      - raw_data
+      title: ApplianceHealthScoreDto
+      description: appliance health score response following the HealthScoreResponse contract.
+    VolumeTelemetrySnapshotPropagationDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            $ref: '#/components/schemas/VolumeTelemetrySnapshotPropagationRecord'
+          type: array
+          title: Items
+          description: Snapshot propagation records with statistical analysis
+        snapshot_appliances:
+          items:
+            type: string
+          type: array
+          title: Snapshot Appliances
+          description: List of unique appliance names that created snapshots
+        sync_appliances:
+          items:
+            type: string
+          type: array
+          title: Sync Appliances
+          description: List of unique appliance names that synced snapshots
+      type: object
+      required:
+      - items
+      - snapshot_appliances
+      - sync_appliances
+      title: VolumeTelemetrySnapshotPropagationDto
+      description: Volume snapshot propagation data with appliance lists.
+    ApplianceTelemetryCacheHitsMissesDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            $ref: '#/components/schemas/ApplianceTelemetryCacheHitsMissesRecord'
+          type: array
+          title: Items
+          description: List of cache hit and miss records
+      type: object
+      required:
+      - items
+      title: ApplianceTelemetryCacheHitsMissesDto
+      description: List of appliance cache hits/misses records
+    ApplianceTelemetryDurationRequestDto:
       properties:
         period:
           type: string
           title: Period
           description: 'Time period in ISO 8601 format. Examples: ''PT1H'' (last 1 hour), ''P1D'' (last 1 day), ''2025-01-01T00:00:00Z/2025-01-02T00:00:00Z'' (specific interval), or millisecond timestamps ''1730390400000/1730476800000''. Minimum range: 6 minutes.'
-        panel_width:
-          anyOf:
-          - type: integer
-            maximum: 5200
-            minimum: 100
-          - type: 'null'
-          title: Panel Width
-          description: Panel width in pixels (100-5200)
-        bin_size:
-          anyOf:
-          - type: integer
-            maximum: 3600
-            minimum: 60
-          - type: 'null'
-          title: Bin Size
-          description: Bin size for data aggregation (60-3600)
       type: object
       required:
       - period
-      title: ApplianceTelemetryRequestDto
-      description: Request DTO for appliance telemetry data (filer_id is in URL path).
-    ApplianceTelemetryCacheDiskIoRecord:
+      title: ApplianceTelemetryDurationRequestDto
+      description: Appliance telemetry duration request with 30-day limit.
+    ApplianceTelemetryCacheDiskLatencyDto:
       properties:
-        time:
-          type: integer
-          title: Time
-          description: Timestamp in milliseconds
-        cache_io_reads:
-          anyOf:
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: Cache Io Reads
-          description: Number of read operations per second performed by cache disk
-        cache_io_writes:
-          anyOf:
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: Cache Io Writes
-          description: Number of write operations per second performed by cache disk
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            $ref: '#/components/schemas/ApplianceTelemetryDiskLatencyRecord'
+          type: array
+          title: Items
+          description: List of disk I/O latency records
       type: object
       required:
-      - time
-      title: ApplianceTelemetryCacheDiskIoRecord
-      description: Appliance cache disk I/O record.
+      - items
+      title: ApplianceTelemetryCacheDiskLatencyDto
+      description: Cache disk latency response with embedded metadata
     VolumeTelemetrySnapshotPropagationRecord:
       properties:
         snapshot_appliance:
@@ -2757,221 +3106,74 @@ components:
       - deviation
       title: VolumeTelemetrySnapshotPropagationRecord
       description: Volume snapshot propagation record with baseline propagation data.
-    ApplianceTelemetrySMBConnectionsRecord:
+    VolumeTelemetryPushTimelineMetadataEventDto:
       properties:
-        time:
-          type: integer
-          title: Time
-          description: Timestamp in milliseconds
-        connections:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Connections
-          description: Number of active SMB sessions - sudden drops may indicate network issues
-      type: object
-      required:
-      - time
-      title: ApplianceTelemetrySMBConnectionsRecord
-      description: Appliance SMB connections record.
-    ApplianceHealthScoreDescriptionDto:
-      properties:
-        health_status:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Health Status
-          description: Health status label returned by telemetry, e.g. Healthy or Warning
-        overview:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Overview
-          description: High-level explanation of the appliance condition
-      type: object
-      title: ApplianceHealthScoreDescriptionDto
-      description: Descriptive text returned with appliance health score.
-    ApplianceTelemetryCowDiskIoRecord:
-      properties:
-        time:
-          type: integer
-          title: Time
-          description: Timestamp in milliseconds
-        cow_disk_io_reads:
-          anyOf:
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: Cow Disk Io Reads
-          description: Number of read operations per second on Copy-on-Write disk
-        cow_disk_io_writes:
-          anyOf:
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: Cow Disk Io Writes
-          description: Number of write operations per second on Copy-on-Write disk
-      type: object
-      required:
-      - time
-      title: ApplianceTelemetryCowDiskIoRecord
-      description: Appliance CoW Disk IOPS record.
-    ApplianceTelemetryOsDiskIoDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            $ref: '#/components/schemas/ApplianceTelemetryOsDiskIoRecord'
-          type: array
-          title: Items
-          description: List of OS disk I/O records
-      type: object
-      required:
-      - items
-      title: ApplianceTelemetryOsDiskIoDto
-      description: List of appliance OS disk I/O records
-    ApplianceTelemetryCacheHitsMissesDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            $ref: '#/components/schemas/ApplianceTelemetryCacheHitsMissesRecord'
-          type: array
-          title: Items
-          description: List of cache hit and miss records
-      type: object
-      required:
-      - items
-      title: ApplianceTelemetryCacheHitsMissesDto
-      description: List of appliance cache hits/misses records
-    VolumeTelemetrySnapshotDetailsDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            $ref: '#/components/schemas/VolumeTelemetrySnapshotDetailsRecord'
-          type: array
-          title: Items
-          description: Raw snapshot metadata records with full details including P1/P2 phases
-      type: object
-      required:
-      - items
-      title: VolumeTelemetrySnapshotDetailsDto
-      description: List of volume snapshot details records
-    ApplianceTelemetryCpuUsageRecord:
-      properties:
-        time:
-          type: integer
-          title: Time
-          description: Timestamp in milliseconds
-        cpu_usage:
-          anyOf:
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: Cpu Usage
-          description: CPU usage percentage (0-100) - sustained high (>80%) degrades performance
-      type: object
-      required:
-      - time
-      title: ApplianceTelemetryCpuUsageRecord
-      description: Appliance CPU usage record.
-    ApplianceHealthScoreDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
+        phase:
+          type: string
+          enum:
+          - metadata_snapshot
+          - metadata_snapshot_failed
+          title: Phase
+          description: 'Event type: 2 for successful metadata snapshot (P2), -2 for failed metadata snapshot'
+        appliance:
+          type: string
+          title: Appliance
+          description: Appliance name/description
         serial_number:
           type: string
           title: Serial Number
-          description: Appliance serial number associated with this health score
-        appliance_name:
-          type: string
-          title: Appliance Name
-          description: Human-readable appliance name
-        health_score:
-          type: string
-          title: Health Score
-          description: Health score text rendered in UI (0-100 or textual state)
-        statistics:
-          $ref: '#/components/schemas/ApplianceHealthScoreStatisticsDto'
-          description: Summary statistics for the appliance health score
-        description:
-          $ref: '#/components/schemas/ApplianceHealthScoreDescriptionDto'
-          description: Descriptive text explaining current status
-        raw_data:
-          $ref: '#/components/schemas/ApplianceHealthScoreRawDataDto'
-          description: Raw charting data for the primary appliance health metric
-        anomaly_details:
-          additionalProperties: true
-          type: object
-          title: Anomaly Details
-          description: Additional context about detected anomalies (counts, window, metric, metadata)
-      type: object
-      required:
-      - serial_number
-      - appliance_name
-      - health_score
-      - statistics
-      - description
-      - raw_data
-      title: ApplianceHealthScoreDto
-      description: appliance health score response following the HealthScoreResponse contract.
-    ApplianceTelemetryCacheUtilizationDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            $ref: '#/components/schemas/ApplianceTelemetryCacheUtilizationRecord'
-          type: array
-          title: Items
-          description: List of cache utilization records
-      type: object
-      required:
-      - items
-      title: ApplianceTelemetryCacheUtilizationDto
-      description: List of appliance cache utilization records
-    ApplianceTelemetryCacheHitsMissesRecord:
-      properties:
-        time:
+          description: Appliance serial number
+        start_time:
           type: integer
-          title: Time
-          description: Timestamp in milliseconds
-        cache_misses:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Cache Misses
-          description: Cache misses requiring cloud fetch - high values suggest insufficient cache or cold data
-        cache_reads:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Cache Reads
-          description: Number of cache read operations (hits)
+          title: Start Time
+          description: Timestamp in milliseconds when metadata snapshot phase started
+        end_time:
+          type: integer
+          title: End Time
+          description: Timestamp in milliseconds when metadata snapshot phase ended
+        volume_version:
+          type: integer
+          title: Volume Version
+          description: Sequential snapshot version number
       type: object
       required:
-      - time
-      title: ApplianceTelemetryCacheHitsMissesRecord
-      description: Appliance cache hits/misses record.
+      - phase
+      - appliance
+      - serial_number
+      - start_time
+      - end_time
+      - volume_version
+      title: VolumeTelemetryPushTimelineMetadataEventDto
+      description: 'Volume push timeline metadata event.
+
+
+        Represents when metadata (directory structure, file info) was pushed during snapshot creation.'
+    ApplianceHealthScoreRawDataDto:
+      properties:
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+          description: Chart title for the primary appliance health metric
+        column_names:
+          items:
+            type: string
+          type: array
+          title: Column Names
+          description: Column names used by the frontend chart
+        data:
+          items:
+            $ref: '#/components/schemas/ApplianceHealthScoreRawDataRecord'
+          type: array
+          title: Data
+          description: Data points for plotting
+      type: object
+      required:
+      - column_names
+      - data
+      title: ApplianceHealthScoreRawDataDto
+      description: Raw charting data for appliance health score.
     ApplianceTelemetryCowDiskIoLatencyDto:
       properties:
         metadata:
@@ -2990,60 +3192,7 @@ components:
       - items
       title: ApplianceTelemetryCowDiskIoLatencyDto
       description: CoW disk IO latency response with embedded metadata
-    VolumeTelemetryPushTimelineDataEventDto:
-      properties:
-        phase:
-          type: string
-          const: data_snapshot
-          title: Phase
-          description: 'Event type: 1 indicates data snapshot phase (P1)'
-        appliance:
-          type: string
-          title: Appliance
-          description: Appliance name/description
-        serial_number:
-          type: string
-          title: Serial Number
-          description: Appliance serial number
-        start_time:
-          type: integer
-          title: Start Time
-          description: Timestamp in milliseconds when data snapshot phase started
-        end_time:
-          type: integer
-          title: End Time
-          description: Timestamp in milliseconds when data snapshot phase ended
-      type: object
-      required:
-      - phase
-      - appliance
-      - serial_number
-      - start_time
-      - end_time
-      title: VolumeTelemetryPushTimelineDataEventDto
-      description: 'Volume push timeline data event.
-
-
-        Represents when file data was pushed to cloud storage during snapshot creation.'
-    ApplianceHealthScoreRequestDto:
-      properties:
-        period:
-          type: string
-          title: Period
-          description: 'Time period in ISO 8601 format. Examples: ''PT1H'' (last 1 hour), ''P1D'' (last 1 day), ''2025-01-01T00:00:00Z/2025-01-02T00:00:00Z'' (specific interval), or millisecond timestamps ''1730390400000/1730476800000''. Minimum range: 6 minutes.'
-        timezone_offset_minutes:
-          type: integer
-          maximum: 1440
-          minimum: -1440
-          title: Timezone Offset Minutes
-          description: Client timezone offset in minutes relative to UTC.
-          default: 0
-      type: object
-      required:
-      - period
-      title: ApplianceHealthScoreRequestDto
-      description: Request body for appliance health score, includes client timezone offset.
-    ApplianceTelemetrySMBConnectionsDto:
+    ApplianceTelemetryCacheDiskIoDto:
       properties:
         metadata:
           additionalProperties: true
@@ -3052,126 +3201,40 @@ components:
           description: Telemetry metadata (help text, metric definitions)
         items:
           items:
-            $ref: '#/components/schemas/ApplianceTelemetrySMBConnectionsRecord'
+            $ref: '#/components/schemas/ApplianceTelemetryCacheDiskIoRecord'
           type: array
           title: Items
-          description: List of SMB connection records
+          description: List of cache disk I/O records
       type: object
       required:
       - items
-      title: ApplianceTelemetrySMBConnectionsDto
-      description: List of appliance SMB connections records
-    ApplianceTelemetryFileIqDiskIoDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            $ref: '#/components/schemas/ApplianceTelemetryFileIqDiskIoRecord'
-          type: array
-          title: Items
-      type: object
-      required:
-      - items
-      title: ApplianceTelemetryFileIqDiskIoDto
-      description: List of appliance File IQ DB Disk IOPS records
-    ApplianceTelemetryCacheDiskLatencyDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            $ref: '#/components/schemas/ApplianceTelemetryDiskLatencyRecord'
-          type: array
-          title: Items
-          description: List of disk I/O latency records
-      type: object
-      required:
-      - items
-      title: ApplianceTelemetryCacheDiskLatencyDto
-      description: Cache disk latency response with embedded metadata
-    ApplianceTelemetryCacheUtilizationRecord:
+      title: ApplianceTelemetryCacheDiskIoDto
+      description: List of appliance cache disk I/O records
+    ApplianceTelemetryDiskIoLatencyRecord:
       properties:
         time:
           type: integer
           title: Time
           description: Timestamp in milliseconds
-        cache_utilization:
+        read_latency:
           anyOf:
           - type: string
             pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
           - type: 'null'
-          title: Cache Utilization
-          description: Percentage (0-100) of cache disk used - near 100% causes evictions and misses
+          title: Read Latency
+          description: Average read latency in milliseconds for the disk
+        write_latency:
+          anyOf:
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Write Latency
+          description: Average write latency in milliseconds for the disk
       type: object
       required:
       - time
-      title: ApplianceTelemetryCacheUtilizationRecord
-      description: Appliance cache utilization record.
-    ApplianceTelemetryNetworkThroughputDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            $ref: '#/components/schemas/ApplianceTelemetryNetworkThroughputRecord'
-          type: array
-          title: Items
-          description: List of network throughput records
-      type: object
-      required:
-      - items
-      title: ApplianceTelemetryNetworkThroughputDto
-      description: List of appliance network throughput records
-    VolumeTelemetryProtectMeanRecords:
-      properties:
-        appliance:
-          type: string
-          title: Appliance
-          description: Appliance name/description
-        serial_number:
-          type: string
-          title: Serial Number
-          description: Appliance serial number
-        snapshots:
-          items:
-            $ref: '#/components/schemas/VolumeTelemetryProtectMeanRecord'
-          type: array
-          title: Snapshots
-          description: Snapshot protection mean records for this appliance
-      type: object
-      required:
-      - appliance
-      - serial_number
-      title: VolumeTelemetryProtectMeanRecords
-      description: Volume protection mean records grouped by appliance.
-    ApplianceTelemetryCowDiskLatencyDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            $ref: '#/components/schemas/ApplianceTelemetryDiskLatencyRecord'
-          type: array
-          title: Items
-          description: List of disk I/O latency records
-      type: object
-      required:
-      - items
-      title: ApplianceTelemetryCowDiskLatencyDto
-      description: CoW disk latency response with embedded metadata
+      title: ApplianceTelemetryDiskIoLatencyRecord
+      description: Appliance disk IO latency record with read/write latency.
     ApplianceTelemetryMemoryUtilizationRecord:
       properties:
         time:
@@ -3204,57 +3267,42 @@ components:
       - time
       title: ApplianceTelemetryMemoryUtilizationRecord
       description: Appliance memory utilization record (pre-v10.0.4).
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    ApplianceTelemetryDurationRequestDto:
+    ApplianceHealthScoreRequestDto:
       properties:
         period:
           type: string
           title: Period
           description: 'Time period in ISO 8601 format. Examples: ''PT1H'' (last 1 hour), ''P1D'' (last 1 day), ''2025-01-01T00:00:00Z/2025-01-02T00:00:00Z'' (specific interval), or millisecond timestamps ''1730390400000/1730476800000''. Minimum range: 6 minutes.'
+        timezone_offset_minutes:
+          type: integer
+          maximum: 1440
+          minimum: -1440
+          title: Timezone Offset Minutes
+          description: Client timezone offset in minutes relative to UTC.
+          default: 0
       type: object
       required:
       - period
-      title: ApplianceTelemetryDurationRequestDto
-      description: Appliance telemetry duration request with 30-day limit.
-    ApplianceTelemetryDiskLatencyRecord:
+      title: ApplianceHealthScoreRequestDto
+      description: Request body for appliance health score, includes client timezone offset.
+    ApplianceTelemetryCpuUsageRecord:
       properties:
         time:
           type: integer
           title: Time
           description: Timestamp in milliseconds
-        io_time:
+        cpu_usage:
           anyOf:
           - type: string
             pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
           - type: 'null'
-          title: Io Time
-          description: Time in milliseconds spent on I/O operations
-        weighted_io_time:
-          anyOf:
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: Weighted Io Time
-          description: Weighted I/O time in ms - much higher than io_time indicates saturation
+          title: Cpu Usage
+          description: CPU usage percentage (0-100) - sustained high (>80%) degrades performance
       type: object
       required:
       - time
-      title: ApplianceTelemetryDiskLatencyRecord
-      description: Appliance disk latency record.
+      title: ApplianceTelemetryCpuUsageRecord
+      description: Appliance CPU usage record.
     ApplianceTelemetryCorePerformanceDto:
       properties:
         metadata:
@@ -3304,174 +3352,188 @@ components:
       type: object
       title: ApplianceTelemetryCorePerformanceDto
       description: Appliance core performance metrics
-    VolumeTelemetryPushTimelineMetadataEventDto:
+    ApplianceTelemetrySMBConnectionsDto:
       properties:
-        phase:
-          type: string
-          enum:
-          - metadata_snapshot
-          - metadata_snapshot_failed
-          title: Phase
-          description: 'Event type: 2 for successful metadata snapshot (P2), -2 for failed metadata snapshot'
-        appliance:
-          type: string
-          title: Appliance
-          description: Appliance name/description
-        serial_number:
-          type: string
-          title: Serial Number
-          description: Appliance serial number
-        start_time:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            $ref: '#/components/schemas/ApplianceTelemetrySMBConnectionsRecord'
+          type: array
+          title: Items
+          description: List of SMB connection records
+      type: object
+      required:
+      - items
+      title: ApplianceTelemetrySMBConnectionsDto
+      description: List of appliance SMB connections records
+    ApplianceTelemetryMemoryUtilizationDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            $ref: '#/components/schemas/ApplianceTelemetryMemoryUtilizationRecord'
+          type: array
+          title: Items
+          description: List of memory utilization records (pre-v10.0.4)
+      type: object
+      required:
+      - items
+      title: ApplianceTelemetryMemoryUtilizationDto
+      description: List of appliance memory utilization records
+    ApplianceTelemetryCpuUsageDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            $ref: '#/components/schemas/ApplianceTelemetryCpuUsageRecord'
+          type: array
+          title: Items
+          description: List of CPU usage records
+      type: object
+      required:
+      - items
+      title: ApplianceTelemetryCpuUsageDto
+      description: List of appliance CPU usage records
+    ApplianceTelemetryCacheDiskIoLatencyDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            $ref: '#/components/schemas/ApplianceTelemetryDiskIoLatencyRecord'
+          type: array
+          title: Items
+          description: List of disk IO latency records
+      type: object
+      required:
+      - items
+      title: ApplianceTelemetryCacheDiskIoLatencyDto
+      description: Cache disk IO latency response with embedded metadata
+    ApplianceTelemetryCowDiskIoRecord:
+      properties:
+        time:
           type: integer
-          title: Start Time
-          description: Timestamp in milliseconds when metadata snapshot phase started
-        end_time:
+          title: Time
+          description: Timestamp in milliseconds
+        cow_disk_io_reads:
+          anyOf:
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Cow Disk Io Reads
+          description: Number of read operations per second on Copy-on-Write disk
+        cow_disk_io_writes:
+          anyOf:
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Cow Disk Io Writes
+          description: Number of write operations per second on Copy-on-Write disk
+      type: object
+      required:
+      - time
+      title: ApplianceTelemetryCowDiskIoRecord
+      description: Appliance CoW Disk IOPS record.
+    ApplianceTelemetryRequestDto:
+      properties:
+        period:
+          type: string
+          title: Period
+          description: 'Time period in ISO 8601 format. Examples: ''PT1H'' (last 1 hour), ''P1D'' (last 1 day), ''2025-01-01T00:00:00Z/2025-01-02T00:00:00Z'' (specific interval), or millisecond timestamps ''1730390400000/1730476800000''. Minimum range: 6 minutes.'
+        panel_width:
+          anyOf:
+          - type: integer
+            maximum: 5200
+            minimum: 100
+          - type: 'null'
+          title: Panel Width
+          description: Panel width in pixels (100-5200)
+        bin_size:
+          anyOf:
+          - type: integer
+            maximum: 3600
+            minimum: 60
+          - type: 'null'
+          title: Bin Size
+          description: Bin size for data aggregation (60-3600)
+      type: object
+      required:
+      - period
+      title: ApplianceTelemetryRequestDto
+      description: Request DTO for appliance telemetry data (filer_id is in URL path).
+    ApplianceTelemetryOsDiskIoDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            $ref: '#/components/schemas/ApplianceTelemetryOsDiskIoRecord'
+          type: array
+          title: Items
+          description: List of OS disk I/O records
+      type: object
+      required:
+      - items
+      title: ApplianceTelemetryOsDiskIoDto
+      description: List of appliance OS disk I/O records
+    VolumeTelemetrySnapshotDetailsDto:
+      properties:
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          description: Telemetry metadata (help text, metric definitions)
+        items:
+          items:
+            $ref: '#/components/schemas/VolumeTelemetrySnapshotDetailsRecord'
+          type: array
+          title: Items
+          description: Raw snapshot metadata records with full details including P1/P2 phases
+      type: object
+      required:
+      - items
+      title: VolumeTelemetrySnapshotDetailsDto
+      description: List of volume snapshot details records
+    VolumeTelemetryProtectMeanRecord:
+      properties:
+        time:
           type: integer
-          title: End Time
-          description: Timestamp in milliseconds when metadata snapshot phase ended
+          title: Time
+          description: Timestamp in milliseconds
+        protect_mean:
+          type: string
+          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          title: Protect Mean
+          description: Average time in seconds for files to be protected during this snapshot
         volume_version:
           type: integer
           title: Volume Version
           description: Sequential snapshot version number
       type: object
       required:
-      - phase
-      - appliance
-      - serial_number
-      - start_time
-      - end_time
-      - volume_version
-      title: VolumeTelemetryPushTimelineMetadataEventDto
-      description: 'Volume push timeline metadata event.
-
-
-        Represents when metadata (directory structure, file info) was pushed during snapshot creation.'
-    ApplianceTelemetryFileIqDiskLatencyDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            $ref: '#/components/schemas/ApplianceTelemetryDiskLatencyRecord'
-          type: array
-          title: Items
-          description: List of disk I/O latency records
-      type: object
-      required:
-      - items
-      title: ApplianceTelemetryFileIqDiskLatencyDto
-      description: File IQ disk latency response with embedded metadata
-    ApplianceTelemetryDiskIoLatencyRecord:
-      properties:
-        time:
-          type: integer
-          title: Time
-          description: Timestamp in milliseconds
-        read_latency:
-          anyOf:
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: Read Latency
-          description: Average read latency in milliseconds for the disk
-        write_latency:
-          anyOf:
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: Write Latency
-          description: Average write latency in milliseconds for the disk
-      type: object
-      required:
       - time
-      title: ApplianceTelemetryDiskIoLatencyRecord
-      description: Appliance disk IO latency record with read/write latency.
-    ApplianceTelemetryCowDiskIoDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            $ref: '#/components/schemas/ApplianceTelemetryCowDiskIoRecord'
-          type: array
-          title: Items
-          description: List of Copy-on-Write disk I/O records
-      type: object
-      required:
-      - items
-      title: ApplianceTelemetryCowDiskIoDto
-      description: List of appliance CoW Disk IOPS records
-    VolumeTelemetryRequestDto:
-      properties:
-        period:
-          type: string
-          title: Period
-          description: 'Time period in ISO 8601 format. Examples: ''PT1H'' (last 1 hour), ''P1D'' (last 1 day), ''2025-01-01T00:00:00Z/2025-01-02T00:00:00Z'' (specific interval), or millisecond timestamps ''1730390400000/1730476800000''. Minimum range: 6 minutes.'
-        serial_numbers:
-          items:
-            type: string
-            format: uuid
-          type: array
-          title: Serial Numbers
-          description: Appliance serial numbers to filter data - ensures stability across DR events
-        chart_width:
-          anyOf:
-          - type: integer
-            maximum: 5200
-            minimum: 100
-          - type: 'null'
-          title: Chart Width
-          description: Chart width in pixels (100-5200) - affects sampling density
-        smart_sampling:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Smart Sampling
-          description: Enable optimized dataset for trend analysis with faster load times
-      type: object
-      required:
-      - period
-      - serial_numbers
-      title: VolumeTelemetryRequestDto
-      description: Request DTO for volume telemetry data (volume_id is in URL path).
-    VolumeTelemetrySnapshotPropagationDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            $ref: '#/components/schemas/VolumeTelemetrySnapshotPropagationRecord'
-          type: array
-          title: Items
-          description: Snapshot propagation records with statistical analysis
-        snapshot_appliances:
-          items:
-            type: string
-          type: array
-          title: Snapshot Appliances
-          description: List of unique appliance names that created snapshots
-        sync_appliances:
-          items:
-            type: string
-          type: array
-          title: Sync Appliances
-          description: List of unique appliance names that synced snapshots
-      type: object
-      required:
-      - items
-      - snapshot_appliances
-      - sync_appliances
-      title: VolumeTelemetrySnapshotPropagationDto
-      description: Volume snapshot propagation data with appliance lists.
+      - protect_mean
+      - volume_version
+      title: VolumeTelemetryProtectMeanRecord
+      description: Volume protection mean record.
     ApplianceTelemetryMemoryUtilizationDetailsRecord:
       properties:
         time:
@@ -3525,68 +3587,6 @@ components:
       - utilization
       title: ApplianceTelemetryMemoryUtilizationDetailsRecord
       description: Appliance detailed memory utilization record (v10.0.4+).
-    ApplianceHealthScoreRawDataRecord:
-      properties:
-        time:
-          type: integer
-          title: Time
-          description: Timestamp in milliseconds
-        value:
-          anyOf:
-          - type: string
-            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
-          - type: 'null'
-          title: Value
-          description: Metric value at this timestamp
-      type: object
-      required:
-      - time
-      title: ApplianceHealthScoreRawDataRecord
-      description: Single data point for appliance health score chart.
-    ApplianceTelemetryCacheDiskIoDto:
-      properties:
-        metadata:
-          additionalProperties: true
-          type: object
-          title: Metadata
-          description: Telemetry metadata (help text, metric definitions)
-        items:
-          items:
-            $ref: '#/components/schemas/ApplianceTelemetryCacheDiskIoRecord'
-          type: array
-          title: Items
-          description: List of cache disk I/O records
-      type: object
-      required:
-      - items
-      title: ApplianceTelemetryCacheDiskIoDto
-      description: List of appliance cache disk I/O records
-    ApplianceHealthScoreRawDataDto:
-      properties:
-        title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Title
-          description: Chart title for the primary appliance health metric
-        column_names:
-          items:
-            type: string
-          type: array
-          title: Column Names
-          description: Column names used by the frontend chart
-        data:
-          items:
-            $ref: '#/components/schemas/ApplianceHealthScoreRawDataRecord'
-          type: array
-          title: Data
-          description: Data points for plotting
-      type: object
-      required:
-      - column_names
-      - data
-      title: ApplianceHealthScoreRawDataDto
-      description: Raw charting data for appliance health score.
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

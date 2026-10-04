@@ -337,62 +337,6 @@ paths:
       description: Base URL for accounts assigned the Asia-Pacific region.
 components:
   schemas:
-    Paging:
-      type: object
-      properties:
-        href:
-          type: string
-          description: A link to the requested endpoint.
-        limit:
-          type: integer
-          description: The maximum number of items in a page.
-        next:
-          type: string
-          description: A link to the next page of objects. The value will be null if there isn't one.
-        offset:
-          type: integer
-          description: The item number the page starts on.
-        previous:
-          type: string
-          description: A link to the previous page of objects. The value will be null if there isn't one.
-        total:
-          type: integer
-          description: Total number of items available at the requested endpoint.
-      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-          description: 'Specifies the type of error reported. Possible values:
-
-
-            * "error" - General error
-
-            * "validation_error" - Validation error
-
-            * "not_found_error" - Resource not found
-
-            * "auth_error" - Authentication error
-
-            * "perm_error" - Permission error
-
-            * "sync_error" - Error occurred syncing settings with a Filer.
-
-            * "throttled_error" - The request was throttled; too many sent within a duration.
-
-            '
-          enum:
-          - error
-          - validation_error
-          - not_found_error
-          - auth_error
-          - perm_error
-          - sync_error
-          - throttled_error
-        description:
-          type: string
-          description: Description of the error reported.
     Notification:
       type: object
       properties:
@@ -446,6 +390,28 @@ components:
               $ref: '#/components/schemas/Link'
           description: Links to related resources, collections, and actions.
       description: Representation of a Notification object.
+    Paging:
+      type: object
+      properties:
+        href:
+          type: string
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type: string
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type: string
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
     Link:
       type: object
       properties:
@@ -455,21 +421,84 @@ components:
         method:
           type: string
           description: HTTP method to use on the link.
-    ErrorResponse:
+    Error:
       type: object
       properties:
-        error:
-          $ref: '#/components/schemas/Error_2'
-    Link_2:
-      type: object
-      properties:
-        href:
+        code:
           type: string
-          description: Hyperlink to the resource.
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+    Error_2:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "unmanaged_error" - Resource is not managed.
+
+            * "conflict_error" - Conflict error
+
+            * "unsupported_error" - Current filer version does not support this type of request.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
           readOnly: true
-        method:
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - unmanaged_error
+          - conflict_error
+          - unsupported_error
+          - throttled_error
+        description:
           type: string
-          description: HTTP method to use on the link.
+          description: Description of the error reported.
           readOnly: true
     Notification_2:
       type: object
@@ -524,7 +553,23 @@ components:
               $ref: '#/components/schemas/Link_2'
           description: Links to related resources, collections, and actions.
       description: Representation of a Notification object.
-    Error_2:
+    Link_2:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+          readOnly: true
+        method:
+          type: string
+          description: HTTP method to use on the link.
+          readOnly: true
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error_2'
+    Error_3:
       type: object
       properties:
         code:
@@ -569,22 +614,32 @@ components:
           type: string
           description: Description of the error reported.
           readOnly: true
-    ErrorResponse_2:
-      type: object
-      properties:
-        error:
-          $ref: '#/components/schemas/Error_3'
-    Link_3:
+    Paging_2:
       type: object
       properties:
         href:
           type: string
-          description: Hyperlink to the resource.
-          readOnly: true
-        method:
-          type: string
-          description: HTTP method to use on the link.
-          readOnly: true
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type:
+          - string
+          - 'null'
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type:
+          - string
+          - 'null'
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
     Notification_3:
       type: object
       properties:
@@ -638,77 +693,31 @@ components:
               $ref: '#/components/schemas/Link_3'
           description: Links to related resources, collections, and actions.
       description: Representation of a Notification object.
-    Paging_2:
+    Link_3:
       type: object
       properties:
         href:
           type: string
-          description: A link to the requested endpoint.
-        limit:
-          type: integer
-          description: The maximum number of items in a page.
-        next:
-          type:
-          - string
-          - 'null'
-          description: A link to the next page of objects. The value will be null if there isn't one.
-        offset:
-          type: integer
-          description: The item number the page starts on.
-        previous:
-          type:
-          - string
-          - 'null'
-          description: A link to the previous page of objects. The value will be null if there isn't one.
-        total:
-          type: integer
-          description: Total number of items available at the requested endpoint.
-      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
-    Error_3:
+          description: Hyperlink to the resource.
+          readOnly: true
+        method:
+          type: string
+          description: HTTP method to use on the link.
+          readOnly: true
+    ErrorResponse_2:
       type: object
       properties:
-        code:
+        error:
+          $ref: '#/components/schemas/Error_3'
+    ErrorResponseBaseDto:
+      properties:
+        message:
           type: string
-          description: 'Specifies the type of error reported. Possible values:
-
-
-            * "error" - General error
-
-            * "validation_error" - Validation error
-
-            * "not_found_error" - Resource not found
-
-            * "auth_error" - Authentication error
-
-            * "perm_error" - Permission error
-
-            * "sync_error" - Error occurred syncing settings with a Filer.
-
-            * "unmanaged_error" - Resource is not managed.
-
-            * "conflict_error" - Conflict error
-
-            * "unsupported_error" - Current filer version does not support this type of request.
-
-            * "throttled_error" - The request was throttled; too many sent within a duration.
-
-            '
-          readOnly: true
-          enum:
-          - error
-          - validation_error
-          - not_found_error
-          - auth_error
-          - perm_error
-          - sync_error
-          - unmanaged_error
-          - conflict_error
-          - unsupported_error
-          - throttled_error
-        description:
-          type: string
-          description: Description of the error reported.
-          readOnly: true
+          title: Message
+      type: object
+      required:
+      - message
+      title: ErrorResponseBaseDto
     NotificationSeverity:
       type: string
       enum:
@@ -718,37 +727,6 @@ components:
       - INFO
       - ADMIN
       title: NotificationSeverity
-    NotificationPaginationMetadataDto:
-      properties:
-        iterator_id:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Iterator Id
-          description: Iterator ID for loading more results (null if no more)
-        page_size:
-          type: integer
-          title: Page Size
-          description: Number of items returned
-          default: 50
-        total_pages:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Total Pages
-        total_items:
-          type: integer
-          title: Total Items
-        page:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Page
-      type: object
-      required:
-      - total_items
-      title: NotificationPaginationMetadataDto
     NotificationsDto:
       properties:
         items:
@@ -768,15 +746,12 @@ components:
         Designed for "Load more" pattern - no backward navigation, no page numbers.
 
         UI shows: "Showing latest X notifications" with "Load more" button.'
-    ErrorResponseBaseDto:
-      properties:
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - message
-      title: ErrorResponseBaseDto
+    NotificationOriginType:
+      type: string
+      enum:
+      - SYSTEM_GENERATED
+      - CUSTOMER_DEFINED
+      title: NotificationOriginType
     NotificationCategory:
       type: string
       enum:
@@ -798,12 +773,65 @@ components:
       - Security & Access
       - File IQ & Auditing
       title: NotificationCategory
-    NotificationSortDirection:
+    NotificationSubCategory:
       type: string
       enum:
-      - asc
-      - desc
-      title: NotificationSortDirection
+      - Snapshot
+      - Sync
+      - Snapshot Retention
+      - Success
+      - Errors
+      - User Actions
+      - Disaster Recovery
+      - Ransomware
+      - Antivirus
+      - Escrow
+      - Generation
+      - Account
+      - Remote Access
+      - Backup
+      - Delete
+      - Safe Delete
+      - UniFSCK
+      - Multiprotocol
+      - Sharing
+      - GFL
+      - Lock Arbiter
+      - GFA
+      - RAID
+      - Encryption
+      - Exception
+      - Firmware
+      - UPS
+      - Unreachable
+      - Configuration
+      - Health Monitor
+      - NOC
+      - Limits
+      - Resources
+      - Cache Disk
+      - Metrics
+      - Config Backup
+      - Unsupported
+      - OS Disk
+      - Time
+      - Resize
+      - Eviction
+      - Autocache
+      - Pinning
+      - Sideload
+      - Power
+      - New
+      - Offline
+      - NMC
+      - SSO
+      - SSL Certificates
+      - EULA
+      - Remote Support
+      - File IQ
+      - AMQP
+      - Syslog
+      title: NotificationSubCategory
     HTTPValidationError:
       properties:
         message:
@@ -829,6 +857,12 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
+    NotificationSortDirection:
+      type: string
+      enum:
+      - asc
+      - desc
+      title: NotificationSortDirection
     NotificationColumns:
       type: string
       enum:
@@ -908,71 +942,37 @@ components:
       - generated_at
       title: NotificationDto
       description: Single Notification DTO
-    NotificationOriginType:
-      type: string
-      enum:
-      - SYSTEM_GENERATED
-      - CUSTOMER_DEFINED
-      title: NotificationOriginType
-    NotificationSubCategory:
-      type: string
-      enum:
-      - Snapshot
-      - Sync
-      - Snapshot Retention
-      - Success
-      - Errors
-      - User Actions
-      - Disaster Recovery
-      - Ransomware
-      - Antivirus
-      - Escrow
-      - Generation
-      - Account
-      - Remote Access
-      - Backup
-      - Delete
-      - Safe Delete
-      - UniFSCK
-      - Multiprotocol
-      - Sharing
-      - GFL
-      - Lock Arbiter
-      - GFA
-      - RAID
-      - Encryption
-      - Exception
-      - Firmware
-      - UPS
-      - Unreachable
-      - Configuration
-      - Health Monitor
-      - NOC
-      - Limits
-      - Resources
-      - Cache Disk
-      - Metrics
-      - Config Backup
-      - Unsupported
-      - OS Disk
-      - Time
-      - Resize
-      - Eviction
-      - Autocache
-      - Pinning
-      - Sideload
-      - Power
-      - New
-      - Offline
-      - NMC
-      - SSO
-      - SSL Certificates
-      - EULA
-      - Remote Support
-      - File IQ
-      - AMQP
-      - Syslog
-      title: NotificationSubCategory
+    NotificationPaginationMetadataDto:
+      properties:
+        iterator_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Iterator Id
+          description: Iterator ID for loading more results (null if no more)
+        page_size:
+          type: integer
+          title: Page Size
+          description: Number of items returned
+          default: 50
+        total_pages:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Total Pages
+        total_items:
+          type: integer
+          title: Total Items
+        page:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Page
+      type: object
+      required:
+      - total_items
+      title: NotificationPaginationMetadataDto
   securitySchemes:
     AuthToken:
       type: apiKey

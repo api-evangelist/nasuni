@@ -172,6 +172,17 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    FiqsDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/FiqApplianceDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: FiqsDto
     ValidationErrorResponse:
       properties:
         message:
@@ -197,21 +208,15 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
-    ErrorResponse:
+    FiqApplianceUpdateDto:
       properties:
-        message:
-          type: string
-          title: Message
-        detail:
+        enabled:
           anyOf:
-          - {}
+          - type: boolean
           - type: 'null'
-          title: Detail
+          title: Enabled
       type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
+      title: FiqApplianceUpdateDto
     FiqApplianceDto:
       properties:
         serial_number:
@@ -242,17 +247,32 @@ components:
       - enabled
       - connections
       title: FiqApplianceDto
-    FiqsDto:
+    FiqConnections:
       properties:
-        items:
+        edges:
           items:
-            $ref: '#/components/schemas/FiqApplianceDto'
+            $ref: '#/components/schemas/FiqEdgeDto'
           type: array
-          title: Items
+          title: Edges
       type: object
       required:
-      - items
-      title: FiqsDto
+      - edges
+      title: FiqConnections
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
     FiqEdgeDto:
       properties:
         serial_number:
@@ -280,26 +300,6 @@ components:
       - description
       - fiq_service_enabled
       title: FiqEdgeDto
-    FiqConnections:
-      properties:
-        edges:
-          items:
-            $ref: '#/components/schemas/FiqEdgeDto'
-          type: array
-          title: Edges
-      type: object
-      required:
-      - edges
-      title: FiqConnections
-    FiqApplianceUpdateDto:
-      properties:
-        enabled:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Enabled
-      type: object
-      title: FiqApplianceUpdateDto
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

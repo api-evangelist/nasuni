@@ -214,6 +214,20 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    AiActivateAccountInfoDto:
+      properties:
+        mcp:
+          $ref: '#/components/schemas/AiActivateAccountSubscriptionDto'
+      type: object
+      required:
+      - mcp
+      title: AiActivateAccountInfoDto
+      description: 'Account-level AI Activate subscription summary.
+
+
+        MCP is currently the only AI Activate workload. A Search subscription will be
+
+        reintroduced here once that workload lands.'
     NocCloudProvider:
       type: string
       enum:
@@ -238,6 +252,28 @@ components:
       - s3_compatible
       title: NocCloudProvider
       description: Cloud provider identity as used by NOC (shortname).
+    NocCloudStorageProtocol:
+      type: string
+      enum:
+      - amazons3
+      - amazons3gov
+      - azure
+      - ibmcos
+      - hcp
+      - vipr
+      - cleversafe
+      - googles3
+      - s3_compatible
+      title: NocCloudStorageProtocol
+      description: The underlying storage API/protocol (maps to 'type' in NOC response).
+    NocCloudVendor:
+      type: string
+      enum:
+      - customer
+      - private
+      - nasuni
+      title: NocCloudVendor
+      description: Who provisions the cloud infrastructure.
     ValidationErrorResponse:
       properties:
         message:
@@ -263,58 +299,6 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    AccountInformationDto:
-      properties:
-        email:
-          type: string
-          format: email
-          title: Email
-        first_name:
-          type: string
-          title: First Name
-        last_name:
-          type: string
-          title: Last Name
-        company:
-          type: string
-          title: Company
-        phone:
-          type: string
-          title: Phone
-        created:
-          type: string
-          format: date-time
-          title: Created
-        id:
-          type: string
-          format: uuid
-          title: Id
-      type: object
-      required:
-      - email
-      - first_name
-      - last_name
-      - company
-      - phone
-      - created
-      - id
-      title: AccountInformationDto
-      description: Response model for account infromation for webbff/account
     AccountLicenseDto:
       properties:
         subscription_status:
@@ -407,34 +391,6 @@ components:
       - awada_enabled
       - ops_iq_premium
       title: AccountLicenseDto
-    AiActivateAccountInfoDto:
-      properties:
-        mcp:
-          $ref: '#/components/schemas/AiActivateAccountSubscriptionDto'
-      type: object
-      required:
-      - mcp
-      title: AiActivateAccountInfoDto
-      description: 'Account-level AI Activate subscription summary.
-
-
-        MCP is currently the only AI Activate workload. A Search subscription will be
-
-        reintroduced here once that workload lands.'
-    NocCloudStorageProtocol:
-      type: string
-      enum:
-      - amazons3
-      - amazons3gov
-      - azure
-      - ibmcos
-      - hcp
-      - vipr
-      - cleversafe
-      - googles3
-      - s3_compatible
-      title: NocCloudStorageProtocol
-      description: The underlying storage API/protocol (maps to 'type' in NOC response).
     CloudProviderEntryDto:
       properties:
         protocol:
@@ -477,14 +433,6 @@ components:
       - consumed
       - remaining
       title: AiActivateAccountSubscriptionDto
-    NocCloudVendor:
-      type: string
-      enum:
-      - customer
-      - private
-      - nasuni
-      title: NocCloudVendor
-      description: Who provisions the cloud infrastructure.
     UpdateAccountInformationDto:
       properties:
         first_name:
@@ -507,6 +455,58 @@ components:
       - phone
       title: UpdateAccountInformationDto
       description: Request model for account information change for WebApi route /account
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    AccountInformationDto:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+        first_name:
+          type: string
+          title: First Name
+        last_name:
+          type: string
+          title: Last Name
+        company:
+          type: string
+          title: Company
+        phone:
+          type: string
+          title: Phone
+        created:
+          type: string
+          format: date-time
+          title: Created
+        id:
+          type: string
+          format: uuid
+          title: Id
+      type: object
+      required:
+      - email
+      - first_name
+      - last_name
+      - company
+      - phone
+      - created
+      - id
+      title: AccountInformationDto
+      description: Response model for account infromation for webbff/account
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

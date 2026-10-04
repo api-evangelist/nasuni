@@ -290,14 +290,15 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    SerialPatchRequestDto:
+    AuthCodeDto:
       properties:
-        decommission:
-          type: boolean
-          title: Decommission
-          default: false
+        auth_code:
+          type: string
+          title: Auth Code
       type: object
-      title: SerialPatchRequestDto
+      required:
+      - auth_code
+      title: AuthCodeDto
     ValidationErrorResponse:
       properties:
         message:
@@ -323,85 +324,6 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    SerialsDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/SerialDto'
-          type: array
-          title: Items
-      type: object
-      title: SerialsDto
-    HTTPValidationError:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
-      type: object
-      required:
-      - message
-      - detail
-      title: ValidationErrorResponse
-    SerialPatchErrorResponseDto:
-      properties:
-        eligible:
-          type: boolean
-          title: Eligible
-        owned_volumes:
-          type: integer
-          title: Owned Volumes
-        remotely_connected_volumes:
-          type: integer
-          title: Remotely Connected Volumes
-        message:
-          type: string
-          title: Message
-      type: object
-      required:
-      - eligible
-      - owned_volumes
-      - remotely_connected_volumes
-      - message
-      title: SerialPatchErrorResponseDto
-    AuthCodeDto:
-      properties:
-        auth_code:
-          type: string
-          title: Auth Code
-      type: object
-      required:
-      - auth_code
-      title: AuthCodeDto
     SerialDto:
       properties:
         id:
@@ -458,6 +380,84 @@ components:
       - id
       - type
       title: SerialDto
+    HTTPValidationError:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    SerialsDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/SerialDto'
+          type: array
+          title: Items
+      type: object
+      title: SerialsDto
+    SerialPatchRequestDto:
+      properties:
+        decommission:
+          type: boolean
+          title: Decommission
+          default: false
+      type: object
+      title: SerialPatchRequestDto
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
+    SerialPatchErrorResponseDto:
+      properties:
+        eligible:
+          type: boolean
+          title: Eligible
+        owned_volumes:
+          type: integer
+          title: Owned Volumes
+        remotely_connected_volumes:
+          type: integer
+          title: Remotely Connected Volumes
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - eligible
+      - owned_volumes
+      - remotely_connected_volumes
+      - message
+      title: SerialPatchErrorResponseDto
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

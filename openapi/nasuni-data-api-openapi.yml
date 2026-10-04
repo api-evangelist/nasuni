@@ -95,40 +95,19 @@ paths:
       tags:
       - Data
 components:
+  parameters:
+    ClientKeyHeader:
+      name: X-Nasuni-client-key
+      in: header
+      description: String to identify the client within the API Token
+      required: false
+      schema:
+        type: string
+        default: swagger client
   schemas:
     volume_guid:
       type: string
       format: uuid
-    volume_metric:
-      type: object
-      required:
-      - metric_type
-      - mode
-      - profile
-      - time_to_protect
-      - timestamp
-      - version
-      - volume_guid
-      - volume_title
-      properties:
-        metric_type:
-          type: string
-        mode:
-          type: string
-        profile:
-          type: string
-        time_to_protect:
-          type: integer
-        timestamp:
-          type: string
-          format: date-time
-        version:
-          type: integer
-        volume_guid:
-          type: string
-          format: uuid
-        volume_title:
-          type: string
     filer_metric:
       type: object
       required:
@@ -149,6 +128,99 @@ components:
         metric_type:
           type: string
         oldest_unprotected_data:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: integer
+        volume_guid:
+          type: string
+          format: uuid
+        volume_title:
+          type: string
+    info:
+      type: object
+      required:
+      - account
+      - last_info
+      - last_lock_event
+      - last_propagation
+      - request_time
+      - volumes
+      properties:
+        account:
+          type: string
+          format: uuid
+        last_info:
+          type: string
+          format: date-time
+        last_lock_event:
+          type: string
+          format: date-time
+        last_propagation:
+          type: string
+          format: date-time
+        request_time:
+          type: string
+          format: date-time
+        volumes:
+          type: array
+          items:
+            $ref: '#/components/schemas/volume_guid'
+    propagation_metric:
+      type: object
+      required:
+      - filer_guid
+      - filer_title
+      - kind
+      - metric_type
+      - prop_seconds
+      - timestamp
+      - version
+      - volume_guid
+      - volume_title
+      properties:
+        filer_guid:
+          type: string
+          format: uuid
+        filer_title:
+          type: string
+        kind:
+          type: string
+        metric_type:
+          type: string
+        prop_seconds:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: integer
+        volume_guid:
+          type: string
+          format: uuid
+        volume_title:
+          type: string
+    volume_metric:
+      type: object
+      required:
+      - metric_type
+      - mode
+      - profile
+      - time_to_protect
+      - timestamp
+      - version
+      - volume_guid
+      - volume_title
+      properties:
+        metric_type:
+          type: string
+        mode:
+          type: string
+        profile:
+          type: string
+        time_to_protect:
           type: integer
         timestamp:
           type: string
@@ -196,40 +268,6 @@ components:
           format: uuid
         volume_title:
           type: string
-    propagation_metric:
-      type: object
-      required:
-      - filer_guid
-      - filer_title
-      - kind
-      - metric_type
-      - prop_seconds
-      - timestamp
-      - version
-      - volume_guid
-      - volume_title
-      properties:
-        filer_guid:
-          type: string
-          format: uuid
-        filer_title:
-          type: string
-        kind:
-          type: string
-        metric_type:
-          type: string
-        prop_seconds:
-          type: integer
-        timestamp:
-          type: string
-          format: date-time
-        version:
-          type: integer
-        volume_guid:
-          type: string
-          format: uuid
-        volume_title:
-          type: string
     metrics:
       type: object
       required:
@@ -254,47 +292,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/lock_metric'
-    info:
-      type: object
-      required:
-      - account
-      - last_info
-      - last_lock_event
-      - last_propagation
-      - request_time
-      - volumes
-      properties:
-        account:
-          type: string
-          format: uuid
-        last_info:
-          type: string
-          format: date-time
-        last_lock_event:
-          type: string
-          format: date-time
-        last_propagation:
-          type: string
-          format: date-time
-        request_time:
-          type: string
-          format: date-time
-        volumes:
-          type: array
-          items:
-            $ref: '#/components/schemas/volume_guid'
   responses:
     UnauthorizedError:
       description: Access token is missing or invalid
-  parameters:
-    ClientKeyHeader:
-      name: X-Nasuni-client-key
-      in: header
-      description: String to identify the client within the API Token
-      required: false
-      schema:
-        type: string
-        default: swagger client
   securitySchemes:
     ApiTokenHeader:
       type: apiKey

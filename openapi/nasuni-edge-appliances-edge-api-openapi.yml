@@ -478,19 +478,45 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    EdgeVolumes:
+    SimpleEdgeDto:
       properties:
-        owned:
-          type: integer
-          title: Owned
-        remotely_connected:
-          type: integer
-          title: Remotely Connected
+        id:
+          type: string
+          format: uuid
+          title: Id
+        description:
+          type: string
+          title: Description
+        services:
+          $ref: '#/components/schemas/EdgeServicesDto'
+        serial:
+          type: string
+          format: uuid
+          title: Serial
+        synced:
+          type: boolean
+          title: Synced
+          default: false
+        is_reachable:
+          type: boolean
+          title: Is Reachable
+          default: false
+        last_seen_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Seen At
+        build:
+          type: string
+          title: Build
       type: object
       required:
-      - owned
-      - remotely_connected
-      title: EdgeVolumes
+      - id
+      - description
+      - serial
+      - build
+      title: SimpleEdgeDto
     EdgeDto:
       properties:
         id:
@@ -558,6 +584,39 @@ components:
       - build
       - machine
       title: EdgeDto
+    EdgeBuild:
+      properties:
+        current:
+          type: string
+          title: Current
+        available:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Available
+        platform:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Platform
+      type: object
+      required:
+      - current
+      title: EdgeBuild
+    UpdateEdgeFiqServiceDto:
+      properties:
+        enabled:
+          type: boolean
+          title: Enabled
+          default: false
+        connected_file_iq_serial:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Connected File Iq Serial
+      type: object
+      title: UpdateEdgeFiqServiceDto
     ValidationErrorResponse:
       properties:
         message:
@@ -583,21 +642,6 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
     EdgeS3EdgeConfigDto:
       properties:
         enabled:
@@ -607,93 +651,29 @@ components:
       required:
       - enabled
       title: EdgeS3EdgeConfigDto
-    UpdateEdgeFiqServiceDto:
+    EdgesDto:
       properties:
-        enabled:
-          type: boolean
-          title: Enabled
-          default: false
-        connected_file_iq_serial:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Connected File Iq Serial
+        items:
+          items:
+            $ref: '#/components/schemas/SimpleEdgeDto'
+          type: array
+          title: Items
       type: object
-      title: UpdateEdgeFiqServiceDto
-    EdgeBuild:
+      title: EdgesDto
+    EdgeServicesDto:
       properties:
-        current:
-          type: string
-          title: Current
-        available:
+        s3_edge:
           anyOf:
-          - type: string
+          - type: boolean
           - type: 'null'
-          title: Available
-        platform:
+          title: S3 Edge
+        file_iq:
           anyOf:
-          - type: string
+          - type: boolean
           - type: 'null'
-          title: Platform
+          title: File Iq
       type: object
-      required:
-      - current
-      title: EdgeBuild
-    EdgeFiqServiceDto:
-      properties:
-        enabled:
-          type: boolean
-          title: Enabled
-        connected_file_iq_serial:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Connected File Iq Serial
-      type: object
-      required:
-      - enabled
-      title: EdgeFiqServiceDto
-    SimpleEdgeDto:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        description:
-          type: string
-          title: Description
-        services:
-          $ref: '#/components/schemas/EdgeServicesDto'
-        serial:
-          type: string
-          format: uuid
-          title: Serial
-        synced:
-          type: boolean
-          title: Synced
-          default: false
-        is_reachable:
-          type: boolean
-          title: Is Reachable
-          default: false
-        last_seen_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last Seen At
-        build:
-          type: string
-          title: Build
-      type: object
-      required:
-      - id
-      - description
-      - serial
-      - build
-      title: SimpleEdgeDto
+      title: EdgeServicesDto
     EdgeMachine:
       properties:
         cpu:
@@ -738,29 +718,49 @@ components:
       - fiq_disk
       - cow_disk
       title: EdgeMachine
-    EdgesDto:
+    EdgeVolumes:
       properties:
-        items:
-          items:
-            $ref: '#/components/schemas/SimpleEdgeDto'
-          type: array
-          title: Items
+        owned:
+          type: integer
+          title: Owned
+        remotely_connected:
+          type: integer
+          title: Remotely Connected
       type: object
-      title: EdgesDto
-    EdgeServicesDto:
+      required:
+      - owned
+      - remotely_connected
+      title: EdgeVolumes
+    EdgeFiqServiceDto:
       properties:
-        s3_edge:
+        enabled:
+          type: boolean
+          title: Enabled
+        connected_file_iq_serial:
           anyOf:
-          - type: boolean
+          - type: string
+            format: uuid
           - type: 'null'
-          title: S3 Edge
-        file_iq:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: File Iq
+          title: Connected File Iq Serial
       type: object
-      title: EdgeServicesDto
+      required:
+      - enabled
+      title: EdgeFiqServiceDto
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

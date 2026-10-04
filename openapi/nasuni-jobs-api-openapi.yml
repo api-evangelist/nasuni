@@ -166,6 +166,62 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    TaskState:
+      type: string
+      enum:
+      - in_progress
+      - completed
+      - failed
+      title: TaskState
+    TasksSummaryDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/TaskSummaryDto'
+          type: array
+          title: Items
+      type: object
+      required:
+      - items
+      title: TasksSummaryDto
+    TaskInitiator:
+      type: string
+      enum:
+      - portal
+      - edge
+      title: TaskInitiator
+    TaskResource:
+      type: string
+      enum:
+      - edge
+      - volume
+      - cloud_credential
+      title: TaskResource
+    HTTPValidationError:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
     ErrorResponse:
       properties:
         message:
@@ -181,6 +237,11 @@ components:
       - message
       - detail
       title: ErrorResponse
+    TaskExecutor:
+      type: string
+      enum:
+      - edge
+      title: TaskExecutor
     TaskSummaryDto:
       properties:
         id:
@@ -278,67 +339,6 @@ components:
         otherwise. The deliberate partial-failure aggregation policy that decides
 
         *what* to put there remains deferred (see the PORTAL-2195 ledger, FU-3).'
-    TaskInitiator:
-      type: string
-      enum:
-      - portal
-      - edge
-      title: TaskInitiator
-    HTTPValidationError:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
-      type: object
-      required:
-      - message
-      - detail
-      title: ValidationErrorResponse
-    TaskExecutor:
-      type: string
-      enum:
-      - edge
-      title: TaskExecutor
-    TaskState:
-      type: string
-      enum:
-      - in_progress
-      - completed
-      - failed
-      title: TaskState
-    TasksSummaryDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/TaskSummaryDto'
-          type: array
-          title: Items
-      type: object
-      required:
-      - items
-      title: TasksSummaryDto
-    TaskResource:
-      type: string
-      enum:
-      - edge
-      - volume
-      - cloud_credential
-      title: TaskResource
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

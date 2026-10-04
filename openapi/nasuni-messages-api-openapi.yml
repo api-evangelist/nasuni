@@ -166,40 +166,6 @@ components:
           type: integer
           description: Total number of items available at the requested endpoint.
       description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-          description: 'Specifies the type of error reported. Possible values:
-
-
-            * "error" - General error
-
-            * "validation_error" - Validation error
-
-            * "not_found_error" - Resource not found
-
-            * "auth_error" - Authentication error
-
-            * "perm_error" - Permission error
-
-            * "sync_error" - Error occurred syncing settings with a Filer.
-
-            * "throttled_error" - The request was throttled; too many sent within a duration.
-
-            '
-          enum:
-          - error
-          - validation_error
-          - not_found_error
-          - auth_error
-          - perm_error
-          - sync_error
-          - throttled_error
-        description:
-          type: string
-          description: Description of the error reported.
     Message:
       type: object
       properties:
@@ -258,11 +224,85 @@ components:
         method:
           type: string
           description: HTTP method to use on the link.
-    ErrorResponse:
+    Error:
       type: object
       properties:
-        error:
-          $ref: '#/components/schemas/Error_2'
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+    Error_2:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "unmanaged_error" - Resource is not managed.
+
+            * "conflict_error" - Conflict error
+
+            * "unsupported_error" - Current filer version does not support this type of request.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          readOnly: true
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - unmanaged_error
+          - conflict_error
+          - unsupported_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+          readOnly: true
     Message_2:
       type: object
       properties:
@@ -333,7 +373,12 @@ components:
           type: string
           description: HTTP method to use on the link.
           readOnly: true
-    Error_2:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error_2'
+    Error_3:
       type: object
       properties:
         code:
@@ -378,6 +423,32 @@ components:
           type: string
           description: Description of the error reported.
           readOnly: true
+    Paging_2:
+      type: object
+      properties:
+        href:
+          type: string
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type:
+          - string
+          - 'null'
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type:
+          - string
+          - 'null'
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
     Message_3:
       type: object
       properties:
@@ -441,11 +512,6 @@ components:
         error:
           $ref: '#/components/schemas/Error_3'
       description: The message object is used to track an action that we want the Filer to perform.
-    ErrorResponse_2:
-      type: object
-      properties:
-        error:
-          $ref: '#/components/schemas/Error_3'
     Link_3:
       type: object
       properties:
@@ -457,77 +523,11 @@ components:
           type: string
           description: HTTP method to use on the link.
           readOnly: true
-    Paging_2:
+    ErrorResponse_2:
       type: object
       properties:
-        href:
-          type: string
-          description: A link to the requested endpoint.
-        limit:
-          type: integer
-          description: The maximum number of items in a page.
-        next:
-          type:
-          - string
-          - 'null'
-          description: A link to the next page of objects. The value will be null if there isn't one.
-        offset:
-          type: integer
-          description: The item number the page starts on.
-        previous:
-          type:
-          - string
-          - 'null'
-          description: A link to the previous page of objects. The value will be null if there isn't one.
-        total:
-          type: integer
-          description: Total number of items available at the requested endpoint.
-      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
-    Error_3:
-      type: object
-      properties:
-        code:
-          type: string
-          description: 'Specifies the type of error reported. Possible values:
-
-
-            * "error" - General error
-
-            * "validation_error" - Validation error
-
-            * "not_found_error" - Resource not found
-
-            * "auth_error" - Authentication error
-
-            * "perm_error" - Permission error
-
-            * "sync_error" - Error occurred syncing settings with a Filer.
-
-            * "unmanaged_error" - Resource is not managed.
-
-            * "conflict_error" - Conflict error
-
-            * "unsupported_error" - Current filer version does not support this type of request.
-
-            * "throttled_error" - The request was throttled; too many sent within a duration.
-
-            '
-          readOnly: true
-          enum:
-          - error
-          - validation_error
-          - not_found_error
-          - auth_error
-          - perm_error
-          - sync_error
-          - unmanaged_error
-          - conflict_error
-          - unsupported_error
-          - throttled_error
-        description:
-          type: string
-          description: Description of the error reported.
-          readOnly: true
+        error:
+          $ref: '#/components/schemas/Error_3'
   securitySchemes:
     AuthToken:
       type: apiKey

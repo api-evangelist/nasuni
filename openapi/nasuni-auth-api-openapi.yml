@@ -363,6 +363,34 @@ paths:
       description: Base URL for accounts assigned the Asia-Pacific region.
 components:
   schemas:
+    FieldError:
+      type: object
+      properties:
+        field:
+          type: string
+          description: The field to which the validation error applies, or "__all__" if it is a non-field error.
+        errors:
+          type: array
+          items:
+            type: string
+    ValidationError:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldError'
+    AuthToken:
+      type: object
+      properties:
+        token:
+          type: string
+        expires:
+          type: string
     Error:
       type: object
       properties:
@@ -397,85 +425,12 @@ components:
         description:
           type: string
           description: Description of the error reported.
-    ValidationError:
-      type: object
-      properties:
-        code:
-          type: string
-        description:
-          type: string
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/FieldError'
-    AuthToken:
-      type: object
-      properties:
-        token:
-          type: string
-        expires:
-          type: string
-    FieldError:
-      type: object
-      properties:
-        field:
-          type: string
-          description: The field to which the validation error applies, or "__all__" if it is a non-field error.
-        errors:
-          type: array
-          items:
-            type: string
-    Error_2:
-      type: object
-      properties:
-        code:
-          type: string
-          description: 'Specifies the type of error reported. Possible values:
-
-
-            * "error" - General error
-
-            * "validation_error" - Validation error
-
-            * "not_found_error" - Resource not found
-
-            * "auth_error" - Authentication error
-
-            * "perm_error" - Permission error
-
-            * "sync_error" - Error occurred syncing settings with a Filer.
-
-            * "unmanaged_error" - Resource is not managed.
-
-            * "conflict_error" - Conflict error
-
-            * "unsupported_error" - Current filer version does not support this type of request.
-
-            * "throttled_error" - The request was throttled; too many sent within a duration.
-
-            '
-          readOnly: true
-          enum:
-          - error
-          - validation_error
-          - not_found_error
-          - auth_error
-          - perm_error
-          - sync_error
-          - unmanaged_error
-          - conflict_error
-          - unsupported_error
-          - throttled_error
-        description:
-          type: string
-          description: Description of the error reported.
-          readOnly: true
     ErrorResponse:
       type: object
       properties:
         error:
           $ref: '#/components/schemas/Error_2'
-    Error_3:
+    Error_2:
       type: object
       properties:
         code:
@@ -525,6 +480,51 @@ components:
       properties:
         error:
           $ref: '#/components/schemas/Error_3'
+    Error_3:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'Specifies the type of error reported. Possible values:
+
+
+            * "error" - General error
+
+            * "validation_error" - Validation error
+
+            * "not_found_error" - Resource not found
+
+            * "auth_error" - Authentication error
+
+            * "perm_error" - Permission error
+
+            * "sync_error" - Error occurred syncing settings with a Filer.
+
+            * "unmanaged_error" - Resource is not managed.
+
+            * "conflict_error" - Conflict error
+
+            * "unsupported_error" - Current filer version does not support this type of request.
+
+            * "throttled_error" - The request was throttled; too many sent within a duration.
+
+            '
+          readOnly: true
+          enum:
+          - error
+          - validation_error
+          - not_found_error
+          - auth_error
+          - perm_error
+          - sync_error
+          - unmanaged_error
+          - conflict_error
+          - unsupported_error
+          - throttled_error
+        description:
+          type: string
+          description: Description of the error reported.
+          readOnly: true
     ValidationErrorResponse:
       properties:
         message:
@@ -550,21 +550,6 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
-    ErrorResponse_3:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
     TokenRequestDto:
       properties:
         token:
@@ -574,6 +559,15 @@ components:
       required:
       - token
       title: TokenRequestDto
+    McpAuthorizeRequest:
+      properties:
+        request_id:
+          type: string
+          title: Request Id
+      type: object
+      required:
+      - request_id
+      title: McpAuthorizeRequest
     TokensDto:
       properties:
         access_token:
@@ -596,15 +590,21 @@ components:
       - access_token
       - refresh_token
       title: TokensDto
-    McpAuthorizeRequest:
+    ErrorResponse_3:
       properties:
-        request_id:
+        message:
           type: string
-          title: Request Id
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
       type: object
       required:
-      - request_id
-      title: McpAuthorizeRequest
+      - message
+      - detail
+      title: ErrorResponse
   securitySchemes:
     AuthToken:
       type: apiKey

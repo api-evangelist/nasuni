@@ -550,60 +550,7 @@ paths:
       tags:
       - Nasuni Data Service (NDS) AWS API
 components:
-  parameters:
-    XAmzDateHeader:
-      name: X-Amz-Date
-      in: header
-      required: false
-      description: ISO8601 timestamp used by SigV4, e.g. 20250115T103000Z. Omit with presigned URLs.
-      schema:
-        type: string
-        example: 20250115T103000Z
-    XAmzSecurityTokenHeader:
-      name: X-Amz-Security-Token
-      in: header
-      required: false
-      description: Session token when using temporary credentials (STS/role).
-      schema:
-        type: string
-    XAmzContentSha256Header:
-      name: X-Amz-Content-Sha256
-      in: header
-      required: false
-      description: 'For GET/HEAD, S3 commonly uses `UNSIGNED-PAYLOAD`.
-
-        SDKs set this automatically. Omit with presigned URLs.
-
-        '
-      schema:
-        type: string
-        example: UNSIGNED-PAYLOAD
-    AwsAuthorizationHeader:
-      name: Authorization
-      in: header
-      required: false
-      description: 'AWS Signature Version 4 authorization header.
-
-        Omit when using a presigned URL.
-
-        '
-      schema:
-        type: string
-        example: AWS4-HMAC-SHA256 Credential=AKIA.../20250115/us-east-1/s3/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=0123456789abcdef...
   responses:
-    AccessDenied:
-      description: Access denied or NDS disabled
-      content:
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            ndsNotLicensed:
-              summary: NDS not available in license
-              value: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>NDSDisabled</Code>\n  <Message>NDS is not available in your license</Message>\n</Error>\n"
-            ndsDisabledConfig:
-              summary: NDS disabled in configuration
-              value: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>NDSDisabled</Code>\n  <Message>NDS is available in your license but is disabled or misconfigured</Message>\n</Error>\n"
     NotImplemented:
       description: Not Implemented - Operation not supported by NDS
       content:
@@ -622,20 +569,6 @@ components:
           schema:
             type: string
             description: May be empty depending on operation.
-    NoSuchKey:
-      description: The specified key does not exist
-      content:
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>NoSuchKey</Code>\n  <Message>The specified key does not exist.</Message>\n</Error>\n"
-    NoSuchBucket:
-      description: The specified bucket does not exist
-      content:
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>NoSuchBucket</Code>\n  <Message>The specified bucket does not exist</Message>\n</Error>\n"
     FailedDependency:
       description: Volume not accessible (not shared or missing TOC)
       content:
@@ -643,7 +576,51 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
           example: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>FailedDependency</Code>\n  <Message>Volume requires Remote Access enabled and at least one snapshot</Message>\n</Error>\n"
+    NoSuchBucket:
+      description: The specified bucket does not exist
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>NoSuchBucket</Code>\n  <Message>The specified bucket does not exist</Message>\n</Error>\n"
+    NoSuchKey:
+      description: The specified key does not exist
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>NoSuchKey</Code>\n  <Message>The specified key does not exist.</Message>\n</Error>\n"
+    AccessDenied:
+      description: Access denied or NDS disabled
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            ndsNotLicensed:
+              summary: NDS not available in license
+              value: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>NDSDisabled</Code>\n  <Message>NDS is not available in your license</Message>\n</Error>\n"
+            ndsDisabledConfig:
+              summary: NDS disabled in configuration
+              value: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n  <Code>NDSDisabled</Code>\n  <Message>NDS is available in your license but is disabled or misconfigured</Message>\n</Error>\n"
   schemas:
+    Error:
+      type: object
+      xml:
+        name: Error
+      properties:
+        Code:
+          type: string
+          description: Error code
+        Message:
+          type: string
+          description: Human-readable error message
+        Resource:
+          type: string
+          description: Resource related to the error
+        RequestId:
+          type: string
+          description: Unique request identifier
     ListBucketResultV2:
       allOf:
       - $ref: '#/components/schemas/ListBucketResultBase'
@@ -652,6 +629,14 @@ components:
           NextContinuationToken:
             type: string
             description: Token for next page (ListObjectsV2 only)
+    ListBucketResultV1:
+      allOf:
+      - $ref: '#/components/schemas/ListBucketResultBase'
+      - type: object
+        properties:
+          NextMarker:
+            type: string
+            description: Marker for next page (ListObjects only)
     ListBucketResultBase:
       type: object
       xml:
@@ -722,31 +707,46 @@ components:
           enum:
           - STANDARD
           description: Storage class (always STANDARD for NDS)
-    ListBucketResultV1:
-      allOf:
-      - $ref: '#/components/schemas/ListBucketResultBase'
-      - type: object
-        properties:
-          NextMarker:
-            type: string
-            description: Marker for next page (ListObjects only)
-    Error:
-      type: object
-      xml:
-        name: Error
-      properties:
-        Code:
-          type: string
-          description: Error code
-        Message:
-          type: string
-          description: Human-readable error message
-        Resource:
-          type: string
-          description: Resource related to the error
-        RequestId:
-          type: string
-          description: Unique request identifier
+  parameters:
+    AwsAuthorizationHeader:
+      name: Authorization
+      in: header
+      required: false
+      description: 'AWS Signature Version 4 authorization header.
+
+        Omit when using a presigned URL.
+
+        '
+      schema:
+        type: string
+        example: AWS4-HMAC-SHA256 Credential=AKIA.../20250115/us-east-1/s3/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=0123456789abcdef...
+    XAmzSecurityTokenHeader:
+      name: X-Amz-Security-Token
+      in: header
+      required: false
+      description: Session token when using temporary credentials (STS/role).
+      schema:
+        type: string
+    XAmzDateHeader:
+      name: X-Amz-Date
+      in: header
+      required: false
+      description: ISO8601 timestamp used by SigV4, e.g. 20250115T103000Z. Omit with presigned URLs.
+      schema:
+        type: string
+        example: 20250115T103000Z
+    XAmzContentSha256Header:
+      name: X-Amz-Content-Sha256
+      in: header
+      required: false
+      description: 'For GET/HEAD, S3 commonly uses `UNSIGNED-PAYLOAD`.
+
+        SDKs set this automatically. Omit with presigned URLs.
+
+        '
+      schema:
+        type: string
+        example: UNSIGNED-PAYLOAD
   securitySchemes:
     awsSigV4:
       type: apiKey
