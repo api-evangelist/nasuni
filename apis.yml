@@ -45,7 +45,7 @@ x-type: company
 x-source: harvest:secondary-market
 specificationVersion: '0.20'
 created: '2026-08-26'
-modified: '2026-09-16'
+modified: '2026-10-06'
 tags:
 - Company
 - File Storage
@@ -895,6 +895,8 @@ apis:
   - type: Documentation
     url: https://docs.nasuni.com/docs/nds-aws-api-overview
 common:
+- url: https://www.nasuni.com/feed/
+  type: BlogRSS
 - type: CapabilityMap
   url: capabilities/nasuni-capability-edges.yml
   name: Nasuni Business Capability Map
