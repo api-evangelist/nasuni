@@ -71,3 +71,39 @@ plans:
   contract_term: 3 years
   includes: [Global File Lock, Global File Acceleration]
 plan_count: 5
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models: []
+  units: []
+  plans:
+  - name: Nasuni File Data Platform
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods: []
+  - name: Nasuni Ransomware Protection Add-On
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods: []
+  - name: Nasuni File IQ Premium Add-On
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods: []
+  - name: Nasuni Advanced Web Access Add-On
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods: []
+  - name: Nasuni Multi-Site Collaboration Add-On
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods: []
