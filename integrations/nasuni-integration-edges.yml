@@ -41,3 +41,17 @@ edges:
   seller_name: Nasuni Corporation
   detected_by: sweep-cloud-marketplaces.py
   detected: '2026-10-13'
+- partner_name: Amazon Web Services
+  partner: amazon-web-services
+  partner_match: shape-anchor
+  channel: provider-built
+  relationship: compatible
+  direction: provider-built
+  shape: aws-s3
+  type: contract
+  degree: declared-unqualified
+  evidence: https://github.com/api-evangelist/nasuni/blob/main/openapi/nasuni-edge-appliances-edge-api-openapi.yml#L330
+  evidence_kind: own-contract
+  quote: S3 Edge provides S3-compatible object storage access to Nasuni volumes.
+  detected_by: sweep-shape-compat.py
+  first_seen: '2026-10-13'
