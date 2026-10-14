@@ -27,3 +27,39 @@
   relationship: distribution-channel
   status: not-a-workflow
   arazzo: null
+- slug: nasuni-amazon-web-services
+  label: Amazon Web Services
+  partner: amazon-web-services
+  partner_name: Amazon Web Services
+  type: contract
+  channel: provider-built
+  evidence: https://github.com/api-evangelist/nasuni/blob/main/openapi/nasuni-edge-appliances-edge-api-openapi.yml#L330
+  source: edge
+  relationship: compatible
+  status: not-a-workflow
+  arazzo: null
+- slug: nasuni-crowdstrike-own
+  label: CrowdStrike (own)
+  partner: crowdstrike
+  partner_name: CrowdStrike (own)
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://marketplace.crowdstrike.com/listings/nasuni-edge-data-connector/
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: nasuni-splunk-own
+  label: Splunk (own)
+  partner: splunk
+  partner_name: Splunk (own)
+  category: app
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://splunkbase.splunk.com/app/8676/
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
