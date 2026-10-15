@@ -1,27 +1,154 @@
-generated: '2026-08-26'
-method: derived
-source: openapi/nasuni-portal-v0-openapi.yml
+generated: '2026-10-14'
+method: none
+source: openapi/nasuni-account-management-api-openapi.yml, openapi/nasuni-activity-logs-api-openapi.yml,
+  openapi/nasuni-ai-activate-api-openapi.yml, openapi/nasuni-auth-api-openapi.yml, openapi/nasuni-cloud-credentials-api-openapi.yml,
+  openapi/nasuni-configuration-api-openapi.yml, openapi/nasuni-edge-appliances-edge-api-openapi.yml,
+  openapi/nasuni-file-iq-appliances-file-iq-api-openapi.yml, openapi/nasuni-global-file-accelerator-gfa-api-openapi.yml,
+  openapi/nasuni-health-api-openapi.yml, openapi/nasuni-iam-api-openapi.yml, openapi/nasuni-jobs-api-openapi.yml,
+  openapi/nasuni-notifications-api-openapi.yml, openapi/nasuni-ops-iq-api-openapi.yml, openapi/nasuni-portal-api-api-openapi.yml,
+  openapi/nasuni-serials-api-openapi.yml, openapi/nasuni-software-api-openapi.yml, openapi/nasuni-unifs-as-a-service-uaas-api-openapi.yml,
+  openapi/nasuni-volume-connections-api-openapi.yml, openapi/nasuni-volumes-api-openapi.yml
 schemes:
 - name: OAuth2ClientCredentials
-  source: openapi/nasuni-portal-v0-openapi.yml
+  source: openapi/nasuni-account-management-api-openapi.yml
   flows:
   - flow: clientCredentials
     tokenUrl: /auth/token
-  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service key) and `client_secret`
-    (service secret) as form-encoded body parameters to the token endpoint.
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-activity-logs-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-ai-activate-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-auth-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-cloud-credentials-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-configuration-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-edge-appliances-edge-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-file-iq-appliances-file-iq-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-global-file-accelerator-gfa-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-health-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-iam-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-jobs-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-notifications-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-ops-iq-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-portal-api-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-serials-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-software-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-unifs-as-a-service-uaas-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-volume-connections-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
+- name: OAuth2ClientCredentials
+  source: openapi/nasuni-volumes-api-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /auth/token
+  description: Standard OAuth2 Client Credentials flow (RFC 6749 §4.4). Send `client_id` (service
+    key) and `client_secret` (service secret) as form-encoded body parameters to the token endpoint.
 scopes: []
-name: Nasuni Portal API OAuth scopes
-docs: https://docs.api.nasuni.com/api/portal/v0/introduction/
-note: 'The Portal API declares an OAuth 2.0 clientCredentials flow but publishes an EMPTY scopes map, and no operation
-  carries a scope requirement. Authorization is not scope-based: it is role-based and resolved server-side from
-  the caller''s Portal IAM role. The permission vocabulary is retrievable at runtime — GET /iam/permissions lists
-  every permission in the system, GET /iam/roles/{role_id}/permissions the set attached to a role, and GET /iam/me
-  the caller''s own — but Nasuni publishes no static scope or permission reference page, so there is nothing to
-  search for and enrich. scope_count is a real zero, not a gap in this harvest.'
-authorization_model: role-based (Portal IAM), not scope-based
-runtime_permission_endpoints:
-- GET /iam/permissions
-- GET /iam/roles
-- GET /iam/roles/{role_id}/permissions
-- GET /iam/me
-scope_count: 0
+note: The OAuth2 security scheme(s) in the OpenAPI declare no scopes, and no security requirement
+  references one.
