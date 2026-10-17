@@ -373,24 +373,6 @@ components:
           type: array
           items:
             type: string
-    ValidationError:
-      type: object
-      properties:
-        code:
-          type: string
-        description:
-          type: string
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/FieldError'
-    AuthToken:
-      type: object
-      properties:
-        token:
-          type: string
-        expires:
-          type: string
     Error:
       type: object
       properties:
@@ -425,6 +407,24 @@ components:
         description:
           type: string
           description: Description of the error reported.
+    AuthToken:
+      type: object
+      properties:
+        token:
+          type: string
+        expires:
+          type: string
+    ValidationError:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldError'
     ErrorResponse:
       type: object
       properties:
@@ -525,40 +525,6 @@ components:
           type: string
           description: Description of the error reported.
           readOnly: true
-    ValidationErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
-      type: object
-      required:
-      - message
-      - detail
-      title: ValidationErrorResponse
-    TokenRequestDto:
-      properties:
-        token:
-          type: string
-          title: Token
-      type: object
-      required:
-      - token
-      title: TokenRequestDto
     McpAuthorizeRequest:
       properties:
         request_id:
@@ -590,6 +556,40 @@ components:
       - access_token
       - refresh_token
       title: TokensDto
+    TokenRequestDto:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: TokenRequestDto
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
     ErrorResponse_3:
       properties:
         message:

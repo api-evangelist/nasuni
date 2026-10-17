@@ -166,37 +166,11 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
-    TaskState:
-      type: string
-      enum:
-      - in_progress
-      - completed
-      - failed
-      title: TaskState
-    TasksSummaryDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/TaskSummaryDto'
-          type: array
-          title: Items
-      type: object
-      required:
-      - items
-      title: TasksSummaryDto
-    TaskInitiator:
-      type: string
-      enum:
-      - portal
-      - edge
-      title: TaskInitiator
-    TaskResource:
+    TaskExecutor:
       type: string
       enum:
       - edge
-      - volume
-      - cloud_credential
-      title: TaskResource
+      title: TaskExecutor
     HTTPValidationError:
       properties:
         message:
@@ -222,26 +196,30 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
-    ErrorResponse:
+    TasksSummaryDto:
       properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
+        items:
+          items:
+            $ref: '#/components/schemas/TaskSummaryDto'
+          type: array
+          title: Items
       type: object
       required:
-      - message
-      - detail
-      title: ErrorResponse
-    TaskExecutor:
+      - items
+      title: TasksSummaryDto
+    TaskState:
       type: string
       enum:
+      - in_progress
+      - completed
+      - failed
+      title: TaskState
+    TaskInitiator:
+      type: string
+      enum:
+      - portal
       - edge
-      title: TaskExecutor
+      title: TaskInitiator
     TaskSummaryDto:
       properties:
         id:
@@ -339,6 +317,28 @@ components:
         otherwise. The deliberate partial-failure aggregation policy that decides
 
         *what* to put there remains deferred (see the PORTAL-2195 ledger, FU-3).'
+    TaskResource:
+      type: string
+      enum:
+      - edge
+      - volume
+      - cloud_credential
+      title: TaskResource
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
+      type: object
+      required:
+      - message
+      - detail
+      title: ErrorResponse
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

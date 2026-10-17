@@ -303,6 +303,28 @@ paths:
     - url: https://hostname/api/v1.2
 components:
   schemas:
+    Paging:
+      type: object
+      properties:
+        href:
+          type: string
+          description: A link to the requested endpoint.
+        limit:
+          type: integer
+          description: The maximum number of items in a page.
+        next:
+          type: string
+          description: A link to the next page of objects. The value will be null if there isn't one.
+        offset:
+          type: integer
+          description: The item number the page starts on.
+        previous:
+          type: string
+          description: A link to the previous page of objects. The value will be null if there isn't one.
+        total:
+          type: integer
+          description: Total number of items available at the requested endpoint.
+      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
     Error:
       type: object
       properties:
@@ -347,39 +369,6 @@ components:
         description:
           type: string
           description: Description of the error reported.
-          readOnly: true
-    Paging:
-      type: object
-      properties:
-        href:
-          type: string
-          description: A link to the requested endpoint.
-        limit:
-          type: integer
-          description: The maximum number of items in a page.
-        next:
-          type: string
-          description: A link to the next page of objects. The value will be null if there isn't one.
-        offset:
-          type: integer
-          description: The item number the page starts on.
-        previous:
-          type: string
-          description: A link to the previous page of objects. The value will be null if there isn't one.
-        total:
-          type: integer
-          description: Total number of items available at the requested endpoint.
-      description: The paging object provides a container for a listing of objects, defining the start, end, and total size of the listing. Any endpoint that returns a list of items, will likely be wrapped in a paging object.
-    Link:
-      type: object
-      properties:
-        href:
-          type: string
-          description: Hyperlink to the resource.
-          readOnly: true
-        method:
-          type: string
-          description: HTTP method to use on the link.
           readOnly: true
     ErrorResponse:
       type: object
@@ -433,6 +422,17 @@ components:
           description: Links to related resources, collections, and actions.
           readOnly: true
       description: A cloud credential obeject
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Hyperlink to the resource.
+          readOnly: true
+        method:
+          type: string
+          description: HTTP method to use on the link.
+          readOnly: true
     Paging_2:
       type: object
       properties:

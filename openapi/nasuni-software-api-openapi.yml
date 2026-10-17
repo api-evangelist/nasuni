@@ -159,6 +159,18 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
+    DownloadUrlResponseDto:
+      properties:
+        download_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Download Url
+      type: object
+      required:
+      - download_url
+      title: DownloadUrlResponseDto
+      description: Response DTO containing the download URL for a specific download.
     DownloadInfoDto:
       properties:
         appliance_type:
@@ -194,31 +206,15 @@ components:
       - platform
       - display_name
       title: DownloadInfoDto
-    ApplianceType:
-      type: string
-      enum:
-      - nmc
-      - naa
-      - edge
-      - uaas
-      - file_iq
-      - naada
-      - awada
-      - desktop
-      - ha_edge
-      title: ApplianceType
-    DownloadUrlResponseDto:
+    DownloadsDto:
       properties:
-        download_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Download Url
+        items:
+          items:
+            $ref: '#/components/schemas/DownloadInfoDto'
+          type: array
+          title: Items
       type: object
-      required:
-      - download_url
-      title: DownloadUrlResponseDto
-      description: Response DTO containing the download URL for a specific download.
+      title: DownloadsDto
     ErrorResponse:
       properties:
         message:
@@ -234,15 +230,19 @@ components:
       - message
       - detail
       title: ErrorResponse
-    DownloadsDto:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/DownloadInfoDto'
-          type: array
-          title: Items
-      type: object
-      title: DownloadsDto
+    ApplianceType:
+      type: string
+      enum:
+      - nmc
+      - naa
+      - edge
+      - uaas
+      - file_iq
+      - naada
+      - awada
+      - desktop
+      - ha_edge
+      title: ApplianceType
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

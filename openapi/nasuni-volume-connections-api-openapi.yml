@@ -184,6 +184,41 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    ConnectionPermission:
+      type: string
+      enum:
+      - READONLY
+      - READWRITE
+      - Custom
+      title: ConnectionPermission
+    Protocol:
+      type: string
+      enum:
+      - NFS
+      - SMB
+      - FTP
+      title: Protocol
+    VolumeSortBy:
+      type: string
+      enum:
+      - volume_name
+      - cloud_provider
+      - cloud_region
+      - accessible_data
+      - unprotected_data
+      - last_snapshot_utc
+      - appliance_name
+      title: VolumeSortBy
+      description: 'Allowlist for volume-centric sort keys. Invalid values → 422.
+
+
+        All sorts produce a volume-cohesive ordering (mounts of the same
+
+        volume stay grouped). Per-mount keys are rolled up so they make
+
+        sense as a single value per volume: ``last_snapshot_utc`` → MAX
+
+        across mounts; ``appliance_name`` → master mount edge name.'
     SnapshotStatus:
       type: string
       enum:
@@ -217,6 +252,16 @@ components:
         ``cancel_rejected`` ack). ``pending`` is a real filer-reported
 
         state.'
+    PermissionPolicy:
+      type: string
+      enum:
+      - POSIX Mixed Mode
+      - UNIX/NFS Permissions Only Mode
+      - Unauthenticated Access Mode
+      - NTFS Compatible Mode
+      - NTFS Exclusive Mode
+      - NTFS Multiprotocol Mode
+      title: PermissionPolicy
     NocCloudProvider:
       type: string
       enum:
@@ -266,6 +311,12 @@ components:
       - message
       - detail
       title: ValidationErrorResponse
+    portal__api__dto__volumes__Role:
+      type: string
+      enum:
+      - owner
+      - connected
+      title: Role
     SortOrder:
       type: string
       enum:
@@ -273,26 +324,21 @@ components:
       - desc
       title: SortOrder
       description: Short-form sort direction used by list APIs (asc/desc).
-    VolumeConnectionsResponseDto:
+    ErrorResponse:
       properties:
-        items:
-          items:
-            $ref: '#/components/schemas/VolumeConnectionItemDto'
-          type: array
-          title: Items
+        message:
+          type: string
+          title: Message
+        detail:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Detail
       type: object
-      title: VolumeConnectionsResponseDto
-      description: GET /volume_connections response — all matching mounts (no pagination).
-    PermissionPolicy:
-      type: string
-      enum:
-      - POSIX Mixed Mode
-      - UNIX/NFS Permissions Only Mode
-      - Unauthenticated Access Mode
-      - NTFS Compatible Mode
-      - NTFS Exclusive Mode
-      - NTFS Multiprotocol Mode
-      title: PermissionPolicy
+      required:
+      - message
+      - detail
+      title: ErrorResponse
     VolumeConnectionItemDto:
       properties:
         cloud_provider:
@@ -429,6 +475,16 @@ components:
       - role
       title: VolumeConnectionItemDto
       description: "One ``(volume, appliance)`` connection row from\n``GET /volume_connections``.\n\nThe response is denormalised one-row-per-mount (N appliances → N\nrows). Nullability mirrors :class:`VolumeApplianceRow` end-to-end —\n``None`` means \"no data available yet\" and is intentionally\ndistinct from ``0`` / :attr:`SnapshotStatus.idle`.\n\n* ``protocol`` — full deduplicated list in canonical\n  SMB → NFS → FTP order; empty if no share configured.\n* ``connection_permission`` — derived from\n  ``volumes_v2.remoteaccess_autoaccept`` (master) or\n  ``volume_edge_states.remoteaccess_permission`` (non-master).\n* ``accessible_data`` / ``unprotected_data`` — parsed byte counts;\n  ``None`` when the appliance hasn't reported a number.\n* ``last_snapshot_utc`` — tz-aware UTC, serialised as ISO 8601.\n\nThe trailing per-edge state block (``appliance_hostname`` through\n``autofault_folders_count``) carries every column the Volume\nDetails \"Data Protection\", \"Protocols\", \"Data Growth\", and\n\"Additional Details\" cards need. Kept on this row (rather than a\nseparate detail endpoint) so ``/volume_connections`` remains the\nsingle low-level resource for per-mount data — Portal's BFF and\nexternal API consumers compose it with ``/volumes/{id}`` to build\nhigher-level views."
+    VolumeConnectionsResponseDto:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/VolumeConnectionItemDto'
+          type: array
+          title: Items
+      type: object
+      title: VolumeConnectionsResponseDto
+      description: GET /volume_connections response — all matching mounts (no pagination).
     SecurityMode:
       type: string
       enum:
@@ -436,62 +492,6 @@ components:
       - Active Directory
       - LDAP Directory
       title: SecurityMode
-    ConnectionPermission:
-      type: string
-      enum:
-      - READONLY
-      - READWRITE
-      - Custom
-      title: ConnectionPermission
-    Protocol:
-      type: string
-      enum:
-      - NFS
-      - SMB
-      - FTP
-      title: Protocol
-    ErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          anyOf:
-          - {}
-          - type: 'null'
-          title: Detail
-      type: object
-      required:
-      - message
-      - detail
-      title: ErrorResponse
-    VolumeSortBy:
-      type: string
-      enum:
-      - volume_name
-      - cloud_provider
-      - cloud_region
-      - accessible_data
-      - unprotected_data
-      - last_snapshot_utc
-      - appliance_name
-      title: VolumeSortBy
-      description: 'Allowlist for volume-centric sort keys. Invalid values → 422.
-
-
-        All sorts produce a volume-cohesive ordering (mounts of the same
-
-        volume stay grouped). Per-mount keys are rolled up so they make
-
-        sense as a single value per volume: ``last_snapshot_utc`` → MAX
-
-        across mounts; ``appliance_name`` → master mount edge name.'
-    portal__api__dto__volumes__Role:
-      type: string
-      enum:
-      - owner
-      - connected
-      title: Role
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey

@@ -543,6 +543,111 @@ paths:
       - HTTPBearer: []
 components:
   schemas:
+    BucketSDDL:
+      properties:
+        name:
+          type: string
+          title: Name
+        path:
+          type: string
+          title: Path
+        volume:
+          type: string
+          title: Volume
+        roles:
+          anyOf:
+          - additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+          - type: 'null'
+          title: Roles
+        file_sddl:
+          type: string
+          title: File Sddl
+        dir_sddl:
+          type: string
+          title: Dir Sddl
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - path
+      - volume
+      - file_sddl
+      - dir_sddl
+      title: BucketSDDL
+    AiActivateRemoteSupportDto:
+      properties:
+        remote_support:
+          type: boolean
+          title: Remote Support
+      type: object
+      required:
+      - remote_support
+      title: AiActivateRemoteSupportDto
+    SSOConfigDto:
+      properties:
+        provider:
+          type: string
+          title: Provider
+        name:
+          type: string
+          maxLength: 40
+          title: Name
+        client_id:
+          type: string
+          maxLength: 191
+          title: Client Id
+        secret:
+          type: string
+          format: password
+          title: Secret
+          writeOnly: true
+        key:
+          type: string
+          maxLength: 191
+          title: Key
+      type: object
+      required:
+      - provider
+      - name
+      - client_id
+      - secret
+      - key
+      title: SSOConfigDto
+    WebAccessSSOConfigUpdateResponseDto:
+      properties:
+        provider:
+          type: string
+          title: Provider
+        client_id:
+          type: string
+          maxLength: 191
+          title: Client Id
+        secret:
+          type: string
+          format: password
+          title: Secret
+          writeOnly: true
+        key:
+          type: string
+          maxLength: 191
+          title: Key
+        login_button_label:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Login Button Label
+      type: object
+      required:
+      - provider
+      - client_id
+      - secret
+      - key
+      title: WebAccessSSOConfigUpdateResponseDto
     Key:
       properties:
         name:
@@ -560,6 +665,77 @@ components:
       - access
       - secret
       title: Key
+    Bucket:
+      properties:
+        name:
+          type: string
+          title: Name
+        path:
+          type: string
+          title: Path
+        volume:
+          type: string
+          title: Volume
+        roles:
+          anyOf:
+          - additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+          - type: 'null'
+          title: Roles
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - path
+      - volume
+      title: Bucket
+    ValidationErrorResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        detail:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Detail
+          example:
+          - ctx:
+              error: 'invalid length: expected length 32 for simple format, found 3'
+            input: '123'
+            loc:
+            - path
+            - id
+            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
+            type: uuid_parsing
+      type: object
+      required:
+      - message
+      - detail
+      title: ValidationErrorResponse
+    S3EdgeConfigDto:
+      properties:
+        buckets:
+          items:
+            anyOf:
+            - $ref: '#/components/schemas/Bucket'
+            - $ref: '#/components/schemas/BucketSDDL'
+          type: array
+          title: Buckets
+        keys:
+          items:
+            $ref: '#/components/schemas/Key'
+          type: array
+          title: Keys
+      type: object
+      required:
+      - buckets
+      - keys
+      title: S3EdgeConfigDto
     SSOConfigUpdateResponseDto:
       properties:
         provider:
@@ -596,142 +772,6 @@ components:
       - key
       - verification_url
       title: SSOConfigUpdateResponseDto
-    BucketSDDL:
-      properties:
-        name:
-          type: string
-          title: Name
-        path:
-          type: string
-          title: Path
-        volume:
-          type: string
-          title: Volume
-        roles:
-          anyOf:
-          - additionalProperties:
-              items:
-                type: string
-              type: array
-            type: object
-          - type: 'null'
-          title: Roles
-        file_sddl:
-          type: string
-          title: File Sddl
-        dir_sddl:
-          type: string
-          title: Dir Sddl
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - path
-      - volume
-      - file_sddl
-      - dir_sddl
-      title: BucketSDDL
-    ValidationErrorResponse:
-      properties:
-        message:
-          type: string
-          title: Message
-        detail:
-          items:
-            additionalProperties: true
-            type: object
-          type: array
-          title: Detail
-          example:
-          - ctx:
-              error: 'invalid length: expected length 32 for simple format, found 3'
-            input: '123'
-            loc:
-            - path
-            - id
-            msg: 'Input should be a valid UUID, invalid length: expected length 32 for simple format, found 3'
-            type: uuid_parsing
-      type: object
-      required:
-      - message
-      - detail
-      title: ValidationErrorResponse
-    SoftwareDownloadsConfigurationDto:
-      properties:
-        linked_amazon_account_ids:
-          items:
-            type: string
-          type: array
-          title: Linked Amazon Account Ids
-      type: object
-      title: SoftwareDownloadsConfigurationDto
-    Bucket:
-      properties:
-        name:
-          type: string
-          title: Name
-        path:
-          type: string
-          title: Path
-        volume:
-          type: string
-          title: Volume
-        roles:
-          anyOf:
-          - additionalProperties:
-              items:
-                type: string
-              type: array
-            type: object
-          - type: 'null'
-          title: Roles
-      additionalProperties: false
-      type: object
-      required:
-      - name
-      - path
-      - volume
-      title: Bucket
-    WebAccessSSOConfigUpdateResponseDto:
-      properties:
-        provider:
-          type: string
-          title: Provider
-        client_id:
-          type: string
-          maxLength: 191
-          title: Client Id
-        secret:
-          type: string
-          format: password
-          title: Secret
-          writeOnly: true
-        key:
-          type: string
-          maxLength: 191
-          title: Key
-        login_button_label:
-          anyOf:
-          - type: string
-            maxLength: 100
-          - type: 'null'
-          title: Login Button Label
-      type: object
-      required:
-      - provider
-      - client_id
-      - secret
-      - key
-      title: WebAccessSSOConfigUpdateResponseDto
-    AiActivateRemoteSupportDto:
-      properties:
-        remote_support:
-          type: boolean
-          title: Remote Support
-      type: object
-      required:
-      - remote_support
-      title: AiActivateRemoteSupportDto
     ErrorResponse:
       properties:
         message:
@@ -747,6 +787,15 @@ components:
       - message
       - detail
       title: ErrorResponse
+    SoftwareDownloadsConfigurationDto:
+      properties:
+        linked_amazon_account_ids:
+          items:
+            type: string
+          type: array
+          title: Linked Amazon Account Ids
+      type: object
+      title: SoftwareDownloadsConfigurationDto
     WebAccessSSOConfigDto:
       properties:
         provider:
@@ -778,55 +827,6 @@ components:
       - secret
       - key
       title: WebAccessSSOConfigDto
-    SSOConfigDto:
-      properties:
-        provider:
-          type: string
-          title: Provider
-        name:
-          type: string
-          maxLength: 40
-          title: Name
-        client_id:
-          type: string
-          maxLength: 191
-          title: Client Id
-        secret:
-          type: string
-          format: password
-          title: Secret
-          writeOnly: true
-        key:
-          type: string
-          maxLength: 191
-          title: Key
-      type: object
-      required:
-      - provider
-      - name
-      - client_id
-      - secret
-      - key
-      title: SSOConfigDto
-    S3EdgeConfigDto:
-      properties:
-        buckets:
-          items:
-            anyOf:
-            - $ref: '#/components/schemas/Bucket'
-            - $ref: '#/components/schemas/BucketSDDL'
-          type: array
-          title: Buckets
-        keys:
-          items:
-            $ref: '#/components/schemas/Key'
-          type: array
-          title: Keys
-      type: object
-      required:
-      - buckets
-      - keys
-      title: S3EdgeConfigDto
   securitySchemes:
     ServiceKeyHeader:
       type: apiKey
