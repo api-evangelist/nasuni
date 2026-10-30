@@ -64,5 +64,175 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Nasuni is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://forgeglobal.com/nasuni_stock/
+Nasuni is an enterprise hybrid-cloud file data platform that consolidates distributed NAS and file servers into UniFS, a cloud-native global file system backed by customer-owned object storage (Azure Blob, Amazon S3, Google Cloud Storage and S3-compatible on-prem targets). Edge appliances cache hot data at each site while every version is written immutably to the cloud, delivering multi-site collaboration with Global File Lock and Global File Acceleration, continuous versioning, rapid ransomware recovery, and file data services for analytics and AI. Nasuni exposes a substantial programmable surface: the REST Nasuni Management Console (NMC) API for fleet, volume, share, snapshot and appliance management; the multi-region Nasuni Portal API for account, IAM, Ops IQ telemetry, UaaS and job orchestration; the Global File Acceleration Telemetry API; Nasuni Data Service (NDS) endpoints that present Nasuni volumes through Azure Blob- and Amazon S3-compatible interfaces; the Nasuni Data API for appliance filesystem access; and a hosted, OAuth 2.0 Portal MCP Server plus open-source local MCP servers that make the platform callable by AI agents.
+
+**Areas:** Company · File Storage · Hybrid Cloud · Object Storage · Enterprise Storage · Data Management · Backup and Recovery · Ransomware Protection · Infrastructure · Observability · MCP · Agent-Native
+
+## Nasuni on APIs.io
+
+Everything profiled for Nasuni is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/nasuni/](https://apis.io/providers/nasuni/)** — or go straight to one of the APIs or properties below.
+
+### APIs (29)
+
+- [Nasuni Data API](https://apis.io/apis/nasuni/nasuni-data-api/) — HTTP API providing programmatic access to the filesystem of a Nasuni Edge Appliance — create, read, update and delete files and folders, list shares, and…
+- [Nasuni Portal MCP Server](https://apis.io/apis/nasuni/nasuni-portal-mcp-server/) — Hosted, OAuth 2.0-authenticated Model Context Protocol server that exposes the Nasuni Portal to AI clients (Claude, ChatGPT, Microsoft Copilot Studio) as…
+- [Nasuni Account API](https://apis.io/apis/nasuni/nasuni-account-api/) — The Account API from Nasuni — 4 operation(s) for account.
+- [Nasuni Account Management API](https://apis.io/apis/nasuni/nasuni-account-management-api/) — The Account Management API from Nasuni — 3 operation(s) for account management.
+- [Nasuni Activity Logs API](https://apis.io/apis/nasuni/nasuni-activity-logs-api/) — The Activity Logs API from Nasuni — 2 operation(s) for activity logs.
+- [Nasuni AI Activate API](https://apis.io/apis/nasuni/nasuni-ai-activate-api/) — The AI Activate API from Nasuni — 5 operation(s) for ai activate.
+- [Nasuni Auth API](https://apis.io/apis/nasuni/nasuni-auth-api/) — The Auth API from Nasuni — 5 operation(s) for auth.
+- [Nasuni Cloud Credentials API](https://apis.io/apis/nasuni/nasuni-cloud-credentials-api/) — The Cloud Credentials API from Nasuni — 5 operation(s) for cloud credentials.
+- [Nasuni Configuration API](https://apis.io/apis/nasuni/nasuni-configuration-api/) — The Configuration API from Nasuni — 5 operation(s) for configuration.
+- [Nasuni Data API](https://apis.io/apis/nasuni/nasuni-data-api/) — The Data API from Nasuni — 1 operation(s) for data.
+- [Nasuni Edge Appliances (Edge) API](https://apis.io/apis/nasuni/nasuni-edge-appliances-edge-api/) — The Edge Appliances (Edge) API from Nasuni — 4 operation(s) for edge appliances (edge).
+- [Nasuni File IQ Appliances (File IQ) API](https://apis.io/apis/nasuni/nasuni-file-iq-appliances-file-iq-api/) — The File IQ Appliances (File IQ) API from Nasuni — 2 operation(s) for file iq appliances (file iq).
+- [Nasuni Filers API](https://apis.io/apis/nasuni/nasuni-filers-api/) — The Filers API from Nasuni — 30 operation(s) for filers.
+- [Nasuni Global File Accelerator (GFA) API](https://apis.io/apis/nasuni/nasuni-global-file-accelerator-gfa-api/) — The Global File Accelerator (GFA) API from Nasuni — 2 operation(s) for global file accelerator (gfa).
+- [Nasuni Health API](https://apis.io/apis/nasuni/nasuni-health-api/) — The Health API from Nasuni — 1 operation(s) for health.
+- [Nasuni IAM API](https://apis.io/apis/nasuni/nasuni-iam-api/) — The IAM API from Nasuni — 13 operation(s) for iam.
+- [Nasuni Index API](https://apis.io/apis/nasuni/nasuni-index-api/) — The Index API from Nasuni — 1 operation(s) for index.
+- [Nasuni Jobs API](https://apis.io/apis/nasuni/nasuni-jobs-api/) — The Jobs API from Nasuni — 3 operation(s) for jobs.
+- [Nasuni Messages API](https://apis.io/apis/nasuni/nasuni-messages-api/) — The Messages API from Nasuni — 2 operation(s) for messages.
+- [Nasuni Data Service (NDS) API](https://apis.io/apis/nasuni/nasuni-nasuni-data-service-nds-api-api/) — The Nasuni Data Service (NDS) API API from Nasuni — 3 operation(s) for nasuni data service (nds) api.
+- [Nasuni Data Service (NDS) AWS API](https://apis.io/apis/nasuni/nasuni-nasuni-data-service-nds-aws-api-api/) — The Nasuni Data Service (NDS) AWS API API from Nasuni — 2 operation(s) for nasuni data service (nds) aws api.
+- [Nasuni Notifications API](https://apis.io/apis/nasuni/nasuni-notifications-api/) — The Notifications API from Nasuni — 3 operation(s) for notifications.
+- [Nasuni Ops IQ API](https://apis.io/apis/nasuni/nasuni-ops-iq-api/) — **Requires Premium Ops IQ license** (`ops-iq-premium`). The Ops IQ Telemetry API is available only to accounts with the Premium Ops IQ license bit enabled.…
+- [Nasuni Portal API](https://apis.io/apis/nasuni/nasuni-portal-api-api/) — The Portal API API from Nasuni — 1 operation(s) for portal api.
+- [Nasuni Serials API](https://apis.io/apis/nasuni/nasuni-serials-api/) — The Serials API from Nasuni — 3 operation(s) for serials.
+- [Nasuni Software API](https://apis.io/apis/nasuni/nasuni-software-api/) — The Software API from Nasuni — 2 operation(s) for software.
+- [Nasuni UniFS As A Service (UaaS) API](https://apis.io/apis/nasuni/nasuni-unifs-as-a-service-uaas-api/) — The UniFS As A Service (UaaS) API from Nasuni — 10 operation(s) for unifs as a service (uaas).
+- [Nasuni Volume Connections API](https://apis.io/apis/nasuni/nasuni-volume-connections-api/) — The Volume Connections API from Nasuni — 1 operation(s) for volume connections.
+- [Nasuni Volumes API](https://apis.io/apis/nasuni/nasuni-volumes-api/) — The Volumes API from Nasuni — 52 operation(s) for volumes.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### AsyncAPI (1)
+
+Event-driven and webhook contracts.
+
+- [Nasuni File Iq Alerts Webhooks](https://apis.io/asyncapis/nasuni/nasuni-file-iq-alerts-webhooks/)
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [Nasuni MCP servers](https://apis.io/servers/nasuni/nasuni-mcp-servers/)
+
+#### JSON Schema (1)
+
+The data models the API reads and writes.
+
+- [Nasuni File IQ Alert Webhook Payload](https://apis.io/schemas/nasuni/nasuni-file-iq-alert-webhook-payload.schema/)
+
+#### Overlays (7)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Nasuni Global File Acceleration Telemetry Overlay](https://apis.io/overlays/nasuni/nasuni-global-file-acceleration-telemetry-overlay/)
+- [Nasuni Nasuni Data Service Aws Overlay](https://apis.io/overlays/nasuni/nasuni-nasuni-data-service-aws-overlay/)
+- [Nasuni Nasuni Data Service Azure Overlay](https://apis.io/overlays/nasuni/nasuni-nasuni-data-service-azure-overlay/)
+- [Nasuni Nmc V1 0 Overlay](https://apis.io/overlays/nasuni/nasuni-nmc-v1-0-overlay/)
+- [Nasuni Nmc V1 1 Overlay](https://apis.io/overlays/nasuni/nasuni-nmc-v1-1-overlay/)
+- [Nasuni Nmc V1 2 Overlay](https://apis.io/overlays/nasuni/nasuni-nmc-v1-2-overlay/)
+- [Nasuni Portal V0 Overlay](https://apis.io/overlays/nasuni/nasuni-portal-v0-overlay/)
+
+#### Security (4)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Nasuni Authentication](https://apis.io/security/nasuni/nasuni-authentication/)
+- [Nasuni Domain Security](https://apis.io/security/nasuni/nasuni-domain-security/)
+- [Nasuni Trust Center](https://apis.io/security/nasuni/nasuni-trust-center/)
+- [Nasuni Vulnerability Disclosure](https://apis.io/security/nasuni/nasuni-vulnerability-disclosure/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Nasuni Scopes](https://apis.io/scopes/nasuni/nasuni-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Nasuni Plans Pricing](https://apis.io/plans/nasuni/nasuni-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Nasuni Rate Limits](https://apis.io/rate-limits/nasuni/nasuni-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.nasuni.com/)
+- [Documentation](https://docs.nasuni.com/)
+- [Getting started](https://docs.nasuni.com/docs/nasuni-quick-start-guide)
+- [API reference](https://docs.api.nasuni.com/api/nmc/v120/reference/overview/)
+- [Pricing](https://www.nasuni.com/pricing/)
+- [Sign up](https://portal.nasuni.com/)
+- [Support](https://www.nasuni.com/customers/support/)
+- [Blog](https://www.nasuni.com/blog/)
+- [Trust centre](https://trust.nasuni.com/)
+- [Terms of service](https://www.nasuni.com/legal/master-subscription-and-services-agreement-2026/)
+- [Privacy policy](https://www.nasuni.com/legal/privacy-notice-2026/)
+- [GitHub](https://github.com/nasuni-labs)
+
+## API Evangelist rating
+
+**Kin Score 64.9** — strong · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 76.7 |
+| Contract quality | 56.6 |
+| Contract governance | 18.2 |
+| Operational transparency | 57.9 |
+| Developer ergonomics | 66.1 |
+| Access clarity | 84.2 |
+
+**Agent readiness 36.7** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | documented (partial credit) |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 34.3** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/nasuni/](https://apis.io/providers/nasuni/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Nasuni: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/nasuni/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
